@@ -1,0 +1,6 @@
+@WebProject_klas3_groep4_HostAddress = http://localhost:5143
+
+GET {{WebProject_klas3_groep4_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
