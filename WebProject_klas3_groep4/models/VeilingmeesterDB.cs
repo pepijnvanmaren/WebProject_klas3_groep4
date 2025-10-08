@@ -2,6 +2,7 @@
 {
     public class VeilingmeesterDB
     {
+        public int ID { get; set; }
         public String VeilingVestiging { get; set; }
     }
 }
