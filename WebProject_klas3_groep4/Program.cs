@@ -5,32 +5,11 @@ namespace WebProject_klas3_groep4
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-
-            app.MapControllers();
-
-            app.Run();
+            MyContext c = new MyContext();
+            c.Veilingmeesters.Add(new VeilingmeesterDB() {Naam = "Haijin", Telefoonnummer = 0675728539, Email = "Haijin@gmail.com", Rol = "Veilingmeester", VeilingVestiging = "Den Haag" });
+            c.SaveChanges();
+            c.Veilingmeesters.Single((s) => s.ID == 1)
+                .Veilingen.Add(new VeilingDB() { ID = 1, AantalProducten = 10, Bechrijving = "Dingen van mensen verkopen", HuidigeSituatieVanVeiling = "Nog niet begonnen", KlokLocatie = "Den Haag", StartDatum = "12-02-2030", StarTijd = "21:20" });
         }
     }
 }
