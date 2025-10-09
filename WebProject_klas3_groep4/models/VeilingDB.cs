@@ -1,9 +1,11 @@
-﻿using WebProject_klas3_groep4.models;
+﻿using System.ComponentModel.DataAnnotations;
+using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4
 {
     public class VeilingDB
     {
+        [Key]
         public int ID { get; set; }
         public String StarTijd { get; set; }
         public String StartDatum { get; set; }
