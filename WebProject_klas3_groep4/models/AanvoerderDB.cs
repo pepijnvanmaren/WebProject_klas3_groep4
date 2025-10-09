@@ -13,5 +13,6 @@
         public string BedrijfTelefoonnummer { get; set; }
 
         public string BedrijfEmail { get; set; }
+        public List<Product> prodcten {  get; set; }
     }
 }
