@@ -21,5 +21,21 @@ namespace WebProject_klas3_groep4
                 optionsBuilder.UseSqlite("Data Source=database.db");
             }
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<GebruikerDB>().HasData(
+                new GebruikerDB
+                {
+                    ID = 1,
+                    Naam = "Admin",
+                    Telefoonnummer = 123456789,
+                    Email = "admin@example.com",
+                    Rol = "Administrator"
+                }
+            );
+
+            // Voeg hier meer seed-data toe voor andere modellen
+        }
     }
 }
