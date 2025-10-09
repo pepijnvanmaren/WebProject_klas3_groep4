@@ -1,9 +1,7 @@
 ﻿namespace WebProject_klas3_groep4.models
 {
-    public class AanvoerderDB
+    public class AanvoerderDB : GebruikerDB
     {
-        public int ID { get; set; }
-
         public string KvkNummer { get; set; }
 
         public string NaamVanBedrijf { get; set; }
