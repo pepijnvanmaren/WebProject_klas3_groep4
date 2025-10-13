@@ -113,6 +113,9 @@ namespace WebProject_klas3_groep4.Migrations
                     b.Property<string>("GewensteLocatie")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("KoperDBID")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("ProductID")
                         .HasColumnType("INTEGER");
 
@@ -124,9 +127,38 @@ namespace WebProject_klas3_groep4.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("KoperDBID");
+
+                    b.HasIndex("ProductID");
+
                     b.HasIndex("VeilingDBID");
 
-                    b.ToTable("LotDB");
+                    b.ToTable("Lot");
+                });
+
+            modelBuilder.Entity("WebProject_klas3_groep4.models.Product", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("AanvoerderDBID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Beschrijving")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Foto")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Naam")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AanvoerderDBID");
+
+                    b.ToTable("product");
                 });
 
             modelBuilder.Entity("WebProject_klas3_groep4.VeilingmeesterDB", b =>
@@ -140,6 +172,65 @@ namespace WebProject_klas3_groep4.Migrations
                     b.HasDiscriminator().HasValue("VeilingmeesterDB");
                 });
 
+            modelBuilder.Entity("WebProject_klas3_groep4.models.AanvoerderDB", b =>
+                {
+                    b.HasBaseType("WebProject_klas3_groep4.models.GebruikerDB");
+
+                    b.Property<string>("Adres")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BedrijfEmail")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BedrijfTelefoonnummer")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("KvkNummer")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NaamVanBedrijf")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Postcode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasDiscriminator().HasValue("AanvoerderDB");
+                });
+
+            modelBuilder.Entity("WebProject_klas3_groep4.models.KoperDB", b =>
+                {
+                    b.HasBaseType("WebProject_klas3_groep4.models.GebruikerDB");
+
+                    b.Property<string>("Adres")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BankGegevens")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Postcode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("Gebruikers", t =>
+                        {
+                            t.Property("Adres")
+                                .HasColumnName("KoperDB_Adres");
+
+                            t.Property("Postcode")
+                                .HasColumnName("KoperDB_Postcode");
+                        });
+
+                    b.HasDiscriminator().HasValue("KoperDB");
+                });
+
             modelBuilder.Entity("WebProject_klas3_groep4.VeilingDB", b =>
                 {
                     b.HasOne("WebProject_klas3_groep4.VeilingmeesterDB", null)
@@ -149,9 +240,26 @@ namespace WebProject_klas3_groep4.Migrations
 
             modelBuilder.Entity("WebProject_klas3_groep4.models.LotDB", b =>
                 {
+                    b.HasOne("WebProject_klas3_groep4.models.KoperDB", null)
+                        .WithMany("Lists")
+                        .HasForeignKey("KoperDBID");
+
+                    b.HasOne("WebProject_klas3_groep4.models.Product", null)
+                        .WithMany("Lists")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WebProject_klas3_groep4.VeilingDB", null)
                         .WithMany("Lists")
                         .HasForeignKey("VeilingDBID");
+                });
+
+            modelBuilder.Entity("WebProject_klas3_groep4.models.Product", b =>
+                {
+                    b.HasOne("WebProject_klas3_groep4.models.AanvoerderDB", null)
+                        .WithMany("prodcten")
+                        .HasForeignKey("AanvoerderDBID");
                 });
 
             modelBuilder.Entity("WebProject_klas3_groep4.VeilingDB", b =>
@@ -159,9 +267,24 @@ namespace WebProject_klas3_groep4.Migrations
                     b.Navigation("Lists");
                 });
 
+            modelBuilder.Entity("WebProject_klas3_groep4.models.Product", b =>
+                {
+                    b.Navigation("Lists");
+                });
+
             modelBuilder.Entity("WebProject_klas3_groep4.VeilingmeesterDB", b =>
                 {
                     b.Navigation("Veilingen");
+                });
+
+            modelBuilder.Entity("WebProject_klas3_groep4.models.AanvoerderDB", b =>
+                {
+                    b.Navigation("prodcten");
+                });
+
+            modelBuilder.Entity("WebProject_klas3_groep4.models.KoperDB", b =>
+                {
+                    b.Navigation("Lists");
                 });
 #pragma warning restore 612, 618
         }

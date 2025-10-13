@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProject_klas3_groep4.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class dbmaken : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,11 +22,41 @@ namespace WebProject_klas3_groep4.Migrations
                     Email = table.Column<string>(type: "TEXT", nullable: false),
                     Rol = table.Column<string>(type: "TEXT", nullable: false),
                     Discriminator = table.Column<string>(type: "TEXT", maxLength: 21, nullable: false),
-                    VeilingVestiging = table.Column<string>(type: "TEXT", nullable: true)
+                    VeilingVestiging = table.Column<string>(type: "TEXT", nullable: true),
+                    KvkNummer = table.Column<string>(type: "TEXT", nullable: true),
+                    NaamVanBedrijf = table.Column<string>(type: "TEXT", nullable: true),
+                    Postcode = table.Column<string>(type: "TEXT", nullable: true),
+                    Adres = table.Column<string>(type: "TEXT", nullable: true),
+                    BedrijfTelefoonnummer = table.Column<string>(type: "TEXT", nullable: true),
+                    BedrijfEmail = table.Column<string>(type: "TEXT", nullable: true),
+                    BankGegevens = table.Column<string>(type: "TEXT", nullable: true),
+                    KoperDB_Postcode = table.Column<string>(type: "TEXT", nullable: true),
+                    KoperDB_Adres = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Gebruikers", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "product",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Naam = table.Column<string>(type: "TEXT", nullable: true),
+                    Foto = table.Column<string>(type: "TEXT", nullable: true),
+                    Beschrijving = table.Column<string>(type: "TEXT", nullable: true),
+                    AanvoerderDBID = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_product", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_product_Gebruikers_AanvoerderDBID",
+                        column: x => x.AanvoerderDBID,
+                        principalTable: "Gebruikers",
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -54,7 +84,7 @@ namespace WebProject_klas3_groep4.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LotDB",
+                name: "Lot",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -63,22 +93,54 @@ namespace WebProject_klas3_groep4.Migrations
                     VeilingID = table.Column<int>(type: "INTEGER", nullable: false),
                     GebeurtenisDatum = table.Column<DateTime>(type: "TEXT", nullable: true),
                     GewensteLocatie = table.Column<string>(type: "TEXT", nullable: true),
+                    KoperDBID = table.Column<int>(type: "INTEGER", nullable: true),
                     VeilingDBID = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LotDB", x => x.ID);
+                    table.PrimaryKey("PK_Lot", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_LotDB_Veilingen_VeilingDBID",
+                        name: "FK_Lot_Gebruikers_KoperDBID",
+                        column: x => x.KoperDBID,
+                        principalTable: "Gebruikers",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Lot_Veilingen_VeilingDBID",
                         column: x => x.VeilingDBID,
                         principalTable: "Veilingen",
                         principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Lot_product_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "product",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Gebruikers",
+                columns: new[] { "ID", "Discriminator", "Email", "Naam", "Rol", "Telefoonnummer" },
+                values: new object[] { 1, "GebruikerDB", "admin@example.com", "Admin", "Administrator", 123456789 });
+
             migrationBuilder.CreateIndex(
-                name: "IX_LotDB_VeilingDBID",
-                table: "LotDB",
+                name: "IX_Lot_KoperDBID",
+                table: "Lot",
+                column: "KoperDBID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lot_ProductID",
+                table: "Lot",
+                column: "ProductID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lot_VeilingDBID",
+                table: "Lot",
                 column: "VeilingDBID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_product_AanvoerderDBID",
+                table: "product",
+                column: "AanvoerderDBID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Veilingen_VeilingmeesterDBID",
@@ -90,10 +152,13 @@ namespace WebProject_klas3_groep4.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "LotDB");
+                name: "Lot");
 
             migrationBuilder.DropTable(
                 name: "Veilingen");
+
+            migrationBuilder.DropTable(
+                name: "product");
 
             migrationBuilder.DropTable(
                 name: "Gebruikers");

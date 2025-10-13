@@ -14,6 +14,17 @@ namespace WebProject_klas3_groep4
         public DbSet<GebruikerDB> Gebruikers { get; set; }
         public DbSet<VeilingDB> Veilingen { get; set; }
 
+        public DbSet<LotDB> Lot { get; set; }
+        public DbSet<AanvoerderDB> Aanvoerder { get; set; }
+
+        public DbSet<KoperDB> Koper { get; set; }
+        public DbSet<Product> product { get; set; }
+
+
+
+
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
