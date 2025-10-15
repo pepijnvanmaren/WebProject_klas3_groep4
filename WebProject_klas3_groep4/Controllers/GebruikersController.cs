@@ -41,6 +41,36 @@ namespace WebProject_klas3_groep4.Controllers
 
             return CreatedAtAction(nameof(GetGebruiker), new { id = gebruiker.ID }, gebruiker);
         }
+
+        [HttpPut("{id}")]
+        public ActionResult<GebruikerDB> PutGebruiker(int id, [FromBody] GebruikerDB updatedGebruiker)
+        {
+            var gebruiker = _context.Gebruikers.Find(id);
+            if (gebruiker == null)
+                return NotFound();
+
+            gebruiker.Naam = updatedGebruiker.Naam;
+            gebruiker.Email = updatedGebruiker.Email;
+            gebruiker.Telefoonnummer = updatedGebruiker.Telefoonnummer;
+
+            _context.SaveChanges();
+
+            return Ok(gebruiker);
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult<GebruikerDB> DeleteGebruiker(int id)
+        {
+            var gebruiker = _context.Gebruikers.Find(id);
+          
+            if (gebruiker == null)
+                return NotFound();
+
+            _context.Gebruikers.Remove(gebruiker);
+            _context.SaveChanges();
+
+            return NoContent();
+        }
     }
     
 }
