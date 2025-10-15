@@ -1,15 +1,28 @@
-
+using Microsoft.EntityFrameworkCore;
+using WebProject_klas3_groep4;
+using Microsoft.Data.Sqlite;
 namespace WebProject_klas3_groep4
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            MyContext c = new MyContext();
-            c.Veilingmeesters.Add(new VeilingmeesterDB() {Naam = "Haijin", Telefoonnummer = 0675728539, Email = "Haijin@gmail.com", Rol = "Veilingmeester", VeilingVestiging = "Den Haag" });
-            c.SaveChanges();
-            c.Veilingmeesters.Single((s) => s.ID == 1)
-                .Veilingen.Add(new VeilingDB() { ID = 1, AantalProducten = 10, Bechrijving = "Dingen van mensen verkopen", HuidigeSituatieVanVeiling = "Nog niet begonnen", KlokLocatie = "Den Haag", StartDatum = "12-02-2030", StarTijd = "21:20" });
+           var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddControllers();
+            builder.Services.AddDbContext<DatabaseContext>();
+            builder.Services.AddRouting();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+            var app = builder.Build();
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.MapControllers();
+            app.Run();
         }
     }
 }
