@@ -13,23 +13,42 @@ function App() {
                     <ul className="nav-links">
                         <li><a href="#home">Home</a></li>
                         <li><a href="#about">Over ons</a></li>
-                        <li><a href="#services">Diensten</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>
             </nav>
 
-            <div className="inlogGegevens">
+            <div className="giveEmail">
                 <h1>Inloggen</h1>
                 <p>E-Mail</p>
                 <input
                     type="text"
                     placeholder="Voer je E-Mail in"
-                    className="input-field"
+                    className="input-field-Email"
                 />
+            </div>
+
+            <div className="givePassword">
+                <p>Wachtwoord</p>
+                <input
+                    type="password"
+                    placeholder="Voer je wachtwoord in"
+                    className="input-field-Password"
+                />
+            </div>
+
+            <button className="login-button">Inloggen</button>
+
+            <div className="signup-section">
+                <p>Heb je nog geen account?</p>
+                <a href="/registreren" className="signup-link">Account aanmaken</a>
             </div>
         </div>
     )
 }
 
 export default App
+
+// cd frontend
+//npm install
+// npm run dev

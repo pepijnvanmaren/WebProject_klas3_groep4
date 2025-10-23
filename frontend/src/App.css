@@ -1,25 +1,30 @@
-/* Reset standaard marges en paddings */
+/*snap ik nog niet helemaal*/
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Zorg dat de body en root het volledige scherm vullen */
 html, body, #root {
     width: 100%;
     height: 100%;
 }
 
-/* Algemene stijlen */
 body {
     background-color: #ffffff;
     font-family: 'Arial', sans-serif;
     color: #1e2a38;
-    overflow-x: hidden; /* voorkomt horizontaal scrollen */
+    overflow-x: hidden;
 }
 
-/* Hoofdcontainer vult hele breedte */
+
+
+
+
+
+
+/*opmaak boven in het scherm*/
+
 .app-container {
     display: flex;
     flex-direction: column;
@@ -29,59 +34,39 @@ body {
     min-height: 100vh;
     text-align: center;
 }
-
+/*foto*/
 .tree-picture {
-    width: 100%; /* 100% van het scherm, onafhankelijk van parent */
-    height: 23vh; /* hoogte = 20% van schermhoogte */
-    object-fit: cover; /* vult zonder te vervormen */
+    width: 100%;
+    height: 23vh;
+    object-fit: cover;
     display: block;
 }
 
-.inlogGegevens {
-    margin-top: 2.5rem;
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     max-width: 800px;
+    margin-top: 2.5rem;
+    width: 100%;
 }
 
-    .inlogGegevens h1 {
-        font-size: 3rem;
-        margin-bottom: 2rem; /* verhoog dit voor meer ruimte */
-        color: #000;
-        margin-top: 0;
-    }
 
-    .inlogGegevens p {
-        margin-top: 0; /* zorg dat er geen extra margin is */
-        font-size: 1.5rem;
-        color: #000;
-        margin-left: -480px;
-    }
 
-.input-field {
-    margin-top: 0.6rem;
-    font-size: 1.2rem;
-    padding: 0.5rem;
-    width: 300px;
-    border: 2px solid #777;
-    border-radius: 4px;
-    margin-left: -255px;
-    transition: border-color 0.3s ease;
-}
 
-    .input-field::placeholder {
-        color: #555;
-    }
-    
 
-/* Navigatiebalk styling */
+
+
+/* Navigatiebalk boven aan */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    background-color: rgba(30, 42, 56, 0.2); /* 80% transparant (0.2 = 20% opacity) */
-    backdrop-filter: blur(10px); /* optioneel: geeft een frosted glass effect */
+    background-color: rgba(30, 42, 56, 0.2);
+    backdrop-filter: blur(10px);
     z-index: 1000;
-    padding:0.7rem 0;
+    padding: 0.7rem 0;
 }
 
 .nav-content {
@@ -94,8 +79,8 @@ body {
 }
 
 .nav-logo {
-    height: 50px; /* pas de hoogte aan naar je wens */
-    width: auto; /* behoudt de aspect ratio */
+    height: 50px;
+    width: auto;
     object-fit: contain;
 }
 
@@ -112,6 +97,143 @@ body {
         transition: opacity 0.3s ease;
     }
 
-        .nav-links a:hover {
-            opacity: 0.7;
-        }
+    .nav-links a:hover {
+        opacity: 0.7;
+    }
+
+
+
+
+
+
+
+/*Inlog scherm vraagt om email en h1 (header 1) is de titel ("Inloggen")*/
+.giveEmail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+    /*Titel*/
+    .giveEmail h1 {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+        color: #000;
+    }
+    /*vraagt om email*/
+    .giveEmail p {
+        font-size: 1.5rem;
+        color: #000;
+        margin-bottom: 0.6rem;
+        align-self: flex-start;
+        margin-left: calc(50% - 150px);
+    }
+/*kan je email in invullen*/
+.input-field-Email {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    width: 300px;
+    border: 2px solid #777;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+    .input-field-Email::placeholder {
+        color: #555;
+    }
+
+
+
+
+
+
+
+
+
+/*Inlog scherm. vraagt om het wachtwoord*/
+.givePassword {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+    /*tekst die vraagt om het wachtwoord*/
+    .givePassword p {
+        font-size: 1.5rem;
+        color: #000;
+        margin-bottom: 0.6rem;
+        align-self: flex-start;
+        margin-left: calc(50% - 150px);
+    }
+/*veld waar je het wachtwoord kan invullen(in de jsx file staat type password, dat zorgt voor bolletjes bij het invullen)*/
+.input-field-Password {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    width: 300px;
+    border: 2px solid #777;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+
+
+
+
+
+/*inlog scherm. knop waarop staat inloggen en logt je in als de velden correct zijn ingevuld*/
+.login-button {
+    margin-top: 2rem;
+    padding: 0.7rem 2rem;
+    font-size: 1.2rem;
+    color: #fff;
+    background-color: #047B00;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+    margin-left: calc(50% - 150px);
+}
+    /*als je met je muis er op staat wordt de knop iets lichter*/
+    .login-button:hover {
+        background-color: #218838;
+    }
+    /*als je de knop in klikt wordt deze nog lichter voor conformatie dat deze is ingeklikt.*/
+    .login-button:active {
+        background-color: #32cd32;
+    }
+
+
+
+
+
+/*tekst met een knop("account aanmaken") die je verwijst naar de regstreer pagina*/
+.signup-section {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: flex-start;
+    margin-left: calc(50% - 150px);
+}
+    /*(Heb je nog geen account?) tekst */
+    .signup-section p {
+        font-size: 1rem;
+        color: #000;
+        margin-bottom: 0.5rem;
+    }
+
+/*(account aanmaken) knop/tekst*/
+.signup-link {
+    font-size: 1rem;
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+    .signup-link:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
