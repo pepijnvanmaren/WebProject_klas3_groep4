@@ -21,7 +21,7 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(_context.Veilingmeesters.ToList());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public ActionResult<VeilingmeesterDB> GetVeilingmeester(int id)
         {
             var Veilingmeester = _context.Veilingmeesters.Find(id);
