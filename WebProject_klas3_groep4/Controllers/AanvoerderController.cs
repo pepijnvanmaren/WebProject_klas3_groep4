@@ -16,70 +16,73 @@ namespace WebProject_klas3_groep4.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<KoperDB>> GetKopers()
+        public ActionResult<IEnumerable<AanvoerderDB>> GetAanvoerders()
         {
-            return Ok(_context.Kopers.ToList());
+            return Ok(_context.Aanvoerder.ToList());
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<KoperDB> GetKoper(int id)
+        [HttpGet("{id:int}")]
+        public ActionResult<AanvoerderDB> GetAanvoerder(int id)
         {
-            var Koper = _context.Kopers.Find(id);
-            if (Koper == null)
+            var Aanvoerder = _context.Aanvoerder.Find(id);
+            if (Aanvoerder == null)
                 return NotFound();
-            return Ok(Koper);
+            return Ok(Aanvoerder);
         }
 
         [HttpGet("{Naam}")]
-        public ActionResult<KoperDB> GetKoper(string Naam)
+        public ActionResult<AanvoerderDB> GetAanvoerder(string Naam)
         {
-            var Koper = _context.Kopers.Find(Naam);
-            if (Koper == null)
+            var Aanvoerder = _context.Aanvoerder.Find(Naam);
+            if (Aanvoerder == null)
                 return NotFound();
-            return Ok(Koper);
+            return Ok(Aanvoerder);
         }
 
         [HttpPost]
-        public ActionResult<KoperDB> PostKoper([FromBody] KoperDB Koper)
+        public ActionResult<AanvoerderDB> PostAanvoerder([FromBody] AanvoerderDB Aanvoerder)
         {
-            if (Koper == null)
+            if (Aanvoerder == null)
                 return BadRequest();
 
-            _context.Kopers.Add(Koper);
+            _context.Aanvoerder.Add(Aanvoerder);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetKoper), new { id = Koper.ID }, Koper);
+            return CreatedAtAction(nameof(GetAanvoerder), new { id = Aanvoerder.ID }, Aanvoerder);
         }
 
         [HttpPut("{id}")]
-        public ActionResult<KoperDB> PutKoper(int id, [FromBody] KoperDB updatedKoper)
+        public ActionResult<AanvoerderDB> PutAanvoerder(int id, [FromBody] AanvoerderDB updatedAanvoerder)
         {
-            var Koper = _context.Kopers.Find(id);
-            if (Koper == null)
+            var Aanvoerder = _context.Aanvoerder.Find(id);
+            if (Aanvoerder == null)
                 return NotFound();
 
-            Koper.Naam = updatedKoper.Naam;
-            Koper.Email = updatedKoper.Email;
-            Koper.Telefoonnummer = updatedKoper.Telefoonnummer;
-            Koper.BankGegevens = updatedKoper.BankGegevens;
-            Koper.Adres = updatedKoper.Adres;
-            Koper.Postcode = updatedKoper.Postcode;
-            Koper.Lists = updatedKoper.Lists;
+            Aanvoerder.Naam = updatedAanvoerder.Naam;
+            Aanvoerder.Email = updatedAanvoerder.Email;
+            Aanvoerder.Telefoonnummer = updatedAanvoerder.Telefoonnummer;
+            Aanvoerder.KvkNummer = updatedAanvoerder.KvkNummer;
+            Aanvoerder.NaamVanBedrijf = updatedAanvoerder.NaamVanBedrijf;
+            Aanvoerder.Postcode = updatedAanvoerder.Postcode;
+            Aanvoerder.Adres = updatedAanvoerder.Adres;
+            Aanvoerder.BedrijfTelefoonnummer = updatedAanvoerder.BedrijfTelefoonnummer;
+            Aanvoerder.BedrijfEmail = updatedAanvoerder.BedrijfEmail;
+            Aanvoerder.prodcten = updatedAanvoerder.prodcten;
 
             _context.SaveChanges();
 
-            return Ok(Koper);
+            return Ok(Aanvoerder);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<KoperDB> DeleteKoper(int id)
+        public ActionResult<AanvoerderDB> DeleteAanvoerder(int id)
         {
-            var Koper = _context.Kopers.Find(id);
+            var Aanvoerder = _context.Aanvoerder.Find(id);
 
-            if (Koper == null)
+            if (Aanvoerder == null)
                 return NotFound();
 
-            _context.Kopers.Remove(Koper);
+            _context.Aanvoerder.Remove(Aanvoerder);
             _context.SaveChanges();
 
             return NoContent();
