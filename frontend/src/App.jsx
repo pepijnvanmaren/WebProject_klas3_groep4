@@ -1,12 +1,25 @@
-﻿import treePicture from './assets/treePicture.png'
-import royaleFloraLogo from './assets/royaleFloraLogo.svg' // voeg deze regel toe
+﻿import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import treePicture from './assets/treePicture.png'
+import royaleFloraLogo from './assets/royaleFloraLogo.svg'
+import Register from './Register'
 import './App.css'
 
-function App() {
+function Login() {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    const handleLogin = () => {
+        if (email && password) {
+            console.log('Inloggen met:', email)
+            // Hier komt de login logica
+        } else {
+            alert('Vul beide velden in!')
+        }
+    }
+
     return (
         <div className="app-container">
-            <img src={treePicture} alt="tree picture" className="tree-picture" />
-
             <nav className="navbar">
                 <div className="nav-content">
                     <img src={royaleFloraLogo} alt="Royale Flora" className="nav-logo" />
@@ -18,37 +31,59 @@ function App() {
                 </div>
             </nav>
 
-            <div className="giveEmail">
-                <h1>Inloggen</h1>
-                <p>E-Mail</p>
-                <input
-                    type="text"
-                    placeholder="Voer je E-Mail in"
-                    className="input-field-Email"
-                />
-            </div>
+            <img src={treePicture} alt="tree picture" className="tree-picture" />
 
-            <div className="givePassword">
-                <p>Wachtwoord</p>
-                <input
-                    type="password"
-                    placeholder="Voer je wachtwoord in"
-                    className="input-field-Password"
-                />
-            </div>
+            <div className="login-container">
+                <div className="giveEmail">
+                    <h1>Inloggen</h1>
 
-            <button className="login-button">Inloggen</button>
+                    <p>E-Mail</p>
+                    <input
+                        type="email"
+                        placeholder="Voer je E-Mail in"
+                        className="input-field-Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                </div>
 
-            <div className="signup-section">
-                <p>Heb je nog geen account?</p>
-                <a href="/registreren" className="signup-link">Account aanmaken</a>
+                <div className="givePassword">
+                    <p>Wachtwoord</p>
+                    <input
+                        type="password"
+                        placeholder="Voer je wachtwoord in"
+                        className="input-field-Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+
+                <button className="login-button" onClick={handleLogin}>
+                    Inloggen
+                </button>
+
+                <div className="signup-section">
+                    <p>Heb je nog geen account?</p>
+                    <Link to="/registreren" className="signup-link">Account aanmaken</Link>
+                </div>
             </div>
         </div>
     )
 }
 
+function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/registreren" element={<Register />} />
+            </Routes>
+        </BrowserRouter>
+    )
+}
+
 export default App
 
-// cd frontend
+//cd frotnend
 //npm install
-// npm run dev
+//npm run dev
