@@ -20,6 +20,7 @@ namespace WebProject_klas3_groep4.Migrations
                     Naam = table.Column<string>(type: "TEXT", nullable: false),
                     Telefoonnummer = table.Column<int>(type: "INTEGER", nullable: false),
                     Email = table.Column<string>(type: "TEXT", nullable: false),
+                    Paswoord = table.Column<string>(type: "TEXT", nullable: false),
                     Rol = table.Column<string>(type: "TEXT", nullable: false),
                     Discriminator = table.Column<string>(type: "TEXT", maxLength: 21, nullable: false),
                     VeilingVestiging = table.Column<string>(type: "TEXT", nullable: true),
