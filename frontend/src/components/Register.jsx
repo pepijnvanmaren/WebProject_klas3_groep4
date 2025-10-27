@@ -1,8 +1,6 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import treePicture from './assets/treePicture.png'
-import royaleFloraLogo from './assets/royaleFloraLogo.svg'
-import './App.css'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "../styles/Register.css";
 
 function Register() {
     const [email, setEmail] = useState('')
@@ -27,30 +25,7 @@ function Register() {
     }
 
     return (
-        <div className="app-container">
-            <nav className="navbar">
-                <div className="nav-content">
-                    <img src={royaleFloraLogo} alt="Royale Flora" className="nav-logo" />
-                    <ul className="nav-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">Over ons</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-            </nav>
-
-            <img src={treePicture} alt="tree picture" className="tree-picture" />
-
-
-
-
-
-
-
-
-
-
-            <div className="register-container">
+           <div className="register-container">
                 <h1 className="register-title">Account aanmaken</h1>
 
                 <div className="register-form">
@@ -144,7 +119,6 @@ function Register() {
                     </div>
                 </div>
             </div>
-        </div>
     )
 }
 
