@@ -97,7 +97,8 @@ namespace WebProject_klas3_groep4.Migrations
                             Email = "admin@example.com",
                             Naam = "Admin",
                             Rol = "Administrator",
-                            Telefoonnummer = 123456789
+                            Telefoonnummer = 123456789,
+                            Paswoord = "1234"
                         });
                 });
 

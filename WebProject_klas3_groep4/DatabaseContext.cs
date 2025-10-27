@@ -42,7 +42,9 @@ namespace WebProject_klas3_groep4
                     Naam = "Admin",
                     Telefoonnummer = 123456789,
                     Email = "admin@example.com",
-                    Rol = "Administrator"
+                    Rol = "Administrator",
+                    Paswoord = "1234"
+
                 }
             );
 

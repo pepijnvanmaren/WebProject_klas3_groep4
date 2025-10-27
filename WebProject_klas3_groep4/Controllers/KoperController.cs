@@ -18,13 +18,13 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<KoperDB>> GetKopers()
         {
-            return Ok(_context.Kopers.ToList());
+            return Ok(_context.Koper.ToList());
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<KoperDB> GetKoper(int id)
         {
-            var Koper = _context.Kopers.Find(id);
+            var Koper = _context.Koper.Find(id);
             if (Koper == null)
                 return NotFound();
             return Ok(Koper);
@@ -33,7 +33,7 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpGet("{Naam}")]
         public ActionResult<KoperDB> GetKoper(string Naam)
         {
-            var Koper = _context.Kopers.Find(Naam);
+            var Koper = _context.Koper.Find(Naam);
             if (Koper == null)
                 return NotFound();
             return Ok(Koper);
@@ -45,7 +45,7 @@ namespace WebProject_klas3_groep4.Controllers
             if (Koper == null)
                 return BadRequest();
 
-            _context.Kopers.Add(Koper);
+            _context.Koper.Add(Koper);
             _context.SaveChanges();
 
             return CreatedAtAction(nameof(GetKoper), new { id = Koper.ID }, Koper);
@@ -54,7 +54,7 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpPut("{id}")]
         public ActionResult<KoperDB> PutKoper(int id, [FromBody] KoperDB updatedKoper)
         {
-            var Koper = _context.Kopers.Find(id);
+            var Koper = _context.Koper.Find(id);
             if (Koper == null)
                 return NotFound();
 
@@ -74,12 +74,12 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpDelete("{id}")]
         public ActionResult<KoperDB> DeleteKoper(int id)
         {
-            var Koper = _context.Kopers.Find(id);
+            var Koper = _context.Koper.Find(id);
 
             if (Koper == null)
                 return NotFound();
 
-            _context.Kopers.Remove(Koper);
+            _context.Koper.Remove(Koper);
             _context.SaveChanges();
 
             return NoContent();
