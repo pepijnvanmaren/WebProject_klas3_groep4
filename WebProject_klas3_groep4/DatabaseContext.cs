@@ -18,7 +18,7 @@ namespace WebProject_klas3_groep4
         public DbSet<AanvoerderDB> Aanvoerder { get; set; }
 
         public DbSet<KoperDB> Koper { get; set; }
-        public DbSet<Product> product { get; set; }
+        public DbSet<productDB> product { get; set; }
 
 
 
