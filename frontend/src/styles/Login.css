@@ -1,0 +1,113 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    margin-top: 3em;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #ffffff;
+    color: #1e2a38;
+    overflow-x: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding-top: 30vh;
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.giveEmail h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #000;
+    text-align: center;
+}
+
+.giveEmail p,
+.givePassword p {
+    font-size: 1.2rem;
+    color: #000;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.input-field-Email,
+.input-field-Password {
+    font-size: 1rem;
+    padding: 0.5rem;
+    width: 100%;
+    border: 2px solid #777;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+    .input-field-Email::placeholder,
+    .input-field-Password::placeholder {
+        color: #555;
+    }
+
+.login-button {
+    margin-top: 1.5rem;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #047B00;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+    .login-button:hover {
+        background-color: #218838;
+    }
+
+    .login-button:active {
+        background-color: #32cd32;
+    }
+
+.signup-section {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+    .signup-section p {
+        font-size: 0.9rem;
+        color: #000;
+        margin-bottom: 0.3rem;
+    }
+
+.signup-link {
+    font-size: 0.9rem;
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+    .signup-link:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
