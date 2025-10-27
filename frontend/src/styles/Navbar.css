@@ -20,6 +20,7 @@
     background-color: rgba(30, 42, 56, 0.2);
     backdrop-filter: blur(10px);
     padding: 0.7rem 0;
+    position: absolute;
 }
 
 .nav-content {
