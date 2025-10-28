@@ -2,6 +2,8 @@
 import IndexPage from "./pages/IndexPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import SellerDashboardPage from "./pages/SellerDashboardPage";
+import BuyerDashboardPage from "./pages/BuyerDashboardPage";
 
 function App() {
     return (
@@ -9,7 +11,7 @@ function App() {
             <Routes>
                 <Route path="/registreren" element={<RegisterPage />} />
                 <Route path="/" element={<LoginPage />} />
-                <Route path="/verkoperDashboard" element={<SellerDashboardPage />} />
+                <Route path="/VerkoperDashboard" element={<SellerDashboardPage />} />
                 <Route path="/KoperDashboard" element={<BuyerDashboardPage />} />
             </Routes>
         </BrowserRouter>
