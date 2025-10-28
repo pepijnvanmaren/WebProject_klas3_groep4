@@ -1,13 +1,15 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import "../styles/Register.css";
 
 function Register() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [naam, setNaam] = useState('')
-    const [accountType, setAccountType] = useState('koper') // 'koper' of 'verkoper'
+    const [accountType, setAccountType] = useState('koper')
 
     const handleRegister = () => {
         if (!email || !password || !confirmPassword || !naam) {
@@ -20,8 +22,13 @@ function Register() {
             return
         }
 
-        console.log('Registreren met:', { naam, email, accountType })
-        // Hier komt later je registratie logica
+        if (accountType === 'koper') {
+            navigate('/KoperDashboard')
+        }
+
+        if (accountType === 'verkoper') {
+            navigate('/verkoperDashboard')
+        }
     }
 
     return (
@@ -112,4 +119,4 @@ function Register() {
     )
 }
 
-export default Register
+export default Register;
