@@ -32,8 +32,18 @@
     align-items: center;
 }
 
+    .nav-content a {
+
+    }
+
 .nav-logo {
     height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.nav-userIcon {
+    height: 30px;
     width: auto;
     object-fit: contain;
 }

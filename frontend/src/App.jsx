@@ -16,6 +16,6 @@ function App() {
 
 export default App;
 
-//cd frotnend
+//cd frontend
 //npm install
 //npm run dev

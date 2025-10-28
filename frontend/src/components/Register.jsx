@@ -74,16 +74,6 @@ function Register() {
                         </div>
                     </div>
 
-
-
-
-
-
-
-
-
-
-
                     {/* Rechter kolom */}
                     <div className="register-column-right">
                         <div className="form-group">
