@@ -30,10 +30,10 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(Veilingmeester);
         }
 
-        [HttpGet("{Naam}")]
-        public ActionResult<VeilingmeesterDB> GetVeilingmeester(string Naam)
+        [HttpGet("{Email}")]
+        public ActionResult<VeilingmeesterDB> GetVeilingmeester(string Email)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(Naam);
+            var Veilingmeester = _context.Veilingmeesters.Find(Email);
             if (Veilingmeester == null)
                 return NotFound();
             return Ok(Veilingmeester);

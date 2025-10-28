@@ -52,6 +52,7 @@ namespace WebProject_klas3_groep4.Controllers
             gebruiker.Naam = updatedGebruiker.Naam;
             gebruiker.Email = updatedGebruiker.Email;
             gebruiker.Telefoonnummer = updatedGebruiker.Telefoonnummer;
+            gebruiker.Paswoord = updatedGebruiker.Paswoord;
 
             _context.SaveChanges();
 

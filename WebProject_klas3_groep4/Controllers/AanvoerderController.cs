@@ -30,10 +30,10 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(Aanvoerder);
         }
 
-        [HttpGet("{Naam}")]
-        public ActionResult<AanvoerderDB> GetAanvoerder(string Naam)
+        [HttpGet("{Email}")]
+        public ActionResult<AanvoerderDB> GetAanvoerder(string Email)
         {
-            var Aanvoerder = _context.Aanvoerder.Find(Naam);
+            var Aanvoerder = _context.Aanvoerder.Find(Email);
             if (Aanvoerder == null)
                 return NotFound();
             return Ok(Aanvoerder);
