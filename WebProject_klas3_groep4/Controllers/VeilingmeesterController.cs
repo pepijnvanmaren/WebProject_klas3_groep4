@@ -31,9 +31,9 @@ namespace WebProject_klas3_groep4.Controllers
         }
 
         [HttpGet("{Email}")]
-        public ActionResult<VeilingmeesterDB> GetVeilingmeester(string Email)
+        public ActionResult<VeilingmeesterDB> GetVeilingmeester(string Email, string passwoord)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(Email);
+            var Veilingmeester = _context.Veilingmeesters.Find(Email, passwoord);
             if (Veilingmeester == null)
                 return NotFound();
             return Ok(Veilingmeester);

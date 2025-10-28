@@ -31,9 +31,9 @@ namespace WebProject_klas3_groep4.Controllers
         }
 
         [HttpGet("{Email}")]
-        public ActionResult<KoperDB> GetKoper(string Email)
+        public ActionResult<KoperDB> GetKoper(string Email, string passwoord)
         {
-            var Koper = _context.Koper.Find(Email);
+            var Koper = _context.Koper.Find(Email, passwoord);
             if (Koper == null)
                 return NotFound();
             return Ok(Koper);

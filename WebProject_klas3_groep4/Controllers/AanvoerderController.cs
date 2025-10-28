@@ -31,9 +31,9 @@ namespace WebProject_klas3_groep4.Controllers
         }
 
         [HttpGet("{Email}")]
-        public ActionResult<AanvoerderDB> GetAanvoerder(string Email)
+        public ActionResult<AanvoerderDB> GetAanvoerder(string Email, string passwoord)
         {
-            var Aanvoerder = _context.Aanvoerder.Find(Email);
+            var Aanvoerder = _context.Aanvoerder.Find(Email, passwoord);
             if (Aanvoerder == null)
                 return NotFound();
             return Ok(Aanvoerder);
