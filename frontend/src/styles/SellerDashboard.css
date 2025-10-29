@@ -9,7 +9,7 @@ Dashboard.css
 .dashboard-root {
     font-family: "Segoe UI", sans-serif;
     background: #fff;
-    min-height: 100vh;
+    min-height: 30vh;
 }
 
 .dashboard-header {

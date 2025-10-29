@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import "../styles/SellerDashboard.css";
+import React, { useState } from 'react';
+import '../styles/SellerDashboard.css';
 
-
-const apiBase = 'http://localhost:5174';
+const apiBase = 'https://localhost:5174';
 
 function SellerDashboard() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        fetchProducts();
-    }, []);
+
 
     async function fetchProducts() {
         setLoading(true);
@@ -28,7 +25,7 @@ function SellerDashboard() {
     }
 
     async function createProduct() {
-        const sample = { name: "Nieuw product " + (products.length + 1) }
+        const sample = { name: "Nieuw product " + (products.length + 1) };
         try {
             const res = await fetch(`${apiBase}/api/products`, {
                 method: "POST",
@@ -76,10 +73,10 @@ function SellerDashboard() {
                 <h1 className="title">Dashboard</h1>
                 <div className="dashboard-box">
                     <button className="btn primary" onClick={createProduct}>
-
+                        Product Plaatsen
                     </button>
                     <button className="btn secondary" onClick={fetchProducts}>
-
+                        Product Tonen
                     </button>
                     <button
                         className="btn danger"
@@ -90,7 +87,7 @@ function SellerDashboard() {
                             }
                             deleteProduct(products[products.length - 1].id);
                         }}>
-
+                        Product Verwijderen
                     </button>
                 </div>
             </main>
@@ -99,6 +96,7 @@ function SellerDashboard() {
                     <div className="loader">Laden...</div>
                 ) : products.length === 0 ? (
                     <div className="placeholder">
+                        Geen producten beschikbaar
                     </div>
                 ) : (
                     <ul className="product-list">
