@@ -21,39 +21,37 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     width: 100%;
     padding-top: 30vh;
+    max-width: 20rem;
+    margin: 0 auto;
 }
 
-.login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 400px;
-    width: 90%;
+.giveEmail,
+.givePassword {
+    width: 100%;
 }
 
-.giveEmail h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    color: #000;
-    text-align: center;
-}
+    .giveEmail h1 {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: #000;
+        text-align: center;
+    }
 
-.giveEmail p,
-.givePassword p {
-    font-size: 1.2rem;
-    color: #000;
-    margin-bottom: 0.5rem;
-    text-align: left;
-}
+    .giveEmail p,
+    .givePassword p {
+        font-size: 1.2rem;
+        color: #000;
+        margin-bottom: 0.5rem;
+        text-align: left;
+    }
 
 .input-field-Email,
 .input-field-Password {
     font-size: 1rem;
     padding: 0.5rem;
-    width: 100%;
     border: 2px solid #777;
     border-radius: 4px;
     margin-bottom: 1rem;

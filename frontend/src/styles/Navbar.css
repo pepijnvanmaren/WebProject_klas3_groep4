@@ -20,6 +20,7 @@
     background-color: rgba(30, 42, 56, 0.2);
     backdrop-filter: blur(10px);
     padding: 0.7rem 0;
+    position: absolute;
 }
 
 .nav-content {
@@ -31,8 +32,21 @@
     align-items: center;
 }
 
+    .nav-content a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 30px;
+    }
+
 .nav-logo {
     height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.nav-userIcon {
+    height: 30px;
     width: auto;
     object-fit: contain;
 }
