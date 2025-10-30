@@ -23,7 +23,7 @@ function Register() {
         }
 
         if (accountType === 'koper') {
-            navigate('/KoperDashboard')
+            navigate('/')
         }
 
         if (accountType === 'verkoper') {
