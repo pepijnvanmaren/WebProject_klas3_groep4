@@ -2,7 +2,7 @@
 
 namespace WebProject_klas3_groep4.models
 {
-    public class Product
+    public class productDB
     {
         [Key]
         public int ID { get; set; }

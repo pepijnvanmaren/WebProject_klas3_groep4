@@ -14,11 +14,11 @@ namespace WebProject_klas3_groep4
         public DbSet<GebruikerDB> Gebruikers { get; set; }
         public DbSet<VeilingDB> Veilingen { get; set; }
 
-        public DbSet<LotDB> Lot { get; set; }
+        public DbSet<LotDB> Lots { get; set; }
         public DbSet<AanvoerderDB> Aanvoerder { get; set; }
 
         public DbSet<KoperDB> Koper { get; set; }
-        public DbSet<Product> product { get; set; }
+        public DbSet<productDB> product { get; set; }
 
 
 
@@ -42,7 +42,9 @@ namespace WebProject_klas3_groep4
                     Naam = "Admin",
                     Telefoonnummer = 123456789,
                     Email = "admin@example.com",
-                    Rol = "Administrator"
+                    Rol = "Administrator",
+                    Paswoord = "1234"
+
                 }
             );
 
