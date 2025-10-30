@@ -1,0 +1,107 @@
+.main_div {
+    min-height: 40em;
+    width: 100%;
+    margin-top: 15em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5em;
+    padding: 2em;
+}
+
+.content_div {
+    background: #d4e3d1;
+    width: 60%;
+    padding: 1.5em;
+    border-radius: 1em;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.content_div_title {
+    color: black;
+    font-size: 1.8em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+    margin-bottom: 0.75em;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.3em;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom: 1px solid;
+}
+
+.content_layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2em;
+    margin-bottom: 1em;
+}
+
+.left_image_div {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 1em;
+    height: 200px;
+    width: 200px;
+    background-color: black;
+}
+
+    .left_image_div img {
+        width: 100%;
+        max-width: 200px;
+        border-radius: 0.5em;
+    }
+
+.right_text_div {
+    flex: 2;
+    font-size: 1em;
+    color: #555;
+    line-height: 1.5em;
+}
+
+.bottom_text_div {
+    font-size: 0.95em;
+    color: black;
+    border-top: 1px solid #ddd;
+    padding-top: 1em;
+    line-height: 1.4em;
+    border-top: 1px solid;
+}
+
+.content_layout {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 2em;
+    margin-bottom: 1em;
+    margin-left: 4em;
+}
+
+.price_buy_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buy_button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.6em 1.2em;
+    border-radius: 0.5em;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    .buy_button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
