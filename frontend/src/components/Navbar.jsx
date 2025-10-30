@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 import Logo from "../assets/RoyaleFloraLogo.svg";
 import Trees from "../assets/treePicture.png";
@@ -13,7 +14,7 @@ function Navbar() {
                     <li><a href="#home"><img src={Logo} alt="Royale Flora" className="nav-logo" /></a></li>
                     <ul className="nav-links">
                         <li><a href="#about">Over ons</a></li>
-                        <li><a href="#logOut">Uitloggen</a></li>
+                        <Link to="/">Uitloggen</Link>
                         <li><a href="#contact"><img src={UserIcon} alt="Royale Flora" className="nav-userIcon" /></a></li>
                     </ul>
                 </div>
