@@ -14,7 +14,7 @@ function Navbar() {
                     <li><a href="#home"><img src={Logo} alt="Royale Flora" className="nav-logo" /></a></li>
                     <ul className="nav-links">
                         <li><a href="#about">Over ons</a></li>
-                        <Link to="/">Uitloggen</Link>
+                        <Link to="/inloggen">Uitloggen</Link>
                         <li><a href="#contact"><img src={UserIcon} alt="Royale Flora" className="nav-userIcon" /></a></li>
                     </ul>
                 </div>

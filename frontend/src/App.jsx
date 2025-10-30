@@ -10,9 +10,10 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/registreren" element={<RegisterPage />} />
-                <Route path="/" element={<LoginPage />} />
+                <Route path="/inloggen" element={<LoginPage />} />
                 <Route path="/VerkoperDashboard" element={<SellerDashboardPage />} />
                 <Route path="/KoperDashboard" element={<BuyerDashboardPage />} />
+                <Route path="/" element={<IndexPage />} />
             </Routes>
         </BrowserRouter>
     );

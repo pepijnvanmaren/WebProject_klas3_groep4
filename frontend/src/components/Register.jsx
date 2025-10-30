@@ -111,7 +111,7 @@ function Register() {
 
                         <div className="login-section">
                             <p>Heb je al een account?</p>
-                            <Link to="/" className="signup-link">Inloggen</Link>
+                        <Link to="/inloggen" className="signup-link">Inloggen</Link>
                         </div>
                     </div>
                 </div>
