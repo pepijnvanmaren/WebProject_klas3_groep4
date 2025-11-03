@@ -85,7 +85,7 @@ function SellerDashboard() {
                                 alert("Geen producten om te verwijderen.");
                                 return;
                             }
-                            deleteProduct(products[products.length - 1].id);
+                         //   deleteProduct(products[products.length - 1].id);
                         }}>
                         Product Verwijderen
                     </button>
