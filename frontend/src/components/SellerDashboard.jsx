@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/SellerDashboard.css';
 
 const apiBase = 'https://localhost:5174';
