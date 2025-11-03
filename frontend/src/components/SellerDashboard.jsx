@@ -70,7 +70,7 @@ function SellerDashboard() {
             </header>
         </div>
             <main className="dashboard-container">
-                <h1 className="title">Dashboard</h1>
+                <h1 className="VerkoperDashboard-title">Dashboard</h1>
                 <div className="dashboard-box">
                     <button className="btn primary" onClick={createProduct}>
                         Product Plaatsen
