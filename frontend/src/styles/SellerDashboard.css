@@ -53,10 +53,11 @@ Dashboard.css
     padding: 10px;
 }
 
-.title {
-    color: #bdbdbd;
+.VerkoperDashboard-title {
+    color: #000000;
     margin-bottom: 8px;
     font-weight: 600;
+    text-align: center;
 }
 
 .dashboard-box {
