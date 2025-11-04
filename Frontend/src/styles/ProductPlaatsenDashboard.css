@@ -65,6 +65,20 @@ Dashboard.css
     padding: 18px;
     border-radius: 2px;
 }
+.input-container {
+    font-size: 1rem;
+    padding: 0.5rem;
+    border: 2px solid #777;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.input-field-Email::placeholder,
+.input-field-Password::placeholder {
+    color: #555;
+}
+
 
 .btn {
     width: 100%;

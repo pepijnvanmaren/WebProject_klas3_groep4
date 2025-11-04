@@ -1,4 +1,4 @@
-import '../styles/ProductTonenDashboard.css';
+import '../styles/ProductPlaatsenDashboard.css';
 import { useNavigate } from 'react-router-dom';
 
 function SellerDashboard() {
@@ -34,6 +34,7 @@ function SellerDashboard() {
                         Product naam
                     </h1>
                     <input
+                        className="input-container"
                         placeholder="Voer je Naam in"
                         className="input-field-Naam"
                     />
@@ -41,6 +42,7 @@ function SellerDashboard() {
                         Product infomatie
                     </h1>
                     <input
+                        className="input-container"
                         placeholder="Voer je Bescrhijving in"
                         className="input-field-Naam"
                     />
@@ -48,6 +50,7 @@ function SellerDashboard() {
                         Product foto
                     </h1>
                     <input
+                        className="input-container"
                         placeholder="Voer je Foto in"
                         className="input-field-Naam"
                     />
