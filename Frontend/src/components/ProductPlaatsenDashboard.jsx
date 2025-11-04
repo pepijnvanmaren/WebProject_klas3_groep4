@@ -1,4 +1,4 @@
-import '../styles/ProductPlaatsenDashboard.css';
+import "../styles/ProductPlaatsenDashboard.css";
 import { useNavigate } from 'react-router-dom';
 
 function SellerDashboard() {
