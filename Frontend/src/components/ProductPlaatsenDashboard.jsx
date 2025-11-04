@@ -36,15 +36,13 @@ function SellerDashboard() {
                     <input
                         className="input-container"
                         placeholder="Voer je Naam in"
-                        className="input-field-Naam"
                     />
                     <h1>
                         Product infomatie
                     </h1>
-                    <input
-                        className="input-container"
+                    <textarea 
+                        className="input-container-beschrijving"
                         placeholder="Voer je Bescrhijving in"
-                        className="input-field-Naam"
                     />
                     <h1>
                         Product foto
@@ -52,7 +50,6 @@ function SellerDashboard() {
                     <input
                         className="input-container"
                         placeholder="Voer je Foto in"
-                        className="input-field-Naam"
                     />
                     <button className="login-button" onClick={ProductGemaaktAlert}>
                         Product Maken
