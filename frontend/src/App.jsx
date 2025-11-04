@@ -3,6 +3,7 @@ import IndexPage from "./pages/IndexPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import SellerDashboardPage from "./pages/SellerDashboardPage";
+import AccountInfoPage from "./pages/AccountInfoPage";
 
 function App() {
     return (
@@ -12,6 +13,7 @@ function App() {
                 <Route path="/inloggen" element={<LoginPage />} />
                 <Route path="/VerkoperDashboard" element={<SellerDashboardPage />} />
                 <Route path="/" element={<IndexPage />} />
+                <Route path="/AccountInfo" element={<AccountInfoPage />} />
             </Routes>
         </BrowserRouter>
     );
