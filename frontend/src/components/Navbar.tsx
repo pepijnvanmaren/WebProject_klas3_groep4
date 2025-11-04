@@ -15,7 +15,7 @@ function Navbar() {
                     <ul className="nav-links">
                         <li><a href="#about">Over ons</a></li>
                         <Link to="/inloggen">Uitloggen</Link>
-                        <li><a href="#contact"><img src={UserIcon} alt="Royale Flora" className="nav-userIcon" /></a></li>
+                        <Link to="/AccountInfo"><img src={UserIcon} alt="Royale Flora" className="nav-userIcon" /></Link>
                     </ul>
                 </div>
             </nav>
