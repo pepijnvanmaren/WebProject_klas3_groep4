@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/SellerDashboard.css';
 
 const apiBase = 'https://localhost:5174';
 
 function SellerDashboard() {
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const ProductTonenKnop = () => {
+        navigate('/ProductDashboard') 
+    }
 
+    const ProductMakenKnop = () => {
+        navigate('/ProductMakenDashboard')
+    }
 
     async function fetchProducts() {
         setLoading(true);
@@ -21,22 +29,6 @@ function SellerDashboard() {
             alert("Kon producten niet laden.");
         } finally {
             setLoading(false);
-        }
-    }
-
-    async function createProduct() {
-        const sample = { name: "Nieuw product " + (products.length + 1) };
-        try {
-            const res = await fetch(`${apiBase}/api/products`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(sample),
-            });
-            if (!res.ok) throw new Error("Failed to create");
-            await fetchProducts();
-        } catch (err) {
-            console.error(err);
-            alert("Kon product niet aanmaken.");
         }
     }
 
@@ -72,10 +64,10 @@ function SellerDashboard() {
             <main className="dashboard-container">
                 <h1 className="VerkoperDashboard-title">Dashboard</h1>
                 <div className="dashboard-box">
-                    <button className="btn primary" onClick={createProduct}>
+                    <button className="btn primary" onClick={ProductMakenKnop}>
                         Product Plaatsen
                     </button>
-                    <button className="btn secondary" onClick={fetchProducts}>
+                    <button className="btn secondary" onClick={ProductTonenKnop}>
                         Product Tonen
                     </button>
                     <button
