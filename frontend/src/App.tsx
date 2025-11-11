@@ -3,12 +3,10 @@ import IndexPage from "./pages/IndexPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import SellerDashboardPage from "./pages/SellerDashboardPage";
-<<<<<<< HEAD:frontend/src/App.tsx
 import AccountInfoPage from "./pages/AccountInfoPage";
-=======
 import ProductToneneDashboardPage from "./pages/ProductToneneDashboard";
 import ProductPlaatsenDashboardPage from "./pages/ProductPlaatsenDashboard";
->>>>>>> origin/koper-dashboard:frontend/src/App.jsx
+
 
 function App() {
     return (
