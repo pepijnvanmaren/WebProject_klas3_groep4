@@ -5,7 +5,7 @@ using WebProject_klas3_groep4.models;
 namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/test")]
     public class GebruikersController : ControllerBase
     {
         private readonly DatabaseContext _context;
