@@ -52,9 +52,14 @@ namespace WebProject_klas3_groep4.Controllers
             product.Naam = updatedProduct.Naam;
             product.Foto = updatedProduct.Foto;
             product.Beschrijving = updatedProduct.Beschrijving;
-            product.bedrijf = updatedProduct.bedrijf
-            product.
-            
+            product.bedrijf = updatedProduct.bedrijf;
+            product.startprijs = updatedProduct.startprijs;
+            product.hoeveelheid = updatedProduct.hoeveelheid;
+            product.gekocht = updatedProduct.gekocht;
+
+
+
+
 
             _context.SaveChanges();
 
