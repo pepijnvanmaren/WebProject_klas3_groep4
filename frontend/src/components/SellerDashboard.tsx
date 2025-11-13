@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SellerDashboard.css';
+import { SellerDashboard } from SellerDashboard
 
-const apiBase = 'https://localhost:5174';
+export const apiBase = 'https://localhost:5174';
+
+export interface Product {
+    id: number;
+    name: string;
 
 function SellerDashboard() {
     const navigate = useNavigate();
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
     const ProductTonenKnop = () => {
         navigate('/ProductDashboard') 
@@ -17,7 +27,7 @@ function SellerDashboard() {
         navigate('/ProductMakenDashboard')
     }
 
-    async function fetchProducts() {
+    async function fetchProducts(): Promise <void> {
         setLoading(true);
         try {
             const res = await fetch(`${apiBase}/api/products`);
@@ -32,7 +42,7 @@ function SellerDashboard() {
         }
     }
 
-    async function deleteProduct(id) {
+    async function deleteProduct(id: number): Promise<void> {
         if (!window.confirm("Weet je zeker dat je dit product wilt verwijderen?")) return;
         try {
             const res = await fetch(`${apiBase}/api/products/${id}`, {

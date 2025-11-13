@@ -9,7 +9,7 @@ function SellerDashboard() {
     }
 
     const ProductGemaaktAlert = () => {
-        alert("Uw prodcut is gemaakt.");
+        alert("Uw product is gemaakt.");
     }
 
     return (
