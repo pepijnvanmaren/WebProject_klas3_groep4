@@ -1,4 +1,4 @@
-import React from "react";
+ import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 import Logo from "../assets/RoyaleFloraLogo.svg";

@@ -29,34 +29,43 @@ function SellerDashboard() {
         </div>
             <main className="dashboard-container">
                 <h1 className="title">Product aanmaken</h1>
-                <div className="dashboard-box">
-                    <h1>
-                        Product naam
-                    </h1>
-                    <input
-                        className="input-container"
-                        placeholder="Voer je Naam in"
-                    />
-                    <h1>
-                        Product infomatie
-                    </h1>
-                    <textarea 
-                        className="input-container-beschrijving"
-                        placeholder="Voer je Bescrhijving in"
-                    />
-                    <h1>
-                        Product foto
-                    </h1>
-                    <input
-                        className="input-container"
-                        placeholder="Voer je Foto in"
-                    />
-                    <button className="login-button" onClick={ProductGemaaktAlert}>
-                        Product Maken
-                    </button>
-                    <button className="login-button" onClick={ProductMakenKnop} >
-                        Terug
-                    </button>
+
+                <div className="dashboard-maken-box">
+                    {/* Linker kolom */}
+                    <div className="register-column-left">
+                        <p>
+                            Product naam
+                        </p>
+                        <input
+                            className="input-container"
+                            placeholder="Voer je Naam in"
+                        />
+                        <p>
+                            Product foto
+                        </p>
+                        <input
+                            className="input-container"
+                            placeholder="Voer je Foto in"
+                        />
+                        <button className="login-button" onClick={ProductGemaaktAlert}>
+                            Product Maken
+                        </button>
+                    </div>
+
+                    {/* Rechter kolom */}
+                    <div className="register-column-right">
+                        <p>
+                            Product infomatie
+                        </p>
+                        <textarea 
+                            className="input-container-beschrijving"
+                            placeholder="Voer je Bescrhijving in"
+                        />
+
+                        <button className="login-button" onClick={ProductMakenKnop} >
+                            Terug
+                        </button>
+                    </div>
                 </div>
             </main>
         </>
