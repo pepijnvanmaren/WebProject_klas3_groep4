@@ -31,16 +31,25 @@ namespace WebProject_klas3_groep4.Controllers
         }
 
         [HttpPost]
-        public ActionResult<productDB> PostProduct([FromBody] productDB product)
+        public ActionResult<productDB> PostProduct([FromBody] ProductDto dto)
         {
-            if (product == null)
-                return BadRequest();
+            if (dto == null)
+                return BadRequest("Product data is missing.");
+
+            var product = new productDB
+            {
+                Naam = dto.Naam,
+                Foto = dto.Foto,
+                Beschrijving = dto.Beschrijving,
+                Lists = new List<LotDB>() // initialize empty
+            };
 
             _context.product.Add(product);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetProduct), new { id = product.ID }, product);
+            return CreatedAtAction(nameof(GetProduct), new { ID = product.ID }, product);
         }
+
 
         [HttpPut("{ID}")]
         public ActionResult<productDB> PutProduct(int ID, [FromBody] productDB updatedProduct)
