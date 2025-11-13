@@ -1,116 +1,198 @@
 import "../styles/index.css";
-import React, { useEffect, useState } from "react";
-// rawproduct is een typescript type en zorgt voor een goede backend response.
-// vraagtekens achter de property name voor nullgeving of verkeerde naamvoering
+import React, { useEffect, useState, useRef } from "react";
+
+// Raw API type (handles backend naming variations)
 type RawProduct = {
-  ID?: number;
-  Naam?: string;
-  Foto?: string;
-  Beschrijving?: string | null;
-  id?: number;
-  naam?: string;
-  foto?: string | null;
-  beschrijving?: string | null;
+    ID?: number;
+    Naam?: string;
+    Foto?: string;
+    Beschrijving?: string | null;
+    id?: number;
+    naam?: string;
+    foto?: string | null;
+    beschrijving?: string | null;
 };
-// product entity
+
+// Normalized Product type
 type Product = {
-  id: number;
-  naam?: string | null;
-  foto?: string | null;
-  beschrijving?: string | null;
+    id: number;
+    naam?: string | null;
+    foto?: string | null;
+    beschrijving?: string | null;
 };
-
-
 
 function Index() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+    // --- PRICE TIMER LOGIC ---
+    const [price, setPrice] = useState(30.0);
+    const [isRunning, setIsRunning] = useState(true);
+    const [purchased, setPurchased] = useState(false);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // asynchronische getter voor acceptatiecriteria
-  const getProducts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("https://localhost:7020/api/Product"); // api naam
-      if (!response.ok) {
-        const txt = await response.text();
-        console.error("Server response:", txt);
-        throw new Error("Kon producten niet laden");
-      }
+    const minPrice = 5.0;
+    const maxPrice = 30.0;
 
-      const data: RawProduct[] = await response.json();
-      
-      // naamgeving 
-      const mapped = data.map((p) => ({
-        id: p.id ?? p.ID ?? 0,
-        naam: p.naam ,
-        foto: p.foto ,
-        beschrijving: p.beschrijving ,
-      })) as Product[];
+    const progress = (price - minPrice) / (maxPrice - minPrice);
+    const barColor = `rgb(${Math.round(255 * (1 - progress))}, ${Math.round(
+        255 * progress
+    )}, 0)`;
 
-      setProducts(mapped);
-      return response;
-    } catch (err: any) {
-      console.error("Fout bij ophalen producten:", err);
-      if (err && (err as any).message) {
-        setError((err as any).message);
-      } else {
-        setError("Onbekende fout");
-      }
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+    useEffect(() => {
+        if (isRunning) {
+            intervalRef.current = setInterval(() => {
+                setPrice((prevPrice) => {
+                    if (prevPrice <= minPrice) {
+                        clearInterval(intervalRef.current!);
+                        return minPrice;
+                    }
+                    return parseFloat((prevPrice - 0.1).toFixed(2));
+                });
+            }, 1000);
+        }
+        return () => clearInterval(intervalRef.current!);
+    }, [isRunning]);
 
-  useEffect(() => {
-    void getProducts();
-  }, []);
+    const handleStop = () => {
+        clearInterval(intervalRef.current!);
+        setIsRunning(false);
+        setPurchased(true);
+    };
 
-  return (
-    <div className="main_div">
-      <div className="content_div" style={{ width: "80%" }}>
-        <h2 className="content_div_title">Producten</h2>
+    // --- FETCH PRODUCTS LOGIC ---
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
-        <div style={{ marginBottom: 12, textAlign: "center" }}>
-          <button onClick={() => void getProducts()} disabled={loading} className="buy_button" style={{ marginRight: 8 }}>
-            {loading ? "Laden..." : "Ververs producten"}
-          </button>
-        </div>
+    const getProducts = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch("https://localhost:7020/api/Product");
+            if (!response.ok) {
+                const txt = await response.text();
+                console.error("Server response:", txt);
+                throw new Error("Could not load products");
+            }
 
-        {error && <div style={{ color: "red", textAlign: "center" }}>Fout: {error}</div>}
+            const data: RawProduct[] = await response.json();
 
-        {products.length === 0 && !loading && !error && <div style={{ textAlign: "center" }}>Geen producten gevonden.</div>}
+            // Normalize inconsistent backend naming
+            const mapped = data.map((p) => ({
+                id: p.id ?? p.ID ?? 0,
+                naam: p.naam ?? p.Naam ?? "Unknown product",
+                // If your API returns relative paths, prefix them with your backend URL
+                foto: p.foto
+                    ? p.foto.startsWith("http")
+                        ? p.foto
+                        : `https://localhost:7020/${p.foto}`
+                    : null,
+                beschrijving:
+                    p.beschrijving ?? p.Beschrijving ?? "No description available.",
+            }));
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "1em", marginTop: "1em" }}>
-          {products.map((p) => (
-            <div key={p.id} className="content_layout">
-              <div className="left_image_div">
-                {(p.foto !== undefined && p.foto !== null && p.foto.length > 0) ? (
-                  <img src={p.foto} alt={(p.naam !== undefined && p.naam !== null) ? p.naam : `Product ${p.id}`} />
-                ) : (
-                  <div style={{ color: "#fff" }}>No image</div>
-                )}
-              </div>
+            setProducts(mapped);
+        } catch (err: any) {
+            console.error("Error fetching products:", err);
+            setError(err?.message ?? "Unknown error");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-              <div className="right_text_div">
-                <h3 style={{ marginTop: 0 }}>{(p.naam !== undefined && p.naam !== null) ? p.naam : `Product #${p.id}`}</h3>
-                <div className="bottom_text_div">
-                  {(p.beschrijving !== undefined && p.beschrijving !== null) ? p.beschrijving : "Geen beschrijving"}
+    useEffect(() => {
+        void getProducts();
+    }, []);
+
+    // --- LOADING & ERROR STATES ---
+    if (loading) return <p>Loading products...</p>;
+    if (error) return <p>Error loading products: {error}</p>;
+
+    // --- DEFINE CURRENT & NEXT PRODUCT ---
+    const currentProduct = products[0];
+    const nextProduct = products[1];
+
+    return (
+        <div className="page">
+            <h1 className="page-title">Current product</h1>
+
+            <div className="container">
+                <div className="box">
+                    {currentProduct?.foto ? (
+                        <img
+                            src={currentProduct.foto}
+                            alt={currentProduct.naam ?? "Product image"}
+                            className="Roses"
+                        />
+                    ) : (
+                        <div className="no-image">No image available</div>
+                    )}
                 </div>
 
-                <div className="price_buy_container" style={{ marginTop: 12 }}>
-                  <div style={{ color: "#333", fontWeight: 600 }}>test</div>
-                  <button className="buy_button" style={{ marginLeft: 12 }}>Koop</button>
+                <div className="box box-description">
+                    <div>
+                        <h2 className="product-name">{currentProduct?.naam ?? "Unknown"}</h2>
+                        <p className="description">
+                            {currentProduct?.beschrijving ?? "No description available."}
+                        </p>
+                    </div>
                 </div>
-              </div>
+
+                <div className="box">Go Roos Yourself B.V.</div>
+                <div className="box">500 units</div>
+
+                <div className="box box-price">
+                    <div className="price-row">
+                        <span className="price">EUR {price.toFixed(2)}</span>
+                        <button
+                            className="button"
+                            onClick={handleStop}
+                            disabled={purchased}
+                        >
+                            {purchased ? "Purchased" : "Buy"}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="progress-bar-container integrated-bar">
+                    <div
+                        className="progress-bar"
+                        style={{
+                            width: `${progress * 100}%`,
+                            backgroundColor: barColor,
+                            transition: "width 1s linear, background-color 1s linear",
+                        }}
+                    ></div>
+                </div>
             </div>
-          ))}
+
+            <h1 className="page-title">Next product</h1>
+            <div className="container">
+                <div className="box">
+                    {nextProduct?.foto ? (
+                        <img
+                            src={nextProduct.foto}
+                            alt={nextProduct.naam ?? "Next product"}
+                            className="Roses"
+                        />
+                    ) : (
+                        <div className="no-image">No image available</div>
+                    )}
+                </div>
+
+                <div className="box box-description">
+                    <div>
+                        <h2 className="product-name">{nextProduct?.naam ?? "Unknown"}</h2>
+                        <p className="description">
+                            {nextProduct?.beschrijving ?? "No description available."}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="box">Go Roos Yourself B.V.</div>
+                <div className="box">500 units</div>
+                <div className="box"></div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Index;
