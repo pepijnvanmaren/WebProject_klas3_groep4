@@ -13,7 +13,6 @@ function Navbar() {
                 <div className="nav-content">
                     <li><a href="#home"><img src={Logo} alt="Royale Flora" className="nav-logo" /></a></li>
                     <ul className="nav-links">
-                        <li><a href="#about">Over ons</a></li>
                         <Link to="/inloggen">Uitloggen</Link>
                         <Link to="/AccountInfo"><img src={UserIcon} alt="Royale Flora" className="nav-userIcon" /></Link>
                     </ul>

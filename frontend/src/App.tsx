@@ -1,11 +1,12 @@
 ﻿import { BrowserRouter, Routes, Route } from "react-router-dom";
-import IndexPage from "./pages/IndexPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import SellerDashboardPage from "./pages/SellerDashboardPage";
-import AccountInfoPage from "./pages/AccountInfoPage";
-import ProductToneneDashboardPage from "./pages/ProductToneneDashboard";
-import ProductPlaatsenDashboardPage from "./pages/ProductPlaatsenDashboard";
+import IndexPage from "./pages/IndexPage.js";
+import LoginPage from "./pages/LoginPage.js"; 
+import RegisterPage from "./pages/RegisterPage.js";
+import SellerDashboardPage from "./pages/SellerDashboardPage.js";
+import AccountInfoPage from "./pages/AccountInfoPage.js";
+import ProductToneneDashboardPage from "./pages/ProductToneneDashboard.js";
+import ProductPlaatsenDashboardPage from "./pages/ProductPlaatsenDashboard.js";
+import PrivacyPage from './pages/PrivacyPage.js';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/VerkoperDashboard" element={<SellerDashboardPage />} />
                 <Route path="/" element={<IndexPage />} />
                 <Route path="/AccountInfo" element={<AccountInfoPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
             </Routes>
         </BrowserRouter>
     );
