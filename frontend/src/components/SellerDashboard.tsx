@@ -1,38 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SellerDashboard.css';
-import { SellerDashboard } from SellerDashboard
 
-export const apiBase = 'https://localhost:5174';
+const apiBase = 'https://localhost:5174';
 
 export interface Product {
     id: number;
     name: string;
+}
 
 function SellerDashboard() {
     const navigate = useNavigate();
+
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-
 
     useEffect(() => {
         fetchProducts();
     }, []);
 
     const ProductTonenKnop = () => {
-        navigate('/ProductDashboard') 
-    }
+        navigate('/ProductDashboard');
+    };
 
     const ProductMakenKnop = () => {
-        navigate('/ProductMakenDashboard')
-    }
+        navigate('/ProductMakenDashboard');
+    };
 
-    async function fetchProducts(): Promise <void> {
+    async function fetchProducts(): Promise<void> {
         setLoading(true);
         try {
             const res = await fetch(`${apiBase}/api/products`);
             if (!res.ok) throw new Error("Failed to fetch");
-            const data = await res.json();
+            const data: Product[] = await res.json();
             setProducts(data);
         } catch (err) {
             console.error(err);
@@ -57,20 +57,19 @@ function SellerDashboard() {
     }
 
     return (
-        <><div className="dashboard-root">
-            <header className="dashboard-header">
-                <div className="header-inner">
-                    <img
-                        src="/header-trees.jpg"
-                        alt="header"
-                        className="header-image" />
-                    <nav className="header-nav">
-                        <a href="/registreren">Registreren</a>
-                        <a href="/login">Inloggen</a>
-                    </nav>
-                </div>
-            </header>
-        </div>
+        <>
+            <div className="dashboard-root">
+                <header className="dashboard-header">
+                    <div className="header-inner">
+                        <img src="/header-trees.jpg" alt="header" className="header-image" />
+                        <nav className="header-nav">
+                            <a href="/registreren">Registreren</a>
+                            <a href="/login">Inloggen</a>
+                        </nav>
+                    </div>
+                </header>
+            </div>
+
             <main className="dashboard-container">
                 <h1 className="VerkoperDashboard-title">Dashboard</h1>
                 <div className="dashboard-box">
@@ -87,19 +86,20 @@ function SellerDashboard() {
                                 alert("Geen producten om te verwijderen.");
                                 return;
                             }
-                         //   deleteProduct(products[products.length - 1].id);
-                        }}>
+                            const lastProduct = products[products.length - 1];
+                            if (lastProduct) deleteProduct(lastProduct.id);
+                        }}
+                    >
                         Product Verwijderen
                     </button>
                 </div>
             </main>
+
             <div className="product-list-box">
                 {loading ? (
                     <div className="loader">Laden...</div>
                 ) : products.length === 0 ? (
-                    <div className="placeholder">
-                        Geen producten beschikbaar
-                    </div>
+                    <div className="placeholder">Geen producten beschikbaar</div>
                 ) : (
                     <ul className="product-list">
                         {products.map((product) => (
