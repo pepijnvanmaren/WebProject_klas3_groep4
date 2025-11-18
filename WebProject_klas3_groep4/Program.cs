@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4;
 using Microsoft.Data.Sqlite;
+
 namespace WebProject_klas3_groep4
 {
     public class Program
@@ -9,7 +10,11 @@ namespace WebProject_klas3_groep4
         {
            var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllers();
-            builder.Services.AddDbContext<DatabaseContext>();
+
+            // Configure EF to use SQL Server with the connection string from appsettings.json
+            builder.Services.AddDbContext<DatabaseContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             builder.Services.AddRouting();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddCors(options =>

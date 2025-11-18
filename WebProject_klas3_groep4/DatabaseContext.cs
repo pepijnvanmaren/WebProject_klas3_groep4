@@ -20,16 +20,11 @@ namespace WebProject_klas3_groep4
         public DbSet<KoperDB> Koper { get; set; }
         public DbSet<productDB> product { get; set; }
 
-
-
-
-
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlite("Data Source=database.db");
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=WebProject_klas3_groep4;Trusted_Connection=True;");
             }
         }
 

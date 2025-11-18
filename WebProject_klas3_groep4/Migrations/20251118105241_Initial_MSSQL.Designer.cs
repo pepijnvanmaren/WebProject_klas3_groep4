@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebProject_klas3_groep4;
@@ -11,46 +12,52 @@ using WebProject_klas3_groep4;
 namespace WebProject_klas3_groep4.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20251013094108_dbmaken")]
-    partial class dbmaken
+    [Migration("20251118105241_Initial_MSSQL")]
+    partial class Initial_MSSQL
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("WebProject_klas3_groep4.VeilingDB", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<int>("AantalProducten")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Bechrijving")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HuidigeSituatieVanVeiling")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("KlokLocatie")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StarTijd")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StartDatum")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("VeilingmeesterDBID")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -63,33 +70,39 @@ namespace WebProject_klas3_groep4.Migrations
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(21)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(21)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Naam")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Paswoord")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Rol")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Telefoonnummer")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.ToTable("Gebruikers");
 
-                    b.HasDiscriminator().HasValue("GebruikerDB");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("GebruikerDB");
 
                     b.UseTphMappingStrategy();
 
@@ -99,6 +112,7 @@ namespace WebProject_klas3_groep4.Migrations
                             ID = 1,
                             Email = "admin@example.com",
                             Naam = "Admin",
+                            Paswoord = "1234",
                             Rol = "Administrator",
                             Telefoonnummer = 123456789
                         });
@@ -108,54 +122,61 @@ namespace WebProject_klas3_groep4.Migrations
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime?>("GebeurtenisDatum")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("GewensteLocatie")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("KoperDBID")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductID")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int?>("VeilingDBID")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("VeilingID")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    b.Property<int?>("productDBID")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("KoperDBID");
 
-                    b.HasIndex("ProductID");
-
                     b.HasIndex("VeilingDBID");
 
-                    b.ToTable("Lot");
+                    b.HasIndex("productDBID");
+
+                    b.ToTable("Lots");
                 });
 
-            modelBuilder.Entity("WebProject_klas3_groep4.models.Product", b =>
+            modelBuilder.Entity("WebProject_klas3_groep4.models.productDB", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<int?>("AanvoerderDBID")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Beschrijving")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Foto")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Naam")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -170,7 +191,7 @@ namespace WebProject_klas3_groep4.Migrations
 
                     b.Property<string>("VeilingVestiging")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("VeilingmeesterDB");
                 });
@@ -181,27 +202,27 @@ namespace WebProject_klas3_groep4.Migrations
 
                     b.Property<string>("Adres")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BedrijfEmail")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BedrijfTelefoonnummer")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("KvkNummer")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NaamVanBedrijf")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Postcode")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("AanvoerderDB");
                 });
@@ -212,15 +233,15 @@ namespace WebProject_klas3_groep4.Migrations
 
                     b.Property<string>("Adres")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BankGegevens")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Postcode")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Gebruikers", t =>
                         {
@@ -247,18 +268,16 @@ namespace WebProject_klas3_groep4.Migrations
                         .WithMany("Lists")
                         .HasForeignKey("KoperDBID");
 
-                    b.HasOne("WebProject_klas3_groep4.models.Product", null)
-                        .WithMany("Lists")
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("WebProject_klas3_groep4.VeilingDB", null)
                         .WithMany("Lists")
                         .HasForeignKey("VeilingDBID");
+
+                    b.HasOne("WebProject_klas3_groep4.models.productDB", null)
+                        .WithMany("Lists")
+                        .HasForeignKey("productDBID");
                 });
 
-            modelBuilder.Entity("WebProject_klas3_groep4.models.Product", b =>
+            modelBuilder.Entity("WebProject_klas3_groep4.models.productDB", b =>
                 {
                     b.HasOne("WebProject_klas3_groep4.models.AanvoerderDB", null)
                         .WithMany("prodcten")
@@ -270,7 +289,7 @@ namespace WebProject_klas3_groep4.Migrations
                     b.Navigation("Lists");
                 });
 
-            modelBuilder.Entity("WebProject_klas3_groep4.models.Product", b =>
+            modelBuilder.Entity("WebProject_klas3_groep4.models.productDB", b =>
                 {
                     b.Navigation("Lists");
                 });
