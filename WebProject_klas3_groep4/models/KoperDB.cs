@@ -7,7 +7,7 @@
         public string Postcode { get; set; }
 
         public string Adres { get; set; }
-        public List<LotDB> Lists { get; set; }
+      
 
     }
 }

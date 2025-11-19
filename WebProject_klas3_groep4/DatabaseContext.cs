@@ -14,7 +14,6 @@ namespace WebProject_klas3_groep4
         public DbSet<GebruikerDB> Gebruikers { get; set; }
         public DbSet<VeilingDB> Veilingen { get; set; }
 
-        public DbSet<LotDB> Lots { get; set; }
         public DbSet<AanvoerderDB> Aanvoerder { get; set; }
 
         public DbSet<KoperDB> Koper { get; set; }
@@ -28,22 +27,6 @@ namespace WebProject_klas3_groep4
             }
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<GebruikerDB>().HasData(
-                new GebruikerDB
-                {
-                    ID = 1,
-                    Naam = "Admin",
-                    Telefoonnummer = 123456789,
-                    Email = "admin@example.com",
-                    Rol = "Administrator",
-                    Paswoord = "1234"
-
-                }
-            );
-
-            // Voeg hier meer seed-data toe voor andere modellen
-        }
+       
     }
 }

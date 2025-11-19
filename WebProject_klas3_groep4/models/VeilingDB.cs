@@ -13,7 +13,6 @@ namespace WebProject_klas3_groep4
         public String KlokLocatie { get; set; }
         public String HuidigeSituatieVanVeiling { get; set; }
         public String Bechrijving { get; set; }
-        public List<LotDB> Lists { get; set; }
 
     }
 }

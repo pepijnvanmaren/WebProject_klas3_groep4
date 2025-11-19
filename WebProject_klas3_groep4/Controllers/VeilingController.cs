@@ -55,7 +55,6 @@ namespace WebProject_klas3_groep4.Controllers
             Veiling.KlokLocatie = updatedVeiling.KlokLocatie;
             Veiling.HuidigeSituatieVanVeiling = updatedVeiling.HuidigeSituatieVanVeiling;
             Veiling.Bechrijving = updatedVeiling.Bechrijving;
-            Veiling.Lists = updatedVeiling.Lists;
 
             _context.SaveChanges();
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProject_klas3_groep4.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial_MSSQL : Migration
+    public partial class dbupdateproduct : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -45,9 +45,15 @@ namespace WebProject_klas3_groep4.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Oogstdatum = table.Column<DateOnly>(type: "date", nullable: false),
+                    Potmaat = table.Column<int>(type: "int", nullable: false),
+                    Gewicht = table.Column<double>(type: "float", nullable: false),
+                    Steellengte = table.Column<double>(type: "float", nullable: false),
+                    Hoeveelheid = table.Column<int>(type: "int", nullable: false),
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MinimalePrijs = table.Column<int>(type: "int", nullable: false),
                     AanvoerderDBID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -84,60 +90,6 @@ namespace WebProject_klas3_groep4.Migrations
                         principalColumn: "ID");
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Lots",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductID = table.Column<int>(type: "int", nullable: false),
-                    VeilingID = table.Column<int>(type: "int", nullable: false),
-                    GebeurtenisDatum = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GewensteLocatie = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    KoperDBID = table.Column<int>(type: "int", nullable: true),
-                    VeilingDBID = table.Column<int>(type: "int", nullable: true),
-                    productDBID = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Lots", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Lots_Gebruikers_KoperDBID",
-                        column: x => x.KoperDBID,
-                        principalTable: "Gebruikers",
-                        principalColumn: "ID");
-                    table.ForeignKey(
-                        name: "FK_Lots_Veilingen_VeilingDBID",
-                        column: x => x.VeilingDBID,
-                        principalTable: "Veilingen",
-                        principalColumn: "ID");
-                    table.ForeignKey(
-                        name: "FK_Lots_product_productDBID",
-                        column: x => x.productDBID,
-                        principalTable: "product",
-                        principalColumn: "ID");
-                });
-
-            migrationBuilder.InsertData(
-                table: "Gebruikers",
-                columns: new[] { "ID", "Discriminator", "Email", "Naam", "Paswoord", "Rol", "Telefoonnummer" },
-                values: new object[] { 1, "GebruikerDB", "admin@example.com", "Admin", "1234", "Administrator", 123456789 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Lots_KoperDBID",
-                table: "Lots",
-                column: "KoperDBID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Lots_productDBID",
-                table: "Lots",
-                column: "productDBID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Lots_VeilingDBID",
-                table: "Lots",
-                column: "VeilingDBID");
-
             migrationBuilder.CreateIndex(
                 name: "IX_product_AanvoerderDBID",
                 table: "product",
@@ -153,13 +105,10 @@ namespace WebProject_klas3_groep4.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Lots");
+                name: "product");
 
             migrationBuilder.DropTable(
                 name: "Veilingen");
-
-            migrationBuilder.DropTable(
-                name: "product");
 
             migrationBuilder.DropTable(
                 name: "Gebruikers");

@@ -64,7 +64,6 @@ namespace WebProject_klas3_groep4.Controllers
             Koper.BankGegevens = updatedKoper.BankGegevens;
             Koper.Adres = updatedKoper.Adres;
             Koper.Postcode = updatedKoper.Postcode;
-            Koper.Lists = updatedKoper.Lists;
 
             _context.SaveChanges();
 

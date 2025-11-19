@@ -102,57 +102,6 @@ namespace WebProject_klas3_groep4.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("GebruikerDB");
 
                     b.UseTphMappingStrategy();
-
-                    b.HasData(
-                        new
-                        {
-                            ID = 1,
-                            Email = "admin@example.com",
-                            Naam = "Admin",
-                            Paswoord = "1234",
-                            Rol = "Administrator",
-                            Telefoonnummer = 123456789
-                        });
-                });
-
-            modelBuilder.Entity("WebProject_klas3_groep4.models.LotDB", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<DateTime?>("GebeurtenisDatum")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("GewensteLocatie")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("KoperDBID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("VeilingDBID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VeilingID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("productDBID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("KoperDBID");
-
-                    b.HasIndex("VeilingDBID");
-
-                    b.HasIndex("productDBID");
-
-                    b.ToTable("Lots");
                 });
 
             modelBuilder.Entity("WebProject_klas3_groep4.models.productDB", b =>
@@ -172,8 +121,26 @@ namespace WebProject_klas3_groep4.Migrations
                     b.Property<string>("Foto")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("Gewicht")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Hoeveelheid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinimalePrijs")
+                        .HasColumnType("int");
+
                     b.Property<string>("Naam")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("Oogstdatum")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Potmaat")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Steellengte")
+                        .HasColumnType("float");
 
                     b.HasKey("ID");
 
@@ -259,36 +226,11 @@ namespace WebProject_klas3_groep4.Migrations
                         .HasForeignKey("VeilingmeesterDBID");
                 });
 
-            modelBuilder.Entity("WebProject_klas3_groep4.models.LotDB", b =>
-                {
-                    b.HasOne("WebProject_klas3_groep4.models.KoperDB", null)
-                        .WithMany("Lists")
-                        .HasForeignKey("KoperDBID");
-
-                    b.HasOne("WebProject_klas3_groep4.VeilingDB", null)
-                        .WithMany("Lists")
-                        .HasForeignKey("VeilingDBID");
-
-                    b.HasOne("WebProject_klas3_groep4.models.productDB", null)
-                        .WithMany("Lists")
-                        .HasForeignKey("productDBID");
-                });
-
             modelBuilder.Entity("WebProject_klas3_groep4.models.productDB", b =>
                 {
                     b.HasOne("WebProject_klas3_groep4.models.AanvoerderDB", null)
                         .WithMany("prodcten")
                         .HasForeignKey("AanvoerderDBID");
-                });
-
-            modelBuilder.Entity("WebProject_klas3_groep4.VeilingDB", b =>
-                {
-                    b.Navigation("Lists");
-                });
-
-            modelBuilder.Entity("WebProject_klas3_groep4.models.productDB", b =>
-                {
-                    b.Navigation("Lists");
                 });
 
             modelBuilder.Entity("WebProject_klas3_groep4.VeilingmeesterDB", b =>
@@ -299,11 +241,6 @@ namespace WebProject_klas3_groep4.Migrations
             modelBuilder.Entity("WebProject_klas3_groep4.models.AanvoerderDB", b =>
                 {
                     b.Navigation("prodcten");
-                });
-
-            modelBuilder.Entity("WebProject_klas3_groep4.models.KoperDB", b =>
-                {
-                    b.Navigation("Lists");
                 });
 #pragma warning restore 612, 618
         }
