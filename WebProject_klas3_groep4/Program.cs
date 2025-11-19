@@ -15,6 +15,7 @@ namespace WebProject_klas3_groep4
             builder.Services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
             builder.Services.AddRouting();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddCors(options =>
