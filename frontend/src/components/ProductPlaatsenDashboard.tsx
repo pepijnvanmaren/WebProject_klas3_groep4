@@ -1,67 +1,155 @@
 import "../styles/ProductPlaatsenDashboard.css";
 import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
 
 function SellerDashboard() {
     const navigate = useNavigate();
 
-    const ProductMakenKnop = () => {
-        navigate('/verkoperDashboard')
-    }
+    // --- State for all input fields ---
+    const [naam, setNaam] = useState("");
+    const [beschrijving, setBeschrijving] = useState("");
+    const [foto, setFoto] = useState("");
+    const [oogstdatum, setOogstdatum] = useState("");
+    const [potmaat, setPotmaat] = useState("");
+    const [gewicht, setGewicht] = useState("");
+    const [steellengte, setSteellengte] = useState("");
+    const [hoeveelheid, setHoeveelheid] = useState("");
+    const [minimalePrijs, setMinimalePrijs] = useState("");
 
-    const ProductGemaaktAlert = () => {
-        alert("Uw prodcut is gemaakt.");
-    }
+    const handleCreateProduct = () => {
+        const product = {
+            naam,
+            beschrijving,
+            foto,
+            oogstdatum,
+            potmaat: Number(potmaat),
+            gewicht: Number(gewicht),
+            steellengte: Number(steellengte),
+            hoeveelheid: Number(hoeveelheid),
+            minimalePrijs: Number(minimalePrijs)
+        };
+        console.log(product);
+        alert("Uw product is gemaakt.");
+    };
+
+    const handleGoBack = () => navigate('/verkoperDashboard');
 
     return (
-        <><div className="dashboard-root">
-            <header className="dashboard-header">
-                <div className="header-inner">
-                    <img
-                        src="/header-trees.jpg"
-                        alt="header"
-                        className="header-image" />
-                    <nav className="header-nav">
-                        <a href="/registreren">Registreren</a>
-                        <a href="/login">Inloggen</a>
-                    </nav>
+        <main className="pp_dashboard-container">
+            <h1 className="pp_title">Product aanmaken</h1>
+
+            <div className="pp_dashboard-box pp_dashboard-flex">
+
+                {/* Left column */}
+                <div className="pp_dashboard-column">
+                    <label>
+                        <h2>Naam</h2>
+                        <input
+                            className="pp_input-container"
+                            placeholder="Voer je Naam in"
+                            value={naam}
+                            onChange={e => setNaam(e.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <h2>Beschrijving</h2>
+                        <textarea
+                            className="pp_input-container-beschrijving"
+                            placeholder="Voer je Beschrijving in"
+                            value={beschrijving}
+                            onChange={e => setBeschrijving(e.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <h2>Foto</h2>
+                        <input
+                            className="pp_input-container"
+                            placeholder="Voer je Foto in"
+                            value={foto}
+                            onChange={e => setFoto(e.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <h2>Oogstdatum</h2>
+                        <input
+                            className="pp_input-container"
+                            type="date"
+                            value={oogstdatum}
+                            onChange={e => setOogstdatum(e.target.value)}
+                        />
+                    </label>
                 </div>
-            </header>
-        </div>
-            <main className="dashboard-container">
-                <h1 className="title">Product aanmaken</h1>
-                <div className="dashboard-box">
-                    <h1>
-                        Product naam
-                    </h1>
-                    <input
-                        className="input-container"
-                        placeholder="Voer je Naam in"
-                    />
-                    <h1>
-                        Product infomatie
-                    </h1>
-                    <textarea 
-                        className="input-container-beschrijving"
-                        placeholder="Voer je Bescrhijving in"
-                    />
-                    <h1>
-                        Product foto
-                    </h1>
-                    <input
-                        className="input-container"
-                        placeholder="Voer je Foto in"
-                    />
-                    <button className="login-button" onClick={ProductGemaaktAlert}>
-                        Product Maken
-                    </button>
-                    <button className="login-button" onClick={ProductMakenKnop} >
-                        Terug
-                    </button>
+
+                {/* Right column */}
+                <div className="pp_dashboard-column">
+                    <label>
+                        <h2>Potmaat (cm)</h2>
+                        <input
+                            className="pp_input-container"
+                            type="number"
+                            placeholder="Voer de potmaat in"
+                            value={potmaat}
+                            onChange={e => setPotmaat(e.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <h2>Gewicht (kg)</h2>
+                        <input
+                            className="pp_input-container"
+                            type="number"
+                            placeholder="Voer het gewicht in"
+                            value={gewicht}
+                            onChange={e => setGewicht(e.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <h2>Steellengte (cm)</h2>
+                        <input
+                            className="pp_input-container"
+                            type="number"
+                            placeholder="Voer de steellengte in"
+                            value={steellengte}
+                            onChange={e => setSteellengte(e.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <h2>Hoeveelheid</h2>
+                        <input
+                            className="pp_input-container"
+                            type="number"
+                            placeholder="Voer de hoeveelheid in"
+                            value={hoeveelheid}
+                            onChange={e => setHoeveelheid(e.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <h2>Minimale prijs (€)</h2>
+                        <input
+                            className="pp_input-container"
+                            type="number"
+                            placeholder="Voer de minimale prijs in"
+                            value={minimalePrijs}
+                            onChange={e => setMinimalePrijs(e.target.value)}
+                        />
+                    </label>
                 </div>
-            </main>
-        </>
+
+            </div>
+
+            {/* Buttons underneath */}
+            <div className="pp_buttons-row">
+                <button className="pp_btn" onClick={handleCreateProduct}>Product Maken</button>
+                <button className="pp_btn" onClick={handleGoBack}>Terug</button>
+            </div>
+        </main>
     );
 }
-
 
 export default SellerDashboard;
