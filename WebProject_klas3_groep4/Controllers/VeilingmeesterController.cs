@@ -30,43 +30,66 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(Veilingmeester);
         }
 
-        [HttpGet("{Email}")]
-        public ActionResult<VeilingmeesterDB> GetVeilingmeester(string Email, string passwoord)
+        [HttpGet]
+        public ActionResult<VeilingmeesterDB> GetVeilingmeesterDto([FromQuery] VeilingmeesterDB dto)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(Email, passwoord);
-            if (Veilingmeester == null)
-                return NotFound();
+            if (dto == null)
+                return BadRequest("Veilingmeester data is missing.");
+            var Veilingmeester = new VeilingmeesterDB
+            {
+                Naam = dto.Naam,
+                Paswoord = dto.Paswoord
+            };
             return Ok(Veilingmeester);
         }
 
         [HttpPost]
-        public ActionResult<VeilingmeesterDB> PostVeilingmeester([FromBody] VeilingmeesterDB Veilingmeester)
+        public ActionResult<VeilingmeesterDB> PostVeilingmeester([FromBody] VeilingmeesterDB dto)
         {
-            if (Veilingmeester == null)
-                return BadRequest();
+            if (dto == null)
+                return BadRequest("Veilingmeester data is missing.");
+            var Veilingmeester = new VeilingmeesterDB
+            {
+                Naam = dto.Naam,
+                Paswoord = dto.Paswoord,
+                Email = dto.Email,
+                Telefoonnummer = dto.Telefoonnummer,
+                VeilingVestiging = dto.VeilingVestiging
+            };
 
             _context.Veilingmeesters.Add(Veilingmeester);
             _context.SaveChanges();
-
-            return CreatedAtAction(nameof(GetVeilingmeester), new { id = Veilingmeester.ID }, Veilingmeester);
+            return CreatedAtAction(nameof(GetVeilingmeester), new { id = Veilingmeester.Id }, Veilingmeester);
         }
 
-        [HttpPut("{id}")]
-        public ActionResult<VeilingmeesterDB> PutVeilingmeester(int id, [FromBody] VeilingmeesterDB updatedVeilingmeester)
+        [HttpPut("{id}")]   
+        public ActionResult<VeilingmeesterDB> PutVeilingmeester(int id, [FromBody] VeilingmeesterDB dto)
         {
             var Veilingmeester = _context.Veilingmeesters.Find(id);
             if (Veilingmeester == null)
                 return NotFound();
 
-            Veilingmeester.Naam = updatedVeilingmeester.Naam;
-            Veilingmeester.Email = updatedVeilingmeester.Email;
-            Veilingmeester.Telefoonnummer = updatedVeilingmeester.Telefoonnummer;
-            Veilingmeester.VeilingVestiging = updatedVeilingmeester.VeilingVestiging;
-            Veilingmeester.Veilingen = updatedVeilingmeester.Veilingen;
+            Veilingmeester.Naam = dto.Naam;
+            Veilingmeester.Paswoord = dto.Paswoord;
+            Veilingmeester.Email = dto.Email;
+            Veilingmeester.Telefoonnummer = dto.Telefoonnummer;
+            Veilingmeester.VeilingVestiging = dto.VeilingVestiging;
 
-
+            _context.Veilingmeesters.Update(Veilingmeester);
             _context.SaveChanges();
+            return Ok(Veilingmeester);
+        }
 
+        public ActionResult<VeilingmeesterDB> PutVeilingmeesterVeilingen(int id, [FromBody] VeilingmeesterDB dto)
+        {
+            var Veilingmeester = _context.Veilingmeesters.Find(id);
+            if (Veilingmeester == null)
+                return NotFound();
+
+            Veilingmeester.Veilingen = dto.Veilingen;
+
+            _context.Veilingmeesters.Update(Veilingmeester);
+            _context.SaveChanges();
             return Ok(Veilingmeester);
         }
 

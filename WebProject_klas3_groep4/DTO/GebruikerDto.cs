@@ -2,5 +2,10 @@
 {
     public class GebruikerDto
     {
+        public string Naam { get; set; }
+        public int Telefoonnummer { get; set; }
+        public string Email { get; set; }
+        public string Rol { get; set; }
+        public string Paswoord { get; set; }
     }
 }

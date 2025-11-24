@@ -59,6 +59,8 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpPut("{ID}")]
         public ActionResult<productDB> PutProduct(int ID, [FromBody] ProductDto dto)
         {
+            if (dto == null)
+                return BadRequest("ProductDTO data is missing.");
             var product = _context.product.Find(ID);
             if (product == null)
                 return NotFound();
