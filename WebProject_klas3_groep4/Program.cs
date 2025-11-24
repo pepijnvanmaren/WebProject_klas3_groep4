@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4;
+using WebProject_klas3_groep4.Models;
 using Microsoft.Data.Sqlite;
 
 namespace WebProject_klas3_groep4
@@ -15,8 +16,11 @@ namespace WebProject_klas3_groep4
             builder.Services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddIdentityApiEndpoints<User>()
+            .AddEntityFrameworkStores<DatabaseContext>();
             builder.Services.AddRouting();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowReact", policy =>
@@ -27,7 +31,7 @@ namespace WebProject_klas3_groep4
                           .AllowCredentials();
                 });
             });
-            builder.Services.AddSwaggerGen();
+
             var app = builder.Build();
             if (app.Environment.IsDevelopment())
             {
@@ -36,8 +40,11 @@ namespace WebProject_klas3_groep4
             }
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.MapControllers();
             app.UseCors("AllowReact");
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.MapControllers();
+            app.MapIdentityApi<User>();
             app.Run();
         }
     }

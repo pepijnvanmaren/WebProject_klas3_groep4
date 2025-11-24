@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
+using WebProject_klas3_groep4.Models;
 
 namespace WebProject_klas3_groep4
 {
-    public class DatabaseContext : DbContext
+    public class DatabaseContext : IdentityDbContext<User>
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
@@ -11,7 +13,7 @@ namespace WebProject_klas3_groep4
         }
 
         public DbSet<VeilingmeesterDB> Veilingmeesters { get; set; }
-        public DbSet<GebruikerDB> Gebruikers { get; set; }
+
         public DbSet<VeilingDB> Veilingen { get; set; }
 
         public DbSet<AanvoerderDB> Aanvoerder { get; set; }
