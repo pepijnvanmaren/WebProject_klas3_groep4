@@ -16,6 +16,7 @@ function SellerDashboard() {
     const [hoeveelheid, setHoeveelheid] = useState("");
     const [minimalePrijs, setMinimalePrijs] = useState("");
     const [oogstError, setOogstError] = useState("");
+   
 
     // compute local today string (yyyy-mm-dd) to avoid UTC offset issues
     const localToday = (() => {
@@ -44,7 +45,7 @@ function SellerDashboard() {
         form.append("minimalePrijs", minimalePrijs);
 
         try {
-            const resp = await fetch("/api/product", {
+            const resp = await fetch("https://localhost:7020/api/Product", {
                 method: "POST",
                 body: form
                 // DO NOT set Content-Type header — browser will set multipart boundary
