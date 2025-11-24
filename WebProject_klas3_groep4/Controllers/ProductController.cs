@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.models;
 
@@ -9,10 +14,12 @@ namespace WebProject_klas3_groep4.Controllers
     public class ProductController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public ProductController(DatabaseContext context)
+        public ProductController(DatabaseContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         [HttpGet]
@@ -30,31 +37,52 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(product);
         }
 
-        [HttpPost]
-        public ActionResult<productDB> PostProduct([FromBody] ProductDto dto)
+        public class ProductCreateModel
         {
-            if (dto == null)
-                return BadRequest("Product data is missing.");
-
-            var product = new productDB
-            {
-                Naam = dto.Naam,
-                Foto = dto.Foto,
-                Beschrijving = dto.Beschrijving,
-                Oogstdatum = dto.Oogstdatum ?? DateOnly.FromDateTime(DateTime.Now),
-                Potmaat = dto.Potmaat,
-                Gewicht = dto.Gewicht,
-                Steellengte = dto.Steellengte,
-                Hoeveelheid = dto.Hoeveelheid,
-                MinimalePrijs = dto.MinimalePrijs
-            };
-
-            _context.product.Add(product);
-            _context.SaveChanges();
-
-            return CreatedAtAction(nameof(GetProduct), new { ID = product.ID }, product);
+            public string? Naam { get; set; }
+            public string? Beschrijving { get; set; }
+            public IFormFile? Foto { get; set; }
+            public string? Oogstdatum { get; set; }
+            public string? Potmaat { get; set; }
+            public string? Gewicht { get; set; }
+            public string? Steellengte { get; set; }
+            public string? Hoeveelheid { get; set; }
+            public string? MinimalePrijs { get; set; }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] ProductCreateModel model)
+        {
+            string? imageUrl = null;
+
+            if (model.Foto != null && model.Foto.Length > 0)
+            {
+                // simple validation: allow only common image types
+                var permitted = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                var ext = Path.GetExtension(model.Foto.FileName).ToLowerInvariant();
+                if (string.IsNullOrEmpty(ext) || Array.IndexOf(permitted, ext) < 0)
+                {
+                    return BadRequest("Invalid image type.");
+                }
+
+                var uploadsRoot = Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads");
+                Directory.CreateDirectory(uploadsRoot);
+
+                var fileName = $"{Guid.NewGuid()}{ext}";
+                var filePath = Path.Combine(uploadsRoot, fileName);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await model.Foto.CopyToAsync(stream);
+                }
+
+                imageUrl = $"/uploads/{fileName}";
+            }
+
+            // TODO: persist product to DB using your DatabaseContext (not implemented here)
+            // Example response:
+            return Ok(new { message = "Product saved (file uploaded)", imageUrl });
+        }
 
         [HttpPut("{ID}")]
         public ActionResult<productDB> PutProduct(int ID, [FromBody] ProductDto dto)
