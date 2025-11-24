@@ -15,6 +15,23 @@ type Product = {
     minimalePrijs?: number;
 };
 
+const getImageSrc = (foto?: string | null) => {
+    if (!foto) return "";
+    const s = foto.trim();
+
+    // If backend already returned a data URL, use it as-is
+    if (s.startsWith("data:")) return s;
+
+    // Clean up possible surrounding quotes/newlines
+    const cleaned = s.replace(/^"|"$/g, "").replace(/\r?\n/g, "");
+
+    // Heuristic mime type detection from base64 prefix
+    if (cleaned.startsWith("/9j/")) return `data:image/jpeg;base64,${cleaned}`;
+    if (cleaned.startsWith("iVBOR")) return `data:image/png;base64,${cleaned}`;
+    // fallback: generic image
+    return `data:image/*;base64,${cleaned}`;
+};
+
 function Index() {
     // Timer logic
     const [price, setPrice] = useState(30.0);
@@ -96,8 +113,8 @@ function Index() {
                 <div className="box">
                     {currentProduct?.foto ? (
                         <img
-                            src={currentProduct.foto}
-                            alt={currentProduct.naam}
+                            src={getImageSrc(currentProduct?.foto)}
+                            alt={currentProduct?.naam ?? "product image"}
                             className="Roses"
                         />
                     ) : (
@@ -144,8 +161,8 @@ function Index() {
                 <div className="box">
                     {nextProduct?.foto ? (
                         <img
-                            src={nextProduct.foto}
-                            alt={nextProduct?.naam}
+                            src={getImageSrc(nextProduct?.foto)}
+                            alt={nextProduct?.naam ?? "product image"}
                             className="Roses"
                         />
                     ) : (

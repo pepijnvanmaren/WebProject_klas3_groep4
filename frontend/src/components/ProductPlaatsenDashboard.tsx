@@ -18,25 +18,30 @@ function SellerDashboard() {
     const [oogstError, setOogstError] = useState("");
    
 
-    // compute local today string (yyyy-mm-dd) to avoid UTC offset issues
+    //Maakt een locaal atribuut aan voor de datum van vandaag
     const localToday = (() => {
         const d = new Date();
         const tzOffset = d.getTimezoneOffset();
         return new Date(d.getTime() - tzOffset * 60000).toISOString().split("T")[0];
     })();
 
-    //Handle aanmaak knop
+    //Handle aanmaken product
     const handleCreateProduct = async () => {
-        // final validation before submit
+        //Validatie van het oogstdatum veld
         if (oogstdatum && oogstdatum > localToday) {
             setOogstError("Oogstdatum mag niet in de toekomst liggen.");
             return;
         }
 
+        //Voeg alle data van elk veld toe aan een object
+        //Dit stuk is voor de foto alleen.
         const form = new FormData();
         form.append("naam", naam);
         form.append("beschrijving", beschrijving);
         if (fotoFile) form.append("foto", fotoFile);
+
+        //Voeg alle data van elk veld toe aan een object
+        //Dit stuk is voor de andere velden
         form.append("oogstdatum", oogstdatum);
         form.append("potmaat", potmaat);
         form.append("gewicht", gewicht);
@@ -44,29 +49,33 @@ function SellerDashboard() {
         form.append("hoeveelheid", hoeveelheid);
         form.append("minimalePrijs", minimalePrijs);
 
+        //Dit stuurt het gemaakte object van hierboven als Post naar de backend API.
         try {
             const resp = await fetch("https://localhost:7020/api/Product", {
                 method: "POST",
                 body: form
-                // DO NOT set Content-Type header — browser will set multipart boundary
             });
 
+            //Als het niet ok is stuur error text
             if (!resp.ok) {
                 const text = await resp.text();
                 console.error("Upload failed:", text);
                 alert("Upload failed: " + resp.statusText);
                 return;
             }
-
+            //Als wel ok is stuur dan een response text
             const data = await resp.json();
             console.log("Server response:", data);
             alert("Uw product is gemaakt.");
+
+        //Catch Error
         } catch (err) {
             console.error(err);
             alert("Er is iets misgegaan met het versturen.");
         }
     };
 
+    //Handelt de Terug knop
     const handleGoBack = () => navigate('/verkoperDashboard');
 
     //Handle voor Oogstdatum
@@ -88,6 +97,7 @@ function SellerDashboard() {
         }
     };
 
+    //HTML REACT
     return (
         <main className="pp_dashboard-container">
             <h1 className="pp_title">Product aanmaken</h1>

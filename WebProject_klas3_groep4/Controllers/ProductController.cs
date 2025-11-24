@@ -1,11 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Globalization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.models;
 
@@ -15,23 +17,25 @@ namespace WebProject_klas3_groep4.Controllers
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
+        //dependencies
         private readonly DatabaseContext _context;
-        private readonly IWebHostEnvironment _env;
-        private readonly ILogger<ProductController> _logger;
+        private readonly IWebHostEnvironment _env;  //Wordt niet gebruikt.
 
-        public ProductController(DatabaseContext context, IWebHostEnvironment env, ILogger<ProductController> logger)
+        //Constructor voor dependencies
+        public ProductController(DatabaseContext context, IWebHostEnvironment env)
         {
             _context = context;
             _env = env;
-            _logger = logger;
         }
 
+        //Getrequest
         [HttpGet]
         public ActionResult<IEnumerable<productDB>> GetProducten()
         {
             return Ok(_context.product.ToList());
         }
 
+        //Getrequest (by id) //mag misschien weg?
         [HttpGet("{ID}")]
         public ActionResult<productDB> GetProduct(int ID)
         {
@@ -41,123 +45,78 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(product);
         }
 
+        //Model voor product aanmaken
         public class ProductCreateModel
         {
-            public string? Naam { get; set; }
-            public string? Beschrijving { get; set; }
-            public IFormFile? Foto { get; set; }
-
-            // Accept DateTime? so Swagger/ModelBinder can parse common date formats.
-            public DateTime? Oogstdatum { get; set; }
-
+            public string Naam { get; set; }
+            public string Beschrijving { get; set; }
+            [Column(TypeName = "nvarchar(max)")]
+            public IFormFile Foto { get; set; }
+            public DateTime Oogstdatum { get; set; }
             public string? Potmaat { get; set; }
-            public string? Gewicht { get; set; }
-            public string? Steellengte { get; set; }
-            public string? Hoeveelheid { get; set; }
-            public string? MinimalePrijs { get; set; }
+            public double Gewicht { get; set; }
+            public double? Steellengte { get; set; }
+            public int Hoeveelheid { get; set; }
+            public int MinimalePrijs { get; set; }
         }
 
+        //Post voor product
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] ProductCreateModel model)
         {
-            string? imageUrl = null;
-
-            if (model.Foto != null && model.Foto.Length > 0)
-            {
-                var permitted = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-                var ext = Path.GetExtension(model.Foto.FileName).ToLowerInvariant();
-                if (string.IsNullOrEmpty(ext) || Array.IndexOf(permitted, ext) < 0)
-                {
-                    return BadRequest("Invalid image type.");
-                }
-
-                var uploadsRoot = Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads");
-                Directory.CreateDirectory(uploadsRoot);
-
-                var fileName = $"{Guid.NewGuid()}{ext}";
-                var filePath = Path.Combine(uploadsRoot, fileName);
-
-                using (var stream = System.IO.File.Create(filePath))
-                {
-                    await model.Foto.CopyToAsync(stream);
-                }
-
-                imageUrl = $"/uploads/{fileName}";
-            }
-
-                        // Logging for debugging
-            _logger.LogInformation("Create product received Oogstdatum (modelbinder): {Oogstdatum}", model.Oogstdatum);
-            var rawFormValue = Request.Form["Oogstdatum"].ToString();
-            if (!string.IsNullOrEmpty(rawFormValue))
-                _logger.LogInformation("Create product received Oogstdatum (raw form): {Raw}", rawFormValue);
-
+            //naam niet nullable
             if (string.IsNullOrWhiteSpace(model.Naam))
                 return BadRequest("Naam is required.");
 
-            // Resolve DateOnly oogstdatum from either DateTime? binder or raw string fallback
+            //handles foto input
+            string? imageDataUri = null;
+            if (model.Foto != null && model.Foto.Length > 0)
+            {
+                var allowedExt = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                var ext = Path.GetExtension(model.Foto.FileName).ToLowerInvariant();
+                if (string.IsNullOrEmpty(ext) || Array.IndexOf(allowedExt, ext) < 0)
+                    return BadRequest("Invalid image type.");
+
+                if (!model.Foto.ContentType.StartsWith("image/"))
+                    return BadRequest("Uploaded file is not an image.");
+
+                await using var ms = new MemoryStream();
+                await model.Foto.CopyToAsync(ms);
+                var bytes = ms.ToArray();
+
+                if (bytes.LongLength > 10 * 1024 * 1024) // 10 MB limit
+                    return BadRequest("Image too large. Max 10 MB.");
+
+                var base64 = Convert.ToBase64String(bytes);
+                imageDataUri = $"data:{model.Foto.ContentType};base64,{base64}";
+            }
+
+            //Checkt of oogstdatum niet in de toekomst is
             DateOnly oogstdatum;
-            if (model.Oogstdatum.HasValue)
-            {
-                oogstdatum = DateOnly.FromDateTime(model.Oogstdatum.Value);
-            }
+            if (model.Oogstdatum != default)
+                oogstdatum = DateOnly.FromDateTime(model.Oogstdatum);
+            //anders zet de date op nu
             else
-            {
-                var dateFormats = new[]
-                {
-                    "yyyy-MM-dd",      // HTML date input
-                    "yyyy/MM/dd",
-                    "dd-MM-yyyy",
-                    "dd/MM/yyyy",
-                    "M/d/yyyy",
-                    "MM/dd/yyyy",
-                    "yyyy-MM-ddTHH:mm:ss",
-                    "o"                // round-trip ISO
-                };
+                oogstdatum = DateOnly.FromDateTime(DateTime.Now);
 
-                if (string.IsNullOrWhiteSpace(rawFormValue))
-                {
-                    // default to today when nothing provided
-                    oogstdatum = DateOnly.FromDateTime(DateTime.Now);
-                }
-                else if (!DateOnly.TryParseExact(rawFormValue, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out oogstdatum))
-                {
-                    if (!DateOnly.TryParse(rawFormValue, CultureInfo.CurrentCulture, DateTimeStyles.None, out oogstdatum))
-                    {
-                        if (DateTime.TryParse(rawFormValue, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var dt))
-                        {
-                            oogstdatum = DateOnly.FromDateTime(dt);
-                        }
-                        else
-                        {
-                            _logger.LogWarning("Failed to parse Oogstdatum value: {Value}", rawFormValue);
-                            return BadRequest("Invalid Oogstdatum format. Use yyyy-MM-dd or an ISO date.");
-                        }
-                    }
-                }
-            }
+            //potmaat checken of het niet null is
+            int potmaat = 0;
+            if (!string.IsNullOrWhiteSpace(model.Potmaat))
+                int.TryParse(model.Potmaat, NumberStyles.Integer, CultureInfo.InvariantCulture, out potmaat);
 
-            if (!int.TryParse(model.Potmaat, NumberStyles.Integer, CultureInfo.InvariantCulture, out var potmaat))
-                potmaat = 0;
+            double gewicht = model.Gewicht;
+            double steellengte = model.Steellengte ?? 0;
+            int hoeveelheid = model.Hoeveelheid;
+            int minimalePrijs = model.MinimalePrijs;
 
-            if (!double.TryParse(model.Gewicht, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var gewicht))
-                gewicht = 0.0;
-
-            if (!double.TryParse(model.Steellengte, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var steellengte))
-                steellengte = 0.0;
-
-            if (!int.TryParse(model.Hoeveelheid, NumberStyles.Integer, CultureInfo.InvariantCulture, out var hoeveelheid))
-                hoeveelheid = 0;
-
-            if (!int.TryParse(model.MinimalePrijs, NumberStyles.Integer, CultureInfo.InvariantCulture, out var minimalePrijs))
-                minimalePrijs = 0;
-
+            //Object van product om data in te stoppen en dan te posten
             var product = new productDB
             {
                 Naam = model.Naam,
                 Beschrijving = model.Beschrijving,
-                Foto = imageUrl,
-                Oogstdatum = oogstdatum,
-                Potmaat = potmaat,
+                Foto = imageDataUri,
+                Oogstdatum = oogstdatum.ToDateTime(TimeOnly.MinValue),
+                Potmaat = model.Potmaat,
                 Gewicht = gewicht,
                 Steellengte = steellengte,
                 Hoeveelheid = hoeveelheid,
@@ -170,6 +129,7 @@ namespace WebProject_klas3_groep4.Controllers
             return CreatedAtAction(nameof(GetProduct), new { ID = product.ID }, product);
         }
 
+        //Putrequest
         [HttpPut("{ID}")]
         public ActionResult<productDB> PutProduct(int ID, [FromBody] ProductDto dto)
         {
@@ -180,8 +140,8 @@ namespace WebProject_klas3_groep4.Controllers
             product.Naam = dto.Naam;
             product.Foto = dto.Foto;
             product.Beschrijving = dto.Beschrijving;
-            product.Oogstdatum = dto.Oogstdatum ?? product.Oogstdatum;
-            product.Potmaat = dto.Potmaat;
+            product.Oogstdatum = dto.Oogstdatum.HasValue ? dto.Oogstdatum.Value.ToDateTime(TimeOnly.MinValue) : product.Oogstdatum;
+            product.Potmaat = dto.Potmaat.ToString();
             product.Gewicht = dto.Gewicht;
             product.Steellengte = dto.Steellengte;
             product.Hoeveelheid = dto.Hoeveelheid;
@@ -191,6 +151,7 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(product);
         }
 
+        // DELETE product
         [HttpDelete("{ID}")]
         public ActionResult<productDB> DeleteProduct(int ID)
         {
@@ -203,5 +164,4 @@ namespace WebProject_klas3_groep4.Controllers
             return NoContent();
         }
     }
-
 }
