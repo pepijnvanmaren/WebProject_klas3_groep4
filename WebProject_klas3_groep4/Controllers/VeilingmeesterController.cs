@@ -31,16 +31,15 @@ namespace WebProject_klas3_groep4.Controllers
         }
 
         [HttpGet]
-        public ActionResult<VeilingmeesterDB> GetVeilingmeesterDto([FromQuery] VeilingmeesterDB dto)
+        public ActionResult<VeilingmeesterDB> GetVeilingmeester([FromQuery] string email, [FromQuery] string passwoord)
         {
-            if (dto == null)
-                return BadRequest("Veilingmeester data is missing.");
-            var Veilingmeester = new VeilingmeesterDB
-            {
-                Naam = dto.Naam,
-                Paswoord = dto.Paswoord
-            };
-            return Ok(Veilingmeester);
+            var veilingmeester = _context.Veilingmeesters
+                .FirstOrDefault(v => v.Email == email && v.Paswoord == passwoord);
+
+            if (veilingmeester == null)
+                return NotFound();
+
+            return Ok(veilingmeester);
         }
 
         [HttpPost]
@@ -59,13 +58,13 @@ namespace WebProject_klas3_groep4.Controllers
 
             _context.Veilingmeesters.Add(Veilingmeester);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(GetVeilingmeester), new { id = Veilingmeester.Id }, Veilingmeester);
+            return CreatedAtAction(nameof(GetVeilingmeester), new { id = Veilingmeester.ID }, Veilingmeester);
         }
 
-        [HttpPut("{id}")]   
-        public ActionResult<VeilingmeesterDB> PutVeilingmeester(int id, [FromBody] VeilingmeesterDB dto)
+        [HttpPut("{ID}")]   
+        public ActionResult<VeilingmeesterDB> PutVeilingmeester(int ID, [FromBody] VeilingmeesterDB dto)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(id);
+            var Veilingmeester = _context.Veilingmeesters.Find(ID);
             if (Veilingmeester == null)
                 return NotFound();
 
@@ -107,5 +106,4 @@ namespace WebProject_klas3_groep4.Controllers
             return NoContent();
         }
     }
-
 }
