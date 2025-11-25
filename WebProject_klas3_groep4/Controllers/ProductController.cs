@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebProject_klas3_groep4;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
+using WebProject_klas3_groep4.DTO;
 
 namespace WebProject_klas3_groep4.Controllers
 {
@@ -15,27 +16,60 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
+        // GET ALL
         [HttpGet]
-        public ActionResult<IEnumerable<productDB>> GetProducten()
+        public ActionResult<IEnumerable<ProductOutputDto>> GetProducten()
         {
-            return Ok(_context.Producten.ToList());
+            var producten = _context.Producten
+                .Select(p => new ProductOutputDto
+                {
+                    Id = p.ID,
+                    Naam = p.Naam,
+                    Foto = p.Foto,
+                    Beschrijving = p.Beschrijving,
+                    Oogstdatum = p.Oogstdatum,
+                    Potmaat = p.Potmaat,
+                    Gewicht = p.Gewicht,
+                    Steellengte = p.Steellengte,
+                    Hoeveelheid = p.Hoeveelheid,
+                    MinimalePrijs = p.MinimalePrijs
+                })
+                .ToList();
+
+            return Ok(producten);
         }
 
-        [HttpGet("{ID}")]
-        public ActionResult<productDB> GetProduct(int ID)
+        // GET SINGLE
+        [HttpGet("{id:int}")]
+        public ActionResult<ProductOutputDto> GetProduct(int id)
         {
-            var product = _context.Producten.Find(ID);
+            var product = _context.Producten.Find(id);
             if (product == null)
                 return NotFound();
 
-            return Ok(product);
+            var dto = new ProductOutputDto
+            {
+                Id = product.ID,
+                Naam = product.Naam,
+                Foto = product.Foto,
+                Beschrijving = product.Beschrijving,
+                Oogstdatum = product.Oogstdatum,
+                Potmaat = product.Potmaat,
+                Gewicht = product.Gewicht,
+                Steellengte = product.Steellengte,
+                Hoeveelheid = product.Hoeveelheid,
+                MinimalePrijs = product.MinimalePrijs
+            };
+
+            return Ok(dto);
         }
 
+        // CREATE
         [HttpPost]
-        public ActionResult<productDB> PostProduct([FromBody] ProductDto dto)
+        public ActionResult<ProductOutputDto> PostProduct([FromBody] ProductCreateDto dto)
         {
             if (dto == null)
-                return BadRequest("Product data is missing.");
+                return BadRequest();
 
             var product = new productDB
             {
@@ -53,13 +87,28 @@ namespace WebProject_klas3_groep4.Controllers
             _context.Producten.Add(product);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetProduct), new { ID = product.ID }, product);
+            var outDto = new ProductOutputDto
+            {
+                Id = product.ID,
+                Naam = product.Naam,
+                Foto = product.Foto,
+                Beschrijving = product.Beschrijving,
+                Oogstdatum = product.Oogstdatum,
+                Potmaat = product.Potmaat,
+                Gewicht = product.Gewicht,
+                Steellengte = product.Steellengte,
+                Hoeveelheid = product.Hoeveelheid,
+                MinimalePrijs = product.MinimalePrijs
+            };
+
+            return CreatedAtAction(nameof(GetProduct), new { id = product.ID }, outDto);
         }
 
-        [HttpPut("{ID}")]
-        public ActionResult<productDB> PutProduct(int ID, [FromBody] ProductDto dto)
+        // UPDATE
+        [HttpPut("{id:int}")]
+        public ActionResult<ProductOutputDto> PutProduct(int id, [FromBody] ProductUpdateDto dto)
         {
-            var product = _context.Producten.Find(ID);
+            var product = _context.Producten.Find(id);
             if (product == null)
                 return NotFound();
 
@@ -74,13 +123,29 @@ namespace WebProject_klas3_groep4.Controllers
             product.MinimalePrijs = dto.MinimalePrijs;
 
             _context.SaveChanges();
-            return Ok(product);
+
+            var outDto = new ProductOutputDto
+            {
+                Id = product.ID,
+                Naam = product.Naam,
+                Foto = product.Foto,
+                Beschrijving = product.Beschrijving,
+                Oogstdatum = product.Oogstdatum,
+                Potmaat = product.Potmaat,
+                Gewicht = product.Gewicht,
+                Steellengte = product.Steellengte,
+                Hoeveelheid = product.Hoeveelheid,
+                MinimalePrijs = product.MinimalePrijs
+            };
+
+            return Ok(outDto);
         }
 
-        [HttpDelete("{ID}")]
-        public ActionResult<productDB> DeleteProduct(int ID)
+        // DELETE
+        [HttpDelete("{id:int}")]
+        public ActionResult DeleteProduct(int id)
         {
-            var product = _context.Producten.Find(ID);
+            var product = _context.Producten.Find(id);
             if (product == null)
                 return NotFound();
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebProject_klas3_groep4;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
+using WebProject_klas3_groep4.DTO;
 
 namespace WebProject_klas3_groep4.Controllers
 {
@@ -15,65 +16,125 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
+        // GET ALL
         [HttpGet]
-        public ActionResult<IEnumerable<VeilingDB>> GetVeilingen()
+        public ActionResult<IEnumerable<VeilingOutputDto>> GetVeilingen()
         {
-            return Ok(_context.Veilingen.ToList());
+            var veilingen = _context.Veilingen
+                .Select(v => new VeilingOutputDto
+                {
+                    Id = v.ID,
+                    StarTijd = v.StarTijd,
+                    StartDatum = v.StartDatum,
+                    AantalProducten = v.AantalProducten,
+                    KlokLocatie = v.KlokLocatie,
+                    HuidigeSituatieVanVeiling = v.HuidigeSituatieVanVeiling,
+                    Bechrijving = v.Bechrijving
+                })
+                .ToList();
+
+            return Ok(veilingen);
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<VeilingDB> GetVeiling(int id)
+        // GET SINGLE
+        [HttpGet("{id:int}")]
+        public ActionResult<VeilingOutputDto> GetVeiling(int id)
         {
-            var Veiling = _context.Veilingen.Find(id);
-            if (Veiling == null)
+            var veiling = _context.Veilingen.Find(id);
+            if (veiling == null)
                 return NotFound();
-            return Ok(Veiling);
+
+            var dto = new VeilingOutputDto
+            {
+                Id = veiling.ID,
+                StarTijd = veiling.StarTijd,
+                StartDatum = veiling.StartDatum,
+                AantalProducten = veiling.AantalProducten,
+                KlokLocatie = veiling.KlokLocatie,
+                HuidigeSituatieVanVeiling = veiling.HuidigeSituatieVanVeiling,
+                Bechrijving = veiling.Bechrijving
+            };
+
+            return Ok(dto);
         }
 
+        // CREATE
         [HttpPost]
-        public ActionResult<VeilingDB> PostVeiling([FromBody] VeilingDB Veiling)
+        public ActionResult<VeilingOutputDto> PostVeiling([FromBody] VeilingCreateDto dto)
         {
-            if (Veiling == null)
+            if (dto == null)
                 return BadRequest();
 
-            _context.Veilingen.Add(Veiling);
+            var veiling = new VeilingDB
+            {
+                StarTijd = dto.StarTijd ?? DateTime.Now.ToString("o"),
+                StartDatum = dto.StartDatum ?? DateTime.Now.ToString("o"),
+                AantalProducten = dto.AantalProducten,
+                KlokLocatie = dto.KlokLocatie,
+                HuidigeSituatieVanVeiling = dto.HuidigeSituatieVanVeiling,
+                Bechrijving = dto.Bechrijving
+            };
+
+            _context.Veilingen.Add(veiling);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetVeiling), new { id = Veiling.ID }, Veiling);
+            var outDto = new VeilingOutputDto
+            {
+                Id = veiling.ID,
+                StarTijd = veiling.StarTijd,
+                StartDatum = veiling.StartDatum,
+                AantalProducten = veiling.AantalProducten,
+                KlokLocatie = veiling.KlokLocatie,
+                HuidigeSituatieVanVeiling = veiling.HuidigeSituatieVanVeiling,
+                Bechrijving = veiling.Bechrijving
+            };
+
+            return CreatedAtAction(nameof(GetVeiling), new { id = veiling.ID }, outDto);
         }
 
-        [HttpPut("{id}")]
-        public ActionResult<VeilingDB> PutVeiling(int id, [FromBody] VeilingDB updatedVeiling)
+        // UPDATE
+        [HttpPut("{id:int}")]
+        public ActionResult<VeilingOutputDto> PutVeiling(int id, [FromBody] VeilingUpdateDto dto)
         {
-            var Veiling = _context.Veilingen.Find(id);
-            if (Veiling == null)
+            var veiling = _context.Veilingen.Find(id);
+            if (veiling == null)
                 return NotFound();
 
-            Veiling.StarTijd = updatedVeiling.StarTijd;
-            Veiling.StartDatum = updatedVeiling.StartDatum;
-            Veiling.AantalProducten = updatedVeiling.AantalProducten;
-            Veiling.KlokLocatie = updatedVeiling.KlokLocatie;
-            Veiling.HuidigeSituatieVanVeiling = updatedVeiling.HuidigeSituatieVanVeiling;
-            Veiling.Bechrijving = updatedVeiling.Bechrijving;
+            veiling.StarTijd = dto.StarTijd ?? veiling.StarTijd;
+            veiling.StartDatum = dto.StartDatum ?? veiling.StartDatum;
+            veiling.AantalProducten = dto.AantalProducten;
+            veiling.KlokLocatie = dto.KlokLocatie;
+            veiling.HuidigeSituatieVanVeiling = dto.HuidigeSituatieVanVeiling;
+            veiling.Bechrijving = dto.Bechrijving;
 
             _context.SaveChanges();
 
-            return Ok(Veiling);
+            var outDto = new VeilingOutputDto
+            {
+                Id = veiling.ID,
+                StarTijd = veiling.StarTijd,
+                StartDatum = veiling.StartDatum,
+                AantalProducten = veiling.AantalProducten,
+                KlokLocatie = veiling.KlokLocatie,
+                HuidigeSituatieVanVeiling = veiling.HuidigeSituatieVanVeiling,
+                Bechrijving = veiling.Bechrijving
+            };
+
+            return Ok(outDto);
         }
 
-        [HttpDelete("{id}")]
-        public ActionResult<VeilingDB> DeleteVeiling(int id)
+        // DELETE
+        [HttpDelete("{id:int}")]
+        public ActionResult DeleteVeiling(int id)
         {
-            var Veiling = _context.Veilingen.Find(id);
-
-            if (Veiling == null)
+            var veiling = _context.Veilingen.Find(id);
+            if (veiling == null)
                 return NotFound();
 
-            _context.Veilingen.Remove(Veiling);
+            _context.Veilingen.Remove(veiling);
             _context.SaveChanges();
 
             return NoContent();
         }
     }
-
 }
