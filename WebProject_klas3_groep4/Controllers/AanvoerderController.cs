@@ -17,15 +17,15 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
-        [HttpGet("All")]
+        [HttpGet("AllPersoonsData")]
         public ActionResult<IEnumerable<AanvoerderDB>> GetAanvoerders()
         {
             return Ok(_context.Aanvoerder.ToList());
         }
+        [HttpGet("data/{ID}")]
         public async Task<ActionResult<AanvoerderDataDto>> GetAanvoerderDataDto(int ID)
         {
             var aanvoerder = await _context.Aanvoerder
-            .Include(a => a.prodcten) // Include related products
             .FirstOrDefaultAsync(a => a.ID == ID);
 
             if (aanvoerder == null)
@@ -43,11 +43,10 @@ namespace WebProject_klas3_groep4.Controllers
             return AanvoerderDataDto;
 
         }
-        [HttpGet("bedrijf/{ID}")]
+        [HttpGet("Aanvoerder/{ID}")]
         public async Task<ActionResult<AanvoerderDto>> GetAanvoerderInfo(int ID)
         {
             var aanvoerder = await _context.Aanvoerder
-                .Include(a => a.prodcten) // Include related products
                 .FirstOrDefaultAsync(a => a.ID == ID);
 
             if (aanvoerder == null)
@@ -57,6 +56,7 @@ namespace WebProject_klas3_groep4.Controllers
 
             var aanvoerderDto = new AanvoerderDto
             {
+                Paswoord = aanvoerder.Paswoord,
                 Naam = aanvoerder.Naam,
                 Email = aanvoerder.Email,
                 Telefoonnummer = aanvoerder.Telefoonnummer,
@@ -66,7 +66,7 @@ namespace WebProject_klas3_groep4.Controllers
                 Adres = aanvoerder.Adres,
                 BedrijfTelefoonnummer = aanvoerder.BedrijfTelefoonnummer,
                 BedrijfEmail = aanvoerder.BedrijfEmail,
-                prodcten = aanvoerder.prodcten
+                Rol = aanvoerder.Rol
             };
             return aanvoerderDto;
 
@@ -90,14 +90,13 @@ namespace WebProject_klas3_groep4.Controllers
                 Adres = dto.Adres,
                 BedrijfTelefoonnummer = dto.BedrijfTelefoonnummer,
                 BedrijfEmail = dto.BedrijfEmail,
-                prodcten = dto.prodcten,
                 Rol = dto.Rol
             };
 
             _context.Aanvoerder.Add(Aanvoerder);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetAanvoerder), new { id = Aanvoerder.ID }, Aanvoerder);
+            return CreatedAtAction(nameof(GetAanvoerderInfo), new { id = Aanvoerder.ID }, Aanvoerder);
         }
 
         [HttpPut("{id}")]
@@ -120,8 +119,6 @@ namespace WebProject_klas3_groep4.Controllers
             Aanvoerder.Adres = dto.Adres;
             Aanvoerder.BedrijfTelefoonnummer = dto.BedrijfTelefoonnummer;
             Aanvoerder.BedrijfEmail = dto.BedrijfEmail;
-            Aanvoerder.prodcten = dto.prodcten;
-
             _context.SaveChanges();
 
             return Ok(Aanvoerder);

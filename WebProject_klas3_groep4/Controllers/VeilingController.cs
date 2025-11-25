@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.models;
 
@@ -21,30 +22,27 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(_context.Veilingen.ToList());
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<VeilingDB> GetVeiling(int id)
+        [HttpGet("AlleVeiling/{ID}")]
+        public async Task<ActionResult<VeilingDB>> GetVeiling(int ID)
         {
-            var Veiling = _context.Veilingen.Find(id);
+            var Veiling = await _context.Veilingen
+                .FirstOrDefaultAsync(v => v.ID == ID);
             if (Veiling == null)
+                {
                 return NotFound();
-            return Ok(Veiling);
-        }
+            }
 
-        [HttpGet("AlleVeiling")]
-        public ActionResult<VeilingDB> GetVeilingDto([FromQuery] VeilingDB dto)
-        {
-            if (dto == null)
-                return BadRequest("Veiling data is missing.");
-            var Veiling = new VeilingDB
+            var VeilingDto = new VeilingDB
             {
-                StarTijd = dto.StarTijd,
-                StartDatum = dto.StartDatum,
-                AantalProducten = dto.AantalProducten,
-                KlokLocatie = dto.KlokLocatie,
-                HuidigeSituatieVanVeiling = dto.HuidigeSituatieVanVeiling,
-                Bechrijving = dto.Bechrijving
+                StarTijd = Veiling.StarTijd,
+                StartDatum = Veiling.StartDatum,
+                AantalProducten = Veiling.AantalProducten,
+                KlokLocatie = Veiling.KlokLocatie,
+                HuidigeSituatieVanVeiling = Veiling.HuidigeSituatieVanVeiling,
+                Bechrijving = Veiling.Bechrijving
             };
-            return Ok(Veiling);
+
+            return VeilingDto;
         }
 
         [HttpPost]

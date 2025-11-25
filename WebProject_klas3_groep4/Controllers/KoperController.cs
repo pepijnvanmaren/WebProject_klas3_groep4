@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.models;
@@ -16,19 +17,34 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
-        [HttpGet("all")]
+        [HttpGet("AllKopers")]
         public ActionResult<IEnumerable<KoperDB>> GetKopers()
         {
             return Ok(_context.Koper.ToList());
         }
 
-        [HttpGet("koper/{id}")]
-        public ActionResult<KoperDB> GetKoper(int id)
+        [HttpGet("Koper/{id}")]
+        public async Task<ActionResult<KoperDto>> GetKoper(int id)
         {
-            var Koper = _context.Koper.Find(id);
+            var Koper = await _context.Koper
+                .FirstOrDefaultAsync(k => k.ID == id);
+
             if (Koper == null)
+                {
                 return NotFound();
-            return Ok(Koper);
+            }
+
+            var KoperDto = new KoperDto
+            {
+                Paswoord = Koper.Paswoord,
+                Naam = Koper.Naam,
+                Email = Koper.Email,
+                Telefoonnummer = Koper.Telefoonnummer,
+                BankGegevens = Koper.BankGegevens,
+                Adres = Koper.Adres,
+                Postcode = Koper.Postcode
+            };
+            return KoperDto;
         }
 
         [HttpPost("KoperAanmaken")]
@@ -51,37 +67,26 @@ namespace WebProject_klas3_groep4.Controllers
             return CreatedAtAction(nameof(GetKoper), new { id = Koper.ID }, Koper);
         }
 
-        [HttpPost("KoperAanmakenBasis")]
-        public ActionResult<KoperDB> PostKoperDto([FromBody] KoperDto dto)
+        [HttpPut("{id}")]
+        public ActionResult<KoperDB> PutKoperDto(int id, [FromBody] KoperDto dto)
         {
             if (dto == null)
                 return BadRequest("Koper data is missing.");
-            var Koper = new KoperDB
-            {
-                Naam = dto.Naam,
-                Paswoord = dto.Paswoord,
-                Email = dto.Email
-            };
-            _context.Koper.Add(Koper);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(GetKoper), new { id = Koper.ID }, Koper);
-        }
 
-        [HttpPut]
-        public ActionResult<KoperDB> PutKoperDto([FromBody] KoperDto dto)
-        {
-            var existingKoper = _context.Koper.FirstOrDefault(k => k.Naam == dto.Naam);
-            if (existingKoper == null)
+            var Koper = _context.Koper.Find(id);
+
+            if (Koper == null)
                 return NotFound();
-            existingKoper.Paswoord = dto.Paswoord;
-            existingKoper.Email = dto.Email;
-            existingKoper.Telefoonnummer = dto.Telefoonnummer;
-            existingKoper.BankGegevens = dto.BankGegevens;
-            existingKoper.Adres = dto.Adres;
-            existingKoper.Postcode = dto.Postcode;
-            _context.Koper.Update(existingKoper);
+
+            Koper.Paswoord = dto.Paswoord;
+            Koper.Email = dto.Email;
+            Koper.Telefoonnummer = dto.Telefoonnummer;
+            Koper.BankGegevens = dto.BankGegevens;
+            Koper.Adres = dto.Adres;
+            Koper.Postcode = dto.Postcode;
             _context.SaveChanges();
-            return Ok(existingKoper);
+
+            return Ok(Koper);
         }
 
         [HttpDelete("{id}")]

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.models;
 
@@ -21,25 +22,27 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(_context.Veilingmeesters.ToList());
         }
 
-        [HttpGet("{id:int}")]
-        public ActionResult<VeilingmeesterDB> GetVeilingmeester(int id)
+        [HttpGet("VeilingMeester/{id}")]
+        public async Task<ActionResult<VeilingmeesterDB>> GetVeilingmeester(int id)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(id);
+            var Veilingmeester = await _context.Veilingmeesters
+                .FirstOrDefaultAsync(v => v.ID == id);
+
             if (Veilingmeester == null)
+                {
                 return NotFound();
-            return Ok(Veilingmeester);
-        }
+            }
 
-        [HttpGet]
-        public ActionResult<VeilingmeesterDB> GetVeilingmeester([FromQuery] string email, [FromQuery] string passwoord)
-        {
-            var veilingmeester = _context.Veilingmeesters
-                .FirstOrDefault(v => v.Email == email && v.Paswoord == passwoord);
+            var VeilingmeesterDto = new VeilingmeesterDB
+            {
+                Naam = Veilingmeester.Naam,
+                Paswoord = Veilingmeester.Paswoord,
+                Email = Veilingmeester.Email,
+                Telefoonnummer = Veilingmeester.Telefoonnummer,
+                VeilingVestiging = Veilingmeester.VeilingVestiging
+            };
 
-            if (veilingmeester == null)
-                return NotFound();
-
-            return Ok(veilingmeester);
+            return VeilingmeesterDto;
         }
 
         [HttpPost]
@@ -73,19 +76,6 @@ namespace WebProject_klas3_groep4.Controllers
             Veilingmeester.Email = dto.Email;
             Veilingmeester.Telefoonnummer = dto.Telefoonnummer;
             Veilingmeester.VeilingVestiging = dto.VeilingVestiging;
-
-            _context.Veilingmeesters.Update(Veilingmeester);
-            _context.SaveChanges();
-            return Ok(Veilingmeester);
-        }
-        [HttpPut("veilingen/{id}")]
-        public ActionResult<VeilingmeesterDB> PutVeilingmeesterVeilingen(int id, [FromBody] VeilingmeesterDB dto)
-        {
-            var Veilingmeester = _context.Veilingmeesters.Find(id);
-            if (Veilingmeester == null)
-                return NotFound();
-
-            Veilingmeester.Veilingen = dto.Veilingen;
 
             _context.Veilingmeesters.Update(Veilingmeester);
             _context.SaveChanges();
