@@ -138,8 +138,8 @@ namespace WebProject_klas3_groep4.Migrations
                     b.Property<DateTime?>("Oogstdatum")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Potmaat")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Potmaat")
+                        .HasColumnType("int");
 
                     b.Property<double?>("Steellengte")
                         .HasColumnType("float");
