@@ -301,6 +301,7 @@ namespace WebProject_klas3_groep4.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Beschrijving")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Foto")
@@ -319,15 +320,16 @@ namespace WebProject_klas3_groep4.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Naam")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("Oogstdatum")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("Oogstdatum")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("Potmaat")
+                    b.Property<int?>("Potmaat")
                         .HasColumnType("int");
 
-                    b.Property<double>("Steellengte")
+                    b.Property<double?>("Steellengte")
                         .HasColumnType("float");
 
                     b.HasKey("ID");

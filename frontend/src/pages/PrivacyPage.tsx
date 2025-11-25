@@ -1,13 +1,12 @@
 import React from "react";
-import Navbar from "../components/Navbar.jsx";
-import Index from "../components/Index.jsx";
+import Navbar from "../components/Navbar.js";
+import Privacy from "../components/Privacy.js";
 import Footer from "../components/Footer.jsx";
-
-export default function IndexPage() {
+export default function PrivacyPage() {
     return (
         <>
             <Navbar />
-            <Index />
+            <Privacy />
             <Footer />
         </>
     );
