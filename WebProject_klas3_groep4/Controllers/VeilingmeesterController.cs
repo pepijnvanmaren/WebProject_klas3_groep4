@@ -15,7 +15,7 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("All")]
         public ActionResult<IEnumerable<VeilingmeesterDB>> GetVeilingmeesters()
         {
             return Ok(_context.Veilingmeesters.ToList());
@@ -61,10 +61,10 @@ namespace WebProject_klas3_groep4.Controllers
             return CreatedAtAction(nameof(GetVeilingmeester), new { id = Veilingmeester.ID }, Veilingmeester);
         }
 
-        [HttpPut("{ID}")]   
-        public ActionResult<VeilingmeesterDB> PutVeilingmeester(int ID, [FromBody] VeilingmeesterDB dto)
+        [HttpPut("AccountGegevens/{id}")]   
+        public ActionResult<VeilingmeesterDB> PutVeilingmeester(int id, [FromBody] VeilingmeesterDB dto)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(ID);
+            var Veilingmeester = _context.Veilingmeesters.Find(id);
             if (Veilingmeester == null)
                 return NotFound();
 
@@ -78,7 +78,7 @@ namespace WebProject_klas3_groep4.Controllers
             _context.SaveChanges();
             return Ok(Veilingmeester);
         }
-
+        [HttpPut("veilingen/{id}")]
         public ActionResult<VeilingmeesterDB> PutVeilingmeesterVeilingen(int id, [FromBody] VeilingmeesterDB dto)
         {
             var Veilingmeester = _context.Veilingmeesters.Find(id);

@@ -31,7 +31,7 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(gebruiker);
         }
 
-        [HttpGet]
+        [HttpGet("gebruiker")]
         public ActionResult<GebruikerDB> GetGebruikerDto([FromQuery] GebruikerDto dto)
         {
             if (dto == null)

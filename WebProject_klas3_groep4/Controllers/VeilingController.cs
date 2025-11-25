@@ -15,7 +15,7 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public ActionResult<IEnumerable<VeilingDB>> GetVeilingen()
         {
             return Ok(_context.Veilingen.ToList());
@@ -30,7 +30,7 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(Veiling);
         }
 
-        [HttpGet]
+        [HttpGet("AlleVeiling")]
         public ActionResult<VeilingDB> GetVeilingDto([FromQuery] VeilingDB dto)
         {
             if (dto == null)
@@ -64,7 +64,7 @@ namespace WebProject_klas3_groep4.Controllers
             return CreatedAtAction(nameof(GetVeiling), new { id = Veiling.ID }, Veiling);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("Veiling/{id}")]
         public ActionResult<VeilingDB> PutVeiling(int id, [FromBody] VeilingDB dto)
         {
             var existingVeiling = _context.Veilingen.Find(id);
@@ -82,6 +82,7 @@ namespace WebProject_klas3_groep4.Controllers
             _context.SaveChanges();
             return Ok(existingVeiling);
         }
+        [HttpPut("Producten/{id}")]
         public ActionResult<VeilingDB> PutVeilingAantalDto(int id, [FromBody] VeilingDB dto)
         {
             var existingVeiling = _context.Veilingen.Find(id);
@@ -94,6 +95,7 @@ namespace WebProject_klas3_groep4.Controllers
             _context.SaveChanges();
             return Ok(existingVeiling);
         }
+        [HttpPut("Situatie/{id}")]
 
         public ActionResult<VeilingDB> PutVeilingSituatieDto(int id, [FromBody] VeilingDB dto)
         {

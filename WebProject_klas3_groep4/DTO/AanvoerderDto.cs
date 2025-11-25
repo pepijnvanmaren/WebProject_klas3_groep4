@@ -24,9 +24,4 @@ namespace WebProject_klas3_groep4.DTO
         public string Email { get; set; }
         public int Telefoonnummer { get; set; }
     }
-
-    public class AanvoerderProductenDto
-    {
-        public List<productDB> prodcten { get; set; }
-    }
 }

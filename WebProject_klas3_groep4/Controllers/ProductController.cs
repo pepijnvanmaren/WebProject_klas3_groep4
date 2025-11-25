@@ -15,7 +15,7 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public ActionResult<IEnumerable<productDB>> GetProducten()
         {
             return Ok(_context.product.ToList());

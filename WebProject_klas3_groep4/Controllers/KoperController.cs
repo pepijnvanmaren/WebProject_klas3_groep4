@@ -16,7 +16,7 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public ActionResult<IEnumerable<KoperDB>> GetKopers()
         {
             return Ok(_context.Koper.ToList());
@@ -31,7 +31,7 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(Koper);
         }
 
-        [HttpGet]
+        [HttpGet("gebruiker")]
         public ActionResult<KoperDB> GetKoperDto([FromQuery] KoperDto dto)
         {
             if (dto == null)
@@ -45,7 +45,7 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(Koper);
         }
 
-        [HttpPost]
+        [HttpPost("KoperAanmaken")]
         public ActionResult<KoperDB> PostVolledigKoperDto([FromBody] KoperDto dto)
         {
             if (dto == null)
@@ -65,7 +65,7 @@ namespace WebProject_klas3_groep4.Controllers
             return CreatedAtAction(nameof(GetKoper), new { id = Koper.ID }, Koper);
         }
 
-        [HttpPost]
+        [HttpPost("KoperAanmakenBasis")]
         public ActionResult<KoperDB> PostKoperDto([FromBody] KoperDto dto)
         {
             if (dto == null)

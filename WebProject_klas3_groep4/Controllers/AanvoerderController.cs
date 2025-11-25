@@ -31,42 +31,55 @@ namespace WebProject_klas3_groep4.Controllers
                 return NotFound();
             return Ok(Aanvoerder);
         }
-        [HttpGet("producten")]
-        public async Task<ActionResult<IEnumerable<AanvoerderProductenDto>>> GetAanvoerderProducten()
+        [HttpGet("data/{ID}")]
+        public async Task<ActionResult<AanvoerderDataDto>> GetAanvoerderDataDto(int ID)
         {
-            return await _context.Aanvoerder
-                .Select(dto => new AanvoerderProductenDto
-                {
-                    prodcten = dto.prodcten
-                })
-                .ToListAsync();
+            var aanvoerder = await _context.Aanvoerder
+            .Include(a => a.prodcten) // Include related products
+            .FirstOrDefaultAsync(a => a.ID == ID);
+
+            if (aanvoerder == null)
+            {
+                return NotFound();
+            }
+
+            var AanvoerderDataDto = new AanvoerderDataDto
+            {
+                Naam = aanvoerder.Naam,
+                Email = aanvoerder.Email,
+                Telefoonnummer = aanvoerder.Telefoonnummer
+            };
+
+            return AanvoerderDataDto;
+
         }
-        [HttpGet("data")]
-        public async Task<ActionResult<IEnumerable<AanvoerderDataDto>>> GetAanvoerderDataDto()
+        [HttpGet("bedrijf/{ID}")]
+        public async Task<ActionResult<AanvoerderDto>> GetAanvoerderInfo(int ID)
         {
-            return await _context.Aanvoerder
-                .Select(dto => new AanvoerderDataDto
-                {
-                    Naam = dto.Naam,
-                    Email = dto.Email,
-                    Telefoonnummer = dto.Telefoonnummer
-                })
-                .ToListAsync();
-        }
-        [HttpGet("bedrijf")]
-        public async Task<ActionResult<IEnumerable<AanvoerderDto>>> GetAanvoerder()
-        {
-            return await _context.Aanvoerder
-                .Select(dto => new AanvoerderDto
-                {
-                KvkNummer = dto.KvkNummer,
-                NaamVanBedrijf = dto.NaamVanBedrijf,
-                BedrijfTelefoonnummer = dto.BedrijfTelefoonnummer,
-                BedrijfEmail = dto.BedrijfEmail,
-                Postcode = dto.Postcode,
-                Adres = dto.Adres
-                })
-                .ToListAsync();
+            var aanvoerder = await _context.Aanvoerder
+                .Include(a => a.prodcten) // Include related products
+                .FirstOrDefaultAsync(a => a.ID == ID);
+
+            if (aanvoerder == null)
+            {
+                return NotFound();
+            }
+
+            var aanvoerderDto = new AanvoerderDto
+            {
+                Naam = aanvoerder.Naam,
+                Email = aanvoerder.Email,
+                Telefoonnummer = aanvoerder.Telefoonnummer,
+                KvkNummer = aanvoerder.KvkNummer,
+                NaamVanBedrijf = aanvoerder.NaamVanBedrijf,
+                Postcode = aanvoerder.Postcode,
+                Adres = aanvoerder.Adres,
+                BedrijfTelefoonnummer = aanvoerder.BedrijfTelefoonnummer,
+                BedrijfEmail = aanvoerder.BedrijfEmail,
+                prodcten = aanvoerder.prodcten
+            };
+            return aanvoerderDto;
+
         }
 
         [HttpPost]
@@ -77,7 +90,7 @@ namespace WebProject_klas3_groep4.Controllers
 
             var Aanvoerder = new AanvoerderDB
             {
-
+                Paswoord = dto.Paswoord,
                 Naam = dto.Naam,
                 Email = dto.Email,
                 Telefoonnummer = dto.Telefoonnummer,
@@ -87,7 +100,8 @@ namespace WebProject_klas3_groep4.Controllers
                 Adres = dto.Adres,
                 BedrijfTelefoonnummer = dto.BedrijfTelefoonnummer,
                 BedrijfEmail = dto.BedrijfEmail,
-                prodcten = dto.prodcten
+                prodcten = dto.prodcten,
+                Rol = dto.Rol
             };
 
             _context.Aanvoerder.Add(Aanvoerder);
