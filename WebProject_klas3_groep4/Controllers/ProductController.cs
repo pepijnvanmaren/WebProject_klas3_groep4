@@ -53,7 +53,7 @@ namespace WebProject_klas3_groep4.Controllers
             [Column(TypeName = "nvarchar(max)")]
             public IFormFile Foto { get; set; }
             public DateTime Oogstdatum { get; set; }
-            public string? Potmaat { get; set; }
+            public int? Potmaat { get; set; } // <-- changed to int?
             public double Gewicht { get; set; }
             public double? Steellengte { get; set; }
             public int Hoeveelheid { get; set; }
@@ -99,10 +99,7 @@ namespace WebProject_klas3_groep4.Controllers
             else
                 oogstdatum = DateOnly.FromDateTime(DateTime.Now);
 
-            //potmaat checken of het niet null is
-            int potmaat = 0;
-            if (!string.IsNullOrWhiteSpace(model.Potmaat))
-                int.TryParse(model.Potmaat, NumberStyles.Integer, CultureInfo.InvariantCulture, out potmaat);
+            int? potmaat = model.Potmaat; // direct gebruiken als nullable int
 
             double gewicht = model.Gewicht;
             double steellengte = model.Steellengte ?? 0;
@@ -116,7 +113,7 @@ namespace WebProject_klas3_groep4.Controllers
                 Beschrijving = model.Beschrijving,
                 Foto = imageDataUri,
                 Oogstdatum = oogstdatum.ToDateTime(TimeOnly.MinValue),
-                Potmaat = model.Potmaat,
+                Potmaat = potmaat,
                 Gewicht = gewicht,
                 Steellengte = steellengte,
                 Hoeveelheid = hoeveelheid,
@@ -141,7 +138,7 @@ namespace WebProject_klas3_groep4.Controllers
             product.Foto = dto.Foto;
             product.Beschrijving = dto.Beschrijving;
             product.Oogstdatum = dto.Oogstdatum.HasValue ? dto.Oogstdatum.Value.ToDateTime(TimeOnly.MinValue) : product.Oogstdatum;
-            product.Potmaat = dto.Potmaat.ToString();
+            product.Potmaat = dto.Potmaat; // <-- assign int directly
             product.Gewicht = dto.Gewicht;
             product.Steellengte = dto.Steellengte;
             product.Hoeveelheid = dto.Hoeveelheid;

@@ -9,7 +9,7 @@ namespace WebProject_klas3_groep4.models
         [Key]
         public int ID { get; set; }
         public DateTime? Oogstdatum { get; set; }
-        public string? Potmaat { get; set; }
+        public int? Potmaat { get; set; }
         public double Gewicht { get; set; }
         public double? Steellengte { get; set; }
         public int Hoeveelheid { get; set; }
