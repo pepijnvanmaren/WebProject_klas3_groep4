@@ -31,20 +31,6 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(Koper);
         }
 
-        [HttpGet("gebruiker")]
-        public ActionResult<KoperDB> GetKoperDto([FromQuery] KoperDto dto)
-        {
-            if (dto == null)
-                return BadRequest("Gebruiker data is missing.");
-
-            var Koper = new KoperDB
-            {
-                Naam = dto.Naam,
-                Paswoord = dto.Paswoord
-            };
-            return Ok(Koper);
-        }
-
         [HttpPost("KoperAanmaken")]
         public ActionResult<KoperDB> PostVolledigKoperDto([FromBody] KoperDto dto)
         {

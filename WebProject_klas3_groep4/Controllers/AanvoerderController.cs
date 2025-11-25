@@ -22,16 +22,6 @@ namespace WebProject_klas3_groep4.Controllers
         {
             return Ok(_context.Aanvoerder.ToList());
         }
-
-        [HttpGet("{id:int}")]
-        public ActionResult<AanvoerderDB> GetAanvoerder(int id)
-        {
-            var Aanvoerder = _context.Aanvoerder.Find(id);
-            if (Aanvoerder == null)
-                return NotFound();
-            return Ok(Aanvoerder);
-        }
-        [HttpGet("data/{ID}")]
         public async Task<ActionResult<AanvoerderDataDto>> GetAanvoerderDataDto(int ID)
         {
             var aanvoerder = await _context.Aanvoerder
