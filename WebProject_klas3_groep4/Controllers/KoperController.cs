@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebProject_klas3_groep4;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
@@ -9,80 +10,126 @@ namespace WebProject_klas3_groep4.Controllers
     public class KoperController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly UserManager<GebruikerDB> _userManager;
 
-        public KoperController(DatabaseContext context)
+        public KoperController(DatabaseContext context, UserManager<GebruikerDB> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<KoperDB>> GetKopers()
+        public ActionResult<IEnumerable<GebruikerDB>> GetKopers()
         {
-            return Ok(_context.Koper.ToList());
+            var kopers = _context.Gebruikers
+                .Where(u => u.Rol == "Koper")
+                .ToList();
+            return Ok(kopers);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<KoperDB> GetKoper(int id)
+        public async Task<ActionResult<GebruikerDB>> GetKoper(int id)
         {
-            var Koper = _context.Koper.Find(id);
-            if (Koper == null)
+            var koper = await _context.Gebruikers
+                .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Koper");
+
+            if (koper == null)
                 return NotFound();
-            return Ok(Koper);
+
+            return Ok(koper);
         }
 
-        [HttpGet("{Email}")]
-        public ActionResult<KoperDB> GetKoper(string Email, string passwoord)
+        [HttpGet("login")]
+        public async Task<ActionResult<GebruikerDB>> Login([FromQuery] string email, [FromQuery] string password)
         {
-            var Koper = _context.Koper.Find(Email, passwoord);
-            if (Koper == null)
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null || user.Rol != "Koper")
                 return NotFound();
-            return Ok(Koper);
+
+            var isValid = await _userManager.CheckPasswordAsync(user, password);
+            if (!isValid)
+                return Unauthorized();
+
+            return Ok(user);
         }
 
         [HttpPost]
-        public ActionResult<KoperDB> PostKoper([FromBody] KoperDB Koper)
+        public async Task<ActionResult<GebruikerDB>> PostKoper([FromBody] KoperCreateDto dto)
         {
-            if (Koper == null)
+            if (dto == null)
                 return BadRequest();
 
-            _context.Koper.Add(Koper);
-            _context.SaveChanges();
+            var koper = new GebruikerDB
+            {
+                UserName = dto.UserName,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Rol = "Koper",
+                BankGegevens = dto.BankGegevens,
+                Adres = dto.Adres,
+                Postcode = dto.Postcode
+            };
 
-            return CreatedAtAction(nameof(GetKoper), new { id = Koper.ID }, Koper);
+            var result = await _userManager.CreateAsync(koper, dto.Password);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return CreatedAtAction(nameof(GetKoper), new { id = koper.Id }, koper);
         }
 
         [HttpPut("{id}")]
-        public ActionResult<KoperDB> PutKoper(int id, [FromBody] KoperDB updatedKoper)
+        public async Task<ActionResult<GebruikerDB>> PutKoper(int id, [FromBody] KoperUpdateDto dto)
         {
-            var Koper = _context.Koper.Find(id);
-            if (Koper == null)
+            var koper = await _context.Gebruikers
+                .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Koper");
+
+            if (koper == null)
                 return NotFound();
 
-            Koper.Naam = updatedKoper.Naam;
-            Koper.Email = updatedKoper.Email;
-            Koper.Telefoonnummer = updatedKoper.Telefoonnummer;
-            Koper.BankGegevens = updatedKoper.BankGegevens;
-            Koper.Adres = updatedKoper.Adres;
-            Koper.Postcode = updatedKoper.Postcode;
+            koper.UserName = dto.UserName;
+            koper.Email = dto.Email;
+            koper.PhoneNumber = dto.PhoneNumber;
+            koper.BankGegevens = dto.BankGegevens;
+            koper.Adres = dto.Adres;
+            koper.Postcode = dto.Postcode;
 
-            _context.SaveChanges();
-
-            return Ok(Koper);
+            await _userManager.UpdateAsync(koper);
+            return Ok(koper);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<KoperDB> DeleteKoper(int id)
+        public async Task<ActionResult> DeleteKoper(int id)
         {
-            var Koper = _context.Koper.Find(id);
+            var koper = await _context.Gebruikers
+                .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Koper");
 
-            if (Koper == null)
+            if (koper == null)
                 return NotFound();
 
-            _context.Koper.Remove(Koper);
-            _context.SaveChanges();
-
+            await _userManager.DeleteAsync(koper);
             return NoContent();
         }
     }
 
+    public class KoperCreateDto
+    {
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Password { get; set; }
+        public string? BankGegevens { get; set; }
+        public string? Adres { get; set; }
+        public string? Postcode { get; set; }
+    }
+
+    public class KoperUpdateDto
+    {
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string? BankGegevens { get; set; }
+        public string? Adres { get; set; }
+        public string? Postcode { get; set; }
+    }
 }

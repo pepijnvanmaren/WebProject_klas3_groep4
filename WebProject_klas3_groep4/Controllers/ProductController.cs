@@ -32,16 +32,17 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<productDB>> GetProducten()
         {
-            return Ok(_context.product.ToList());
+            return Ok(_context.Producten.ToList());
         }
 
         //Getrequest (by id) //mag misschien weg?
         [HttpGet("{ID}")]
         public ActionResult<productDB> GetProduct(int ID)
         {
-            var product = _context.product.Find(ID);
+            var product = _context.Producten.Find(ID);
             if (product == null)
                 return NotFound();
+
             return Ok(product);
         }
 
@@ -130,7 +131,7 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpPut("{ID}")]
         public ActionResult<productDB> PutProduct(int ID, [FromBody] ProductDto dto)
         {
-            var product = _context.product.Find(ID);
+            var product = _context.Producten.Find(ID);
             if (product == null)
                 return NotFound();
 
