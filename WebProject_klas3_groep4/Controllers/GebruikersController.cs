@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+/*using Microsoft.AspNetCore.Mvc;
 using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.models;
 
@@ -6,6 +6,7 @@ namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
     [Route("api/test")]
+    [Authorize (Roles = "Admin")]
     public class GebruikersController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -74,4 +75,4 @@ namespace WebProject_klas3_groep4.Controllers
         }
     }
     
-}
+}*/

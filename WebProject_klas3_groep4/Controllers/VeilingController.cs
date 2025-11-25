@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.models;
 
@@ -6,6 +7,7 @@ namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class VeilingController : ControllerBase
     {
         private readonly DatabaseContext _context;

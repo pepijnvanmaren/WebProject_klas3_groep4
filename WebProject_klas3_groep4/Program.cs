@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WebProject_klas3_groep4;
-using WebProject_klas3_groep4.Models;
-using Microsoft.Data.Sqlite;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
+using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4
 {
@@ -14,13 +17,64 @@ namespace WebProject_klas3_groep4
 
             // Configure EF to use SQL Server with the connection string from appsettings.json
             builder.Services.AddDbContext<DatabaseContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddIdentityApiEndpoints<User>()
-            .AddEntityFrameworkStores<DatabaseContext>();
+            builder.Services.AddIdentityCore<User>()             
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<DatabaseContext>()
+            .AddDefaultTokenProviders();
+
+            var jwtSection = builder.Configuration.GetSection("Jwt");
+            var key = Encoding.UTF8.GetBytes(jwtSection["Key"]);
+
+            builder.Services
+               .AddAuthentication(options =>
+               {
+                   options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                   options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+               })
+               .AddJwtBearer(options =>
+               {
+                   options.RequireHttpsMetadata = false; // voor lokaal testen; in productie: true
+                   options.SaveToken = true;
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateIssuer = true,
+                       ValidateAudience = true,
+                       ValidateLifetime = true,
+                       ValidateIssuerSigningKey = true,
+                       ValidIssuer = jwtSection["Issuer"],
+                       ValidAudience = jwtSection["Audience"],
+                       IssuerSigningKey = new SymmetricSecurityKey(key)
+                   };
+               });
             builder.Services.AddRouting();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebProject API", Version = "v1" });
+
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Voer hier je JWT bearer token in"
+                };
+
+                c.AddSecurityDefinition("Bearer", securityScheme);
+
+                var securityRequirement = new OpenApiSecurityRequirement
+    {
+        {
+                        securityScheme,Array.Empty<string>()
+        }
+    };
+
+                c.AddSecurityRequirement(securityRequirement);
+            });
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowReact", policy =>
@@ -36,7 +90,10 @@ namespace WebProject_klas3_groep4
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebProject API v1");
+                        });
             }
             app.UseHttpsRedirection();
             app.UseRouting();
@@ -44,7 +101,6 @@ namespace WebProject_klas3_groep4
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-            app.MapIdentityApi<User>();
             app.Run();
         }
     }

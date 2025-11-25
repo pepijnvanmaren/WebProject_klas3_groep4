@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
-using WebProject_klas3_groep4.Models;
 
 namespace WebProject_klas3_groep4
 {
