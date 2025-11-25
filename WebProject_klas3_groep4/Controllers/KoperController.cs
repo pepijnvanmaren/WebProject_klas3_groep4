@@ -22,7 +22,7 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(_context.Koper.ToList());
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("koper/{id}")]
         public ActionResult<KoperDB> GetKoper(int id)
         {
             var Koper = _context.Koper.Find(id);
