@@ -17,7 +17,7 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("All")]
         public ActionResult<IEnumerable<AanvoerderDB>> GetAanvoerders()
         {
             return Ok(_context.Aanvoerder.ToList());
