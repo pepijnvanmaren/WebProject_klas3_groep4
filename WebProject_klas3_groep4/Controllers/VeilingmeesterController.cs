@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebProject_klas3_groep4;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
@@ -9,80 +10,120 @@ namespace WebProject_klas3_groep4.Controllers
     public class VeilingmeesterController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly UserManager<GebruikerDB> _userManager;
 
-        public VeilingmeesterController(DatabaseContext context)
+        public VeilingmeesterController(DatabaseContext context, UserManager<GebruikerDB> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<VeilingmeesterDB>> GetVeilingmeesters()
+        public ActionResult<IEnumerable<GebruikerDB>> GetVeilingmeesters()
         {
-            return Ok(_context.Veilingmeesters.ToList());
+            var veilingmeesters = _context.Gebruikers
+                .Where(u => u.Rol == "Veilingmeester")
+                .Include(u => u.Veilingen)
+                .ToList();
+            return Ok(veilingmeesters);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<VeilingmeesterDB> GetVeilingmeester(int id)
+        public async Task<ActionResult<GebruikerDB>> GetVeilingmeester(int id)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(id);
-            if (Veilingmeester == null)
+            var veilingmeester = await _context.Gebruikers
+                .Include(u => u.Veilingen)
+                .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Veilingmeester");
+
+            if (veilingmeester == null)
                 return NotFound();
-            return Ok(Veilingmeester);
+
+            return Ok(veilingmeester);
         }
 
-        [HttpGet("{Email}")]
-        public ActionResult<VeilingmeesterDB> GetVeilingmeester(string Email, string passwoord)
+        [HttpGet("login")]
+        public async Task<ActionResult<GebruikerDB>> Login([FromQuery] string email, [FromQuery] string password)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(Email, passwoord);
-            if (Veilingmeester == null)
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null || user.Rol != "Veilingmeester")
                 return NotFound();
-            return Ok(Veilingmeester);
+
+            var isValid = await _userManager.CheckPasswordAsync(user, password);
+            if (!isValid)
+                return Unauthorized();
+
+            return Ok(user);
         }
 
         [HttpPost]
-        public ActionResult<VeilingmeesterDB> PostVeilingmeester([FromBody] VeilingmeesterDB Veilingmeester)
+        public async Task<ActionResult<GebruikerDB>> PostVeilingmeester([FromBody] VeilingmeesterCreateDto dto)
         {
-            if (Veilingmeester == null)
+            if (dto == null)
                 return BadRequest();
 
-            _context.Veilingmeesters.Add(Veilingmeester);
-            _context.SaveChanges();
+            var veilingmeester = new GebruikerDB
+            {
+                UserName = dto.UserName,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Rol = "Veilingmeester",
+                VeilingVestiging = dto.VeilingVestiging
+            };
 
-            return CreatedAtAction(nameof(GetVeilingmeester), new { id = Veilingmeester.ID }, Veilingmeester);
+            var result = await _userManager.CreateAsync(veilingmeester, dto.Password);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return CreatedAtAction(nameof(GetVeilingmeester), new { id = veilingmeester.Id }, veilingmeester);
         }
 
         [HttpPut("{id}")]
-        public ActionResult<VeilingmeesterDB> PutVeilingmeester(int id, [FromBody] VeilingmeesterDB updatedVeilingmeester)
+        public async Task<ActionResult<GebruikerDB>> PutVeilingmeester(int id, [FromBody] VeilingmeesterUpdateDto dto)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(id);
-            if (Veilingmeester == null)
+            var veilingmeester = await _context.Gebruikers
+                .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Veilingmeester");
+
+            if (veilingmeester == null)
                 return NotFound();
 
-            Veilingmeester.Naam = updatedVeilingmeester.Naam;
-            Veilingmeester.Email = updatedVeilingmeester.Email;
-            Veilingmeester.Telefoonnummer = updatedVeilingmeester.Telefoonnummer;
-            Veilingmeester.VeilingVestiging = updatedVeilingmeester.VeilingVestiging;
-            Veilingmeester.Veilingen = updatedVeilingmeester.Veilingen;
+            veilingmeester.UserName = dto.UserName;
+            veilingmeester.Email = dto.Email;
+            veilingmeester.PhoneNumber = dto.PhoneNumber;
+            veilingmeester.VeilingVestiging = dto.VeilingVestiging;
 
-
-            _context.SaveChanges();
-
-            return Ok(Veilingmeester);
+            await _userManager.UpdateAsync(veilingmeester);
+            return Ok(veilingmeester);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<VeilingmeesterDB> DeleteVeilingmeester(int id)
+        public async Task<ActionResult> DeleteVeilingmeester(int id)
         {
-            var Veilingmeester = _context.Veilingmeesters.Find(id);
+            var veilingmeester = await _context.Gebruikers
+                .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Veilingmeester");
 
-            if (Veilingmeester == null)
+            if (veilingmeester == null)
                 return NotFound();
 
-            _context.Veilingmeesters.Remove(Veilingmeester);
-            _context.SaveChanges();
-
+            await _userManager.DeleteAsync(veilingmeester);
             return NoContent();
         }
     }
 
+    public class VeilingmeesterCreateDto
+    {
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Password { get; set; }
+        public string? VeilingVestiging { get; set; }
+    }
+
+    public class VeilingmeesterUpdateDto
+    {
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string? VeilingVestiging { get; set; }
+    }
 }

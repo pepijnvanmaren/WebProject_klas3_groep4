@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using WebProject_klas3_groep4;
+using Microsoft.AspNetCore.Identity;
 using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
@@ -9,10 +9,12 @@ namespace WebProject_klas3_groep4.Controllers
     public class GebruikersController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly UserManager<GebruikerDB> _userManager;
 
-        public GebruikersController(DatabaseContext context)
+        public GebruikersController(DatabaseContext context, UserManager<GebruikerDB> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -22,56 +24,89 @@ namespace WebProject_klas3_groep4.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<GebruikerDB> GetGebruiker(int id)
+        public async Task<ActionResult<GebruikerDB>> GetGebruiker(int id)
         {
-            var gebruiker = _context.Gebruikers.Find(id);
+            var gebruiker = await _userManager.FindByIdAsync(id.ToString());
             if (gebruiker == null)
                 return NotFound();
             return Ok(gebruiker);
         }
 
         [HttpPost]
-        public ActionResult<GebruikerDB> PostGebruiker([FromBody] GebruikerDB gebruiker)
+        public async Task<ActionResult<GebruikerDB>> PostGebruiker([FromBody] GebruikerCreateDto dto)
         {
-            if (gebruiker == null)
+            if (dto == null)
                 return BadRequest();
 
-            _context.Gebruikers.Add(gebruiker);
-            _context.SaveChanges();
+            var gebruiker = new GebruikerDB
+            {
+                UserName = dto.UserName,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Rol = dto.Rol ?? "Gebruiker"
+            };
 
-            return CreatedAtAction(nameof(GetGebruiker), new { id = gebruiker.ID }, gebruiker);
+            var result = await _userManager.CreateAsync(gebruiker, dto.Password);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return CreatedAtAction(nameof(GetGebruiker), new { id = gebruiker.Id }, gebruiker);
         }
 
         [HttpPut("{id}")]
-        public ActionResult<GebruikerDB> PutGebruiker(int id, [FromBody] GebruikerDB updatedGebruiker)
+        public async Task<ActionResult<GebruikerDB>> PutGebruiker(int id, [FromBody] GebruikerUpdateDto dto)
         {
-            var gebruiker = _context.Gebruikers.Find(id);
+            var gebruiker = await _userManager.FindByIdAsync(id.ToString());
             if (gebruiker == null)
                 return NotFound();
 
-            gebruiker.Naam = updatedGebruiker.Naam;
-            gebruiker.Email = updatedGebruiker.Email;
-            gebruiker.Telefoonnummer = updatedGebruiker.Telefoonnummer;
-            gebruiker.Paswoord = updatedGebruiker.Paswoord;
+            gebruiker.UserName = dto.UserName;
+            gebruiker.Email = dto.Email;
+            gebruiker.PhoneNumber = dto.PhoneNumber;
 
-            _context.SaveChanges();
+            var result = await _userManager.UpdateAsync(gebruiker);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            // Als password moet worden gewijzigd
+            if (!string.IsNullOrEmpty(dto.NewPassword))
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(gebruiker);
+                await _userManager.ResetPasswordAsync(gebruiker, token, dto.NewPassword);
+            }
 
             return Ok(gebruiker);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<GebruikerDB> DeleteGebruiker(int id)
+        public async Task<ActionResult> DeleteGebruiker(int id)
         {
-            var gebruiker = _context.Gebruikers.Find(id);
-          
+            var gebruiker = await _userManager.FindByIdAsync(id.ToString());
             if (gebruiker == null)
                 return NotFound();
 
-            _context.Gebruikers.Remove(gebruiker);
-            _context.SaveChanges();
-
+            await _userManager.DeleteAsync(gebruiker);
             return NoContent();
         }
     }
-    
+
+    // DTOs voor veilige data transfer
+    public class GebruikerCreateDto
+    {
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Password { get; set; }
+        public string? Rol { get; set; }
+    }
+
+    public class GebruikerUpdateDto
+    {
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string? NewPassword { get; set; }
+    }
 }
