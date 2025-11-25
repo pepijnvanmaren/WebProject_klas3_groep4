@@ -31,7 +31,7 @@ namespace WebProject_klas3_groep4.Controllers
                 return NotFound();
             return Ok(Aanvoerder);
         }
-        [HttpGet]
+        [HttpGet("producten")]
         public async Task<ActionResult<IEnumerable<AanvoerderProductenDto>>> GetAanvoerderProducten()
         {
             return await _context.Aanvoerder
@@ -41,6 +41,7 @@ namespace WebProject_klas3_groep4.Controllers
                 })
                 .ToListAsync();
         }
+        [HttpGet("data")]
         public async Task<ActionResult<IEnumerable<AanvoerderDataDto>>> GetAanvoerderDataDto()
         {
             return await _context.Aanvoerder
@@ -52,6 +53,7 @@ namespace WebProject_klas3_groep4.Controllers
                 })
                 .ToListAsync();
         }
+        [HttpGet("bedrijf")]
         public async Task<ActionResult<IEnumerable<AanvoerderDto>>> GetAanvoerder()
         {
             return await _context.Aanvoerder
@@ -97,9 +99,11 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpPut("{id}")]
         public ActionResult<AanvoerderDB> PutAanvoerder(int id, [FromBody] AanvoerderDto dto)
         {
-            var Aanvoerder = _context.Aanvoerder.Find(id);
             if (dto == null)
                 return BadRequest("Aanvoerder data is missing.");
+
+            var Aanvoerder = _context.Aanvoerder.Find(id);
+
             if (Aanvoerder == null)
                 return NotFound();
 
