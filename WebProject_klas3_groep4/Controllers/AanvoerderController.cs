@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.models;
@@ -16,7 +17,7 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("All")]
         public ActionResult<IEnumerable<AanvoerderDB>> GetAanvoerders()
         {
             return Ok(_context.Aanvoerder.ToList());
@@ -30,56 +31,42 @@ namespace WebProject_klas3_groep4.Controllers
                 return NotFound();
             return Ok(Aanvoerder);
         }
-
-        [HttpGet("{Email}")]
-        public ActionResult<AanvoerderDB> GetAanvoerder(string Email, string passwoord)
+        [HttpGet("producten")]
+        public async Task<ActionResult<IEnumerable<AanvoerderProductenDto>>> GetAanvoerderProducten()
         {
-            var Aanvoerder = _context.Aanvoerder.Find(Email, passwoord);
-            if (Aanvoerder == null)
-                return NotFound();
-            return Ok(Aanvoerder);
+            return await _context.Aanvoerder
+                .Select(dto => new AanvoerderProductenDto
+                {
+                    prodcten = dto.prodcten
+                })
+                .ToListAsync();
         }
-
-        [HttpGet]
-        public ActionResult<AanvoerderDB> GetAanvoerderProductenDto([FromQuery] AanvoerderDto dto)
+        [HttpGet("data")]
+        public async Task<ActionResult<IEnumerable<AanvoerderDataDto>>> GetAanvoerderDataDto()
         {
-            if (dto == null)
-                return BadRequest("Aanvoerder data is missing.");
-            var Aanvoerder = new AanvoerderDB
-            {
-                prodcten = dto.prodcten
-            };
-            return Ok(Aanvoerder);
+            return await _context.Aanvoerder
+                .Select(dto => new AanvoerderDataDto
+                {
+                    Naam = dto.Naam,
+                    Email = dto.Email,
+                    Telefoonnummer = dto.Telefoonnummer
+                })
+                .ToListAsync();
         }
-        [HttpGet]
-        public ActionResult<AanvoerderDB> GetAanvoerderDataDto([FromQuery] AanvoerderDto dto)
+        [HttpGet("bedrijf")]
+        public async Task<ActionResult<IEnumerable<AanvoerderDto>>> GetAanvoerder()
         {
-            if (dto == null)
-                return BadRequest("Aanvoerder data is missing.");
-            var Aanvoerder = new AanvoerderDB
-            {
-                Naam = dto.Naam,
-                Email = dto.Email,
-                Telefoonnummer = dto.Telefoonnummer
-            };
-            return Ok(Aanvoerder);
-        }
-
-        [HttpGet]
-        public ActionResult<AanvoerderDB> GetAanvoerderDataBedrijfDto([FromQuery] AanvoerderDto dto)
-        {
-            if (dto == null)
-                return BadRequest("Aanvoerder data is missing.");
-            var Aanvoerder = new AanvoerderDB
-            {
+            return await _context.Aanvoerder
+                .Select(dto => new AanvoerderDto
+                {
                 KvkNummer = dto.KvkNummer,
                 NaamVanBedrijf = dto.NaamVanBedrijf,
                 BedrijfTelefoonnummer = dto.BedrijfTelefoonnummer,
                 BedrijfEmail = dto.BedrijfEmail,
                 Postcode = dto.Postcode,
                 Adres = dto.Adres
-            };
-            return Ok(Aanvoerder);
+                })
+                .ToListAsync();
         }
 
         [HttpPost]
@@ -112,9 +99,11 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpPut("{id}")]
         public ActionResult<AanvoerderDB> PutAanvoerder(int id, [FromBody] AanvoerderDto dto)
         {
-            var Aanvoerder = _context.Aanvoerder.Find(id);
             if (dto == null)
                 return BadRequest("Aanvoerder data is missing.");
+
+            var Aanvoerder = _context.Aanvoerder.Find(id);
+
             if (Aanvoerder == null)
                 return NotFound();
 

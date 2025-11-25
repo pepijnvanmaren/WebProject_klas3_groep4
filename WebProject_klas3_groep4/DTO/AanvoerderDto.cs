@@ -17,4 +17,16 @@ namespace WebProject_klas3_groep4.DTO
         public string BedrijfEmail { get; set; }
         public List<productDB> prodcten { get; set; }
     }
+
+    public class AanvoerderDataDto 
+    {
+        public string Naam { get; set; }
+        public string Email { get; set; }
+        public int Telefoonnummer { get; set; }
+    }
+
+    public class AanvoerderProductenDto
+    {
+        public List<productDB> prodcten { get; set; }
+    }
 }
