@@ -17,7 +17,7 @@ function SellerDashboard() {
             <main className="dashboard-container">
                 <h1 className="title">Product</h1>
                 <div className="pt_dashboard-box ">
-                    {/*Rechts*/}z
+                    {/*Rechts*/}
                     <div className="PT-box">
                     <h1>
                         Product naam
