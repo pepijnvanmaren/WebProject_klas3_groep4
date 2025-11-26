@@ -7,9 +7,24 @@ using WebProject_klas3_groep4.models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS policy name
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 // ------------------------------------------
 // Add Services
 // ------------------------------------------
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+                  // If you need cookies/auth, add: .AllowCredentials();
+        });
+});
+
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>
     {
@@ -19,18 +34,37 @@ builder.Services.AddControllers()
 
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+if (builder.Environment.IsDevelopment())
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    builder.Services.AddSwaggerGen(options =>
     {
-        Title = "WebProject API",
-        Version = "v1"
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Description = "Please enter a valid token",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer"
+        });
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+            new OpenApiSecurityScheme
+            {
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Scheme = "Bearer",
+            Reference = new OpenApiReference
+            {
+            Id = "Bearer",
+            Type = ReferenceType.SecurityScheme
+            }
+            },
+            new List<string>()
+            }
+        });
     });
-
-    // Map DateOnly / TimeOnly naar strings
-    c.MapType<DateOnly>(() => new OpenApiSchema { Type = "string", Format = "date" });
-    c.MapType<TimeOnly>(() => new OpenApiSchema { Type = "string", Format = "time" });
-});
+}
 
 // Database
 builder.Services.AddDbContext<DatabaseContext>(options =>
@@ -71,6 +105,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+// Enable CORS (must be between UseRouting and UseAuthentication/UseAuthorization)
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();

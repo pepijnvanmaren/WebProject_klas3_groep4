@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebProject_klas3_groep4.models
 {
+    [Table("product")]
     public class productDB
     {
         [Key]

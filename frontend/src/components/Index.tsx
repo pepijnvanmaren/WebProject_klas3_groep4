@@ -1,39 +1,36 @@
 import "../styles/index.css";
 import React, { useEffect, useState, useRef } from "react";
 
-// Product attributen van de DTO
+// Matches ProductOutputDto from backend
 type Product = {
     id: number;
     naam: string;
     foto: string | null;
     beschrijving: string | null;
-    oogstdatum?: string;
-    potmaat?: number;
-    gewicht?: number;
-    steellengte?: number;
-    hoeveelheid?: number;
-    minimalePrijs?: number;
+    oogstdatum: string;           // DateOnly comes as ISO string
+    potmaat: number | null;
+    gewicht: number;
+    steellengte: number;
+    hoeveelheid: number;
+    minimalePrijs: number;
 };
 
 const getImageSrc = (foto?: string | null) => {
     if (!foto) return "";
     const s = foto.trim();
 
-    // If backend already returned a data URL, use it as-is
     if (s.startsWith("data:")) return s;
 
-    // Clean up possible surrounding quotes/newlines
     const cleaned = s.replace(/^"|"$/g, "").replace(/\r?\n/g, "");
 
-    // Heuristic mime type detection from base64 prefix
     if (cleaned.startsWith("/9j/")) return `data:image/jpeg;base64,${cleaned}`;
     if (cleaned.startsWith("iVBOR")) return `data:image/png;base64,${cleaned}`;
-    // fallback: generic image
+
     return `data:image/*;base64,${cleaned}`;
 };
 
 function Index() {
-    // Timer logic
+    // Timer
     const [price, setPrice] = useState(30.0);
     const [isRunning, setIsRunning] = useState(true);
     const [purchased, setPurchased] = useState(false);
@@ -43,12 +40,14 @@ function Index() {
     const maxPrice = 30.0;
 
     const progress = (price - minPrice) / (maxPrice - minPrice);
-    const barColor = `rgb(${Math.round(255 * (1 - progress))}, ${Math.round(255 * progress)}, 0)`;
+    const barColor = `rgb(${Math.round(255 * (1 - progress))}, ${Math.round(
+        255 * progress
+    )}, 0)`;
 
     useEffect(() => {
         if (isRunning) {
             intervalRef.current = setInterval(() => {
-                setPrice(prev => {
+                setPrice((prev) => {
                     if (prev <= minPrice) {
                         clearInterval(intervalRef.current!);
                         return minPrice;
@@ -66,7 +65,7 @@ function Index() {
         setPurchased(true);
     };
 
-    // Fetch Product logic
+    // Fetch products
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -79,13 +78,11 @@ function Index() {
             const response = await fetch("https://localhost:7020/api/Product");
             if (!response.ok) throw new Error("Could not load products");
 
-            const data = await response.json() as Product[];
+            const data = (await response.json()) as Product[];
             setProducts(data);
-
         } catch (err: any) {
             console.error("Error fetching products:", err);
             setError(err?.message ?? "Unknown error");
-
         } finally {
             setLoading(false);
         }
@@ -95,15 +92,14 @@ function Index() {
         getProducts();
     }, []);
 
-    // Loading Error States
+    // Loading states
     if (loading) return <p>Loading products...</p>;
     if (error) return <p>Error loading products: {error}</p>;
+    if (products.length === 0) return <p>No products found.</p>;
 
-    // Define current and next product
     const currentProduct = products[0];
     const nextProduct = products[1];
 
-    //HTML
     return (
         <div className="page">
             <h1 className="page-title">Current product</h1>
@@ -113,8 +109,8 @@ function Index() {
                 <div className="box">
                     {currentProduct?.foto ? (
                         <img
-                            src={getImageSrc(currentProduct?.foto)}
-                            alt={currentProduct?.naam ?? "product image"}
+                            src={getImageSrc(currentProduct.foto)}
+                            alt={currentProduct.naam}
                             className="Roses"
                         />
                     ) : (
@@ -124,19 +120,23 @@ function Index() {
 
                 {/* DESCRIPTION */}
                 <div className="box box-description">
-                    <h2 className="product-name">{currentProduct?.naam}</h2>
-                    <p className="description">{currentProduct?.beschrijving}</p>
+                    <h2 className="product-name">{currentProduct.naam}</h2>
+                    <p className="description">{currentProduct.beschrijving}</p>
                 </div>
 
                 {/* COMPANY + STOCK */}
                 <div className="box">Go Roos Yourself B.V.</div>
-                <div className="box">{currentProduct?.hoeveelheid ?? "Unknown"} units</div>
+                <div className="box">{currentProduct.hoeveelheid} units</div>
 
                 {/* PRICE + BUY */}
                 <div className="box box-price">
                     <div className="price-row">
                         <span className="price">EUR {price.toFixed(2)}</span>
-                        <button className="button" onClick={handleStop} disabled={purchased}>
+                        <button
+                            className="button"
+                            onClick={handleStop}
+                            disabled={purchased}
+                        >
                             {purchased ? "Purchased" : "Buy"}
                         </button>
                     </div>
@@ -161,8 +161,8 @@ function Index() {
                 <div className="box">
                     {nextProduct?.foto ? (
                         <img
-                            src={getImageSrc(nextProduct?.foto)}
-                            alt={nextProduct?.naam ?? "product image"}
+                            src={getImageSrc(nextProduct.foto)}
+                            alt={nextProduct.naam}
                             className="Roses"
                         />
                     ) : (

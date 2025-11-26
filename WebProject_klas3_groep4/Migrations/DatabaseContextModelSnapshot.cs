@@ -336,7 +336,7 @@ namespace WebProject_klas3_groep4.Migrations
 
                     b.HasIndex("GebruikerDBId");
 
-                    b.ToTable("Producten");
+                    b.ToTable("product");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
