@@ -13,23 +13,12 @@ function SellerDashboard() {
     }
 
     return (
-        <><div className="dashboard-root">
-            <header className="dashboard-header">
-                <div className="header-inner">
-                    <img
-                        src="/header-trees.jpg"
-                        alt="header"
-                        className="header-image" />
-                    <nav className="header-nav">
-                        <a href="/registreren">Registreren</a>
-                        <a href="/login">Inloggen</a>
-                    </nav>
-                </div>
-            </header>
-        </div>
+        <>
             <main className="dashboard-container">
                 <h1 className="title">Product</h1>
-                <div className="dashboard-box">
+                <div className="pt_dashboard-box ">
+                    {/*Rechts*/}z
+                    <div className="PT-box">
                     <h1>
                         Product naam
                     </h1>
@@ -47,10 +36,52 @@ function SellerDashboard() {
                     </h1>
                     <img src="" alt="Foto van het gekozen product">
                     </img>
-                    <button className="login-button" onClick={ProductMakenKnop} >
-                        Terug
-                    </button>
+                    </div>
+
+                    {/*Rechts*/}
+                    <div className="PT-box">
+                        <h1>
+                            Oogstdatum
+                        </h1>
+                        <p className="input-field-Naam">
+                            nep tekst
+                        </p>
+                        <h1>
+                            Potmaat (cm)
+                        </h1>
+                        <p className="input-field-Naam">
+                            nep tekst
+                        </p>
+                        <h1>
+                            Gewicht (kg)
+                        </h1>
+                        <p className="input-field-Naam">
+                            nep tekst
+                        </p>
+                        <h1>
+                            Steellengte (cm)
+                        </h1>
+                        <p className="input-field-Naam">
+                            nep tekst
+                        </p>
+                        <h1>
+                            Hoeveelheid
+                        </h1>
+                        <p className="input-field-Naam">
+                            nep tekst
+                        </p>
+                        <h1>
+                            Minimale prijs
+                        </h1>
+                        <p className="input-field-Naam">
+                            nep tekst
+                        </p>
+                    </div>
                 </div>
+                <button className="login-button" onClick={ProductMakenKnop} >
+                    Terug
+                </button>
+
             </main>
         </>
     );
