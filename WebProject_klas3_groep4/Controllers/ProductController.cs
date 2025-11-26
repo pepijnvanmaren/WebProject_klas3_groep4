@@ -9,110 +9,93 @@ namespace WebProject_klas3_groep4.Controllers
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
-        //dependencies
         private readonly DatabaseContext _context;
-        private readonly IWebHostEnvironment _env;  //Wordt niet gebruikt.
 
-        //Constructor voor dependencies
-        public ProductController(DatabaseContext context, IWebHostEnvironment env)
+        public ProductController(DatabaseContext context)
         {
             _context = context;
-            _env = env;
         }
 
+        // ---------------------------------------------------------
         // GET ALL
+        // ---------------------------------------------------------
         [HttpGet]
-        public ActionResult<IEnumerable<ProductOutputDto>> GetProducten()
+        public async Task<ActionResult<IEnumerable<ProductOutputDto>>> GetProducten()
         {
-            var producten = _context.Producten
+            var producten = await _context.Producten
                 .Select(p => new ProductOutputDto
                 {
                     Id = p.ID,
                     Naam = p.Naam,
                     Foto = p.Foto,
                     Beschrijving = p.Beschrijving,
-                    Oogstdatum = p.Oogstdatum,
+                    Oogstdatum = p.Oogstdatum.HasValue
+                        ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                        : DateOnly.FromDateTime(DateTime.Now),
                     Potmaat = p.Potmaat,
                     Gewicht = p.Gewicht,
-                    Steellengte = p.Steellengte,
+                    Steellengte = p.Steellengte ?? 0,
                     Hoeveelheid = p.Hoeveelheid,
                     MinimalePrijs = p.MinimalePrijs
                 })
-                .ToList();
+                .ToListAsync();
 
             return Ok(producten);
         }
 
+        // ---------------------------------------------------------
         // GET SINGLE
+        // ---------------------------------------------------------
         [HttpGet("{id:int}")]
-        public ActionResult<ProductOutputDto> GetProduct(int id)
+        public async Task<ActionResult<ProductOutputDto>> GetProduct(int id)
         {
-            var product = _context.Producten.Find(id);
-            if (product == null)
-                return NotFound();
+            var p = await _context.Producten.FindAsync(id);
+            if (p == null) return NotFound();
 
             var dto = new ProductOutputDto
             {
-                Id = product.ID,
-                Naam = product.Naam,
-                Foto = product.Foto,
-                Beschrijving = product.Beschrijving,
-                Oogstdatum = product.Oogstdatum,
-                Potmaat = product.Potmaat,
-                Gewicht = product.Gewicht,
-                Steellengte = product.Steellengte,
-                Hoeveelheid = product.Hoeveelheid,
-                MinimalePrijs = product.MinimalePrijs
+                Id = p.ID,
+                Naam = p.Naam,
+                Foto = p.Foto,
+                Beschrijving = p.Beschrijving,
+                Oogstdatum = p.Oogstdatum.HasValue
+                    ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                    : DateOnly.FromDateTime(DateTime.Now),
+                Potmaat = p.Potmaat,
+                Gewicht = p.Gewicht,
+                Steellengte = p.Steellengte ?? 0,
+                Hoeveelheid = p.Hoeveelheid,
+                MinimalePrijs = p.MinimalePrijs
             };
 
             return Ok(dto);
         }
 
+        // ---------------------------------------------------------
         // CREATE
+        // ---------------------------------------------------------
         [HttpPost]
-        public ActionResult<ProductOutputDto> PostProduct([FromBody] ProductCreateDto dto)
+        public async Task<ActionResult<ProductOutputDto>> PostProduct([FromBody] ProductCreateDto dto)
         {
-            if (dto == null)
-                return BadRequest();
+            if (dto == null) return BadRequest("Invalid product data");
 
-                if (bytes.LongLength > 10 * 1024 * 1024) // 10 MB limit
-                    return BadRequest("Image too large. Max 10 MB.");
+            var oogstdatum = dto.Oogstdatum?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now;
 
-                var base64 = Convert.ToBase64String(bytes);
-                imageDataUri = $"data:{model.Foto.ContentType};base64,{base64}";
-            }
-
-            //Checkt of oogstdatum niet in de toekomst is
-            DateOnly oogstdatum;
-            if (model.Oogstdatum != default)
-                oogstdatum = DateOnly.FromDateTime(model.Oogstdatum);
-            //anders zet de date op nu
-            else
-                oogstdatum = DateOnly.FromDateTime(DateTime.Now);
-
-            int? potmaat = model.Potmaat; // direct gebruiken als nullable int
-
-            double gewicht = model.Gewicht;
-            double steellengte = model.Steellengte ?? 0;
-            int hoeveelheid = model.Hoeveelheid;
-            int minimalePrijs = model.MinimalePrijs;
-
-            //Object van product om data in te stoppen en dan te posten
             var product = new productDB
             {
-                Naam = model.Naam,
-                Beschrijving = model.Beschrijving,
-                Foto = imageDataUri,
-                Oogstdatum = oogstdatum.ToDateTime(TimeOnly.MinValue),
-                Potmaat = potmaat,
-                Gewicht = gewicht,
-                Steellengte = steellengte,
-                Hoeveelheid = hoeveelheid,
-                MinimalePrijs = minimalePrijs
+                Naam = dto.Naam,
+                Beschrijving = dto.Beschrijving,
+                Foto = dto.Foto,
+                Oogstdatum = oogstdatum,
+                Potmaat = dto.Potmaat,
+                Gewicht = dto.Gewicht,
+                Steellengte = dto.Steellengte,
+                Hoeveelheid = dto.Hoeveelheid,
+                MinimalePrijs = dto.MinimalePrijs
             };
 
-            _context.product.Add(product);
-            await _context.SaveChangesAsync();
+            _context.Producten.Add(product);
+            await _context.SaveChangesAsync(); 
 
             var outDto = new ProductOutputDto
             {
@@ -120,10 +103,10 @@ namespace WebProject_klas3_groep4.Controllers
                 Naam = product.Naam,
                 Foto = product.Foto,
                 Beschrijving = product.Beschrijving,
-                Oogstdatum = product.Oogstdatum,
+                Oogstdatum = DateOnly.FromDateTime(product.Oogstdatum ?? DateTime.Now),
                 Potmaat = product.Potmaat,
                 Gewicht = product.Gewicht,
-                Steellengte = product.Steellengte,
+                Steellengte = product.Steellengte ?? 0,
                 Hoeveelheid = product.Hoeveelheid,
                 MinimalePrijs = product.MinimalePrijs
             };
@@ -131,53 +114,58 @@ namespace WebProject_klas3_groep4.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = product.ID }, outDto);
         }
 
+        // ---------------------------------------------------------
         // UPDATE
+        // ---------------------------------------------------------
         [HttpPut("{id:int}")]
-        public ActionResult<ProductOutputDto> PutProduct(int id, [FromBody] ProductUpdateDto dto)
+        public async Task<ActionResult<ProductOutputDto>> PutProduct(int id, [FromBody] ProductUpdateDto dto)
         {
-            var product = _context.Producten.Find(id);
-            if (product == null)
-                return NotFound();
+            var p = await _context.Producten.FindAsync(id);
+            if (p == null) return NotFound();
 
-            product.Naam = dto.Naam;
-            product.Foto = dto.Foto;
-            product.Beschrijving = dto.Beschrijving;
-            product.Oogstdatum = dto.Oogstdatum.HasValue ? dto.Oogstdatum.Value.ToDateTime(TimeOnly.MinValue) : product.Oogstdatum;
-            product.Potmaat = dto.Potmaat; // <-- assign int directly
-            product.Gewicht = dto.Gewicht;
-            product.Steellengte = dto.Steellengte;
-            product.Hoeveelheid = dto.Hoeveelheid;
-            product.MinimalePrijs = dto.MinimalePrijs;
+            // Update alleen velden die niet null zijn
+            if (dto.Naam != null) p.Naam = dto.Naam;
+            if (dto.Beschrijving != null) p.Beschrijving = dto.Beschrijving;
+            if (dto.Foto != null) p.Foto = dto.Foto;
+            if (dto.Oogstdatum.HasValue) p.Oogstdatum = dto.Oogstdatum.Value.ToDateTime(TimeOnly.MinValue);
+            if (dto.Potmaat.HasValue) p.Potmaat = dto.Potmaat.Value;
+            if (dto.Gewicht.HasValue) p.Gewicht = dto.Gewicht.Value;
+            if (dto.Steellengte.HasValue) p.Steellengte = dto.Steellengte.Value;
+            if (dto.Hoeveelheid.HasValue) p.Hoeveelheid = dto.Hoeveelheid.Value;
+            if (dto.MinimalePrijs.HasValue) p.MinimalePrijs = dto.MinimalePrijs.Value;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync(); // ✅ werkt nu
 
             var outDto = new ProductOutputDto
             {
-                Id = product.ID,
-                Naam = product.Naam,
-                Foto = product.Foto,
-                Beschrijving = product.Beschrijving,
-                Oogstdatum = product.Oogstdatum,
-                Potmaat = product.Potmaat,
-                Gewicht = product.Gewicht,
-                Steellengte = product.Steellengte,
-                Hoeveelheid = product.Hoeveelheid,
-                MinimalePrijs = product.MinimalePrijs
+                Id = p.ID,
+                Naam = p.Naam,
+                Foto = p.Foto,
+                Beschrijving = p.Beschrijving,
+                Oogstdatum = p.Oogstdatum.HasValue
+                    ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                    : DateOnly.FromDateTime(DateTime.Now),
+                Potmaat = p.Potmaat,
+                Gewicht = p.Gewicht,
+                Steellengte = p.Steellengte ?? 0,
+                Hoeveelheid = p.Hoeveelheid,
+                MinimalePrijs = p.MinimalePrijs
             };
 
             return Ok(outDto);
         }
 
+        // ---------------------------------------------------------
         // DELETE
+        // ---------------------------------------------------------
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteProduct(int id)
+        public async Task<ActionResult> DeleteProduct(int id)
         {
-            var product = _context.Producten.Find(id);
-            if (product == null)
-                return NotFound();
+            var p = await _context.Producten.FindAsync(id);
+            if (p == null) return NotFound();
 
-            _context.product.Remove(product);
-            _context.SaveChanges();
+            _context.Producten.Remove(p);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using WebProject_klas3_groep4;
+using WebProject_klas3_groep4.models;
 
 var builder = WebApplication.CreateBuilder(args);
 
