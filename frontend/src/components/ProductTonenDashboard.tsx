@@ -33,15 +33,15 @@ function SellerDashboard() {
                     <h1>
                         Product naam
                     </h1>
-                    <h2 className="input-field-Naam">
+                    <p className="input-field-Naam">
                         nep tekst
-                    </h2>
+                    </p>
                     <h1>
                         Product infomatie
                     </h1>
-                    <h2 className="input-field-infomatie">
+                    <p   className="input-field-infomatie">
                         nep tekst
-                    </h2>
+                    </p>
                     <h1>
                         Product foto
                     </h1>

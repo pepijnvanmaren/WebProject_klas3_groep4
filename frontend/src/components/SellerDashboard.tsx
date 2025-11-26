@@ -64,14 +64,14 @@ function SellerDashboard() {
             <main className="dashboard-container">
                 <h1 className="VerkoperDashboard-title">Dashboard</h1>
                 <div className="dashboard-box">
-                    <button className="btn primary" onClick={ProductMakenKnop}>
+                    <button className="btn" onClick={ProductMakenKnop}>
                         Product Plaatsen
                     </button>
-                    <button className="btn secondary" onClick={ProductTonenKnop}>
+                    <button className="btn" onClick={ProductTonenKnop}>
                         Product Tonen
                     </button>
                     <button
-                        className="btn danger"
+                        className="btn"
                         onClick={() => {
                             if (products.length === 0) {
                                 alert("Geen producten om te verwijderen.");

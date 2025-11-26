@@ -82,6 +82,19 @@
     transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 }
 
+    .btn:hover {
+        background: #45a049;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        background: #3e8e41;
+    }
+
+
 .product-list-box {
     max-width: 25rem;
     margin: 5px auto 0;
