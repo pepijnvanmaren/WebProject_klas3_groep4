@@ -40,17 +40,34 @@ builder.Services.AddIdentity<GebruikerDB, IdentityRole<int>>(options =>
 .AddEntityFrameworkStores<DatabaseContext>()
 .AddDefaultTokenProviders();
 
-// Dummy email sender (nodig voor MapIdentityApi)
+// Dummy email sender
 builder.Services.AddTransient<IEmailSender<GebruikerDB>, DummyEmailSender>();
 
 // ----------------------------------------------------------
-// Authentication — Bearer Token 
+// Authentication — Cookies
 // ----------------------------------------------------------
-builder.Services.AddAuthentication()
-    .AddBearerToken(IdentityConstants.BearerScheme, options =>
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/api/auth/login";
+    options.LogoutPath = "/api/auth/logout";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+    options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+});
+
+// ----------------------------------------------------------
+// CORS
+// ----------------------------------------------------------
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
     {
-        options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
+        policy.WithOrigins("http://localhost:5173") // React frontend
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
+});
 
 // ----------------------------------------------------------
 // Swagger
@@ -64,34 +81,9 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1"
     });
 
-    // Support voor DateOnly / TimeOnly
+    // DateOnly / TimeOnly support
     options.MapType<DateOnly>(() => new OpenApiSchema { Type = "string", Format = "date" });
     options.MapType<TimeOnly>(() => new OpenApiSchema { Type = "string", Format = "time" });
-
-    // Bearer token support
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Description = "Voer je Bearer token in.",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer"
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Id = "Bearer",
-                    Type = ReferenceType.SecurityScheme
-                }
-            },
-            new List<string>()
-        }
-    });
 });
 
 // ----------------------------------------------------------
@@ -108,21 +100,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
 // ----------------------------------------------------------
-// Identity API Endpoints (login/register/token)
-// ----------------------------------------------------------
+// Identity API Endpoints (login/register)
 app.MapIdentityApi<GebruikerDB>();
 
 // ----------------------------------------------------------
 // Role Seeding
-// ----------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-
     string[] roles = { "Admin", "Manager", "Teamlead", "User" };
 
     foreach (var role in roles)
@@ -136,15 +126,12 @@ using (var scope = app.Services.CreateScope())
 
 // ----------------------------------------------------------
 // Admin User Seeding
-// ----------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<GebruikerDB>>();
-
     string adminPassword = "Admin123!"; // In secrets.json zetten!
 
     var existingUser = await userManager.FindByNameAsync("adminUser");
-
     if (existingUser == null)
     {
         var adminUser = new GebruikerDB
@@ -155,7 +142,6 @@ using (var scope = app.Services.CreateScope())
         };
 
         var createResult = await userManager.CreateAsync(adminUser, adminPassword);
-
         if (createResult.Succeeded)
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -163,27 +149,21 @@ using (var scope = app.Services.CreateScope())
         else
         {
             foreach (var error in createResult.Errors)
-            {
                 Console.WriteLine($"[ADMIN ERROR] {error.Description}");
-            }
         }
     }
 }
 
+// ----------------------------------------------------------
+// Controllers
 app.MapControllers();
 app.Run();
 
 // ----------------------------------------------------------
 // Dummy Email Sender
-// ----------------------------------------------------------
 public class DummyEmailSender : IEmailSender<GebruikerDB>
 {
-    public Task SendConfirmationLinkAsync(GebruikerDB user, string email, string link)
-        => Task.CompletedTask;
-
-    public Task SendPasswordResetLinkAsync(GebruikerDB user, string email, string link)
-        => Task.CompletedTask;
-
-    public Task SendPasswordResetCodeAsync(GebruikerDB user, string email, string code)
-        => Task.CompletedTask;
+    public Task SendConfirmationLinkAsync(GebruikerDB user, string email, string link) => Task.CompletedTask;
+    public Task SendPasswordResetLinkAsync(GebruikerDB user, string email, string link) => Task.CompletedTask;
+    public Task SendPasswordResetCodeAsync(GebruikerDB user, string email, string code) => Task.CompletedTask;
 }

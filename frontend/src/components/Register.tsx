@@ -5,67 +5,85 @@ import "../styles/Register.css";
 function Register() {
     const navigate = useNavigate();
 
-    // States die overeenkomen met je model
-    const [naam, setNaam] = useState('');
-    const [telefoonnummer, setTelefoonnummer] = useState('');
-    const [email, setEmail] = useState('');
-    const [paswoord, setPaswoord] = useState('');
-    const [confirmPaswoord, setConfirmPaswoord] = useState('');
-    const [rol, setRol] = useState('koper'); // komt overeen met "Rol" in model
+    // Form states
+    const [naam, setNaam] = useState("");
+    const [telefoonnummer, setTelefoonnummer] = useState("");
+    const [email, setEmail] = useState("");
+    const [paswoord, setPaswoord] = useState("");
+    const [confirmPaswoord, setConfirmPaswoord] = useState("");
+    const [rol, setRol] = useState("koper"); // "koper" of "aanvoerder"
+    const [loading, setLoading] = useState(false);
 
-    // Functie om POST te doen
+    // Functie om registratie te versturen
     const postAccount = async () => {
-        try {
-            const response = await fetch('https://localhost:7020/api/test', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    naam: naam,
-                    telefoonnummer: parseInt(telefoonnummer), // model verwacht int
-                    email: email,
-                    rol: rol,
-                    paswoord: paswoord,
-                }),
-            });
+        const url =
+            rol === "koper"
+                ? "https://localhost:7020/api/kopers"
+                : "https://localhost:7020/api/aanvoerders";
 
-            if (!response.ok) {
-                const text = await response.text();
-                console.error("Server response:", text);
-                throw new Error('Registratie mislukt');
-            }
+        let body: any = {
+            userName: email,
+            email,
+            phoneNumber: telefoonnummer,
+            password: paswoord,
+        };
 
-            return response;
-        } catch (error) {
-            console.error('Fout bij registreren:', error);
-            throw error;
+        if (rol === "koper") {
+            body.bankGegevens = "";
+            body.postcode = "";
+            body.adres = "";
+        } else {
+            // Aanvoerder-specifiek
+            body.naamVanBedrijf = naam;
+            body.kvkNummer = "";
+            body.postcode = "";
+            body.adres = "";
+            body.bedrijfTelefoonnummer = telefoonnummer;
+            body.bedrijfEmail = email;
         }
+
+        const response = await fetch(url, {
+            method: "POST", // GEEN /login endpoint
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+        });
+
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || "Registratie mislukt");
+        }
+
+        return response.json();
     };
 
+
+
+
     const handleRegister = async () => {
-        // Validatie
         if (!email || !paswoord || !confirmPaswoord || !naam || !telefoonnummer) {
-            alert('Vul alle velden in!');
+            alert("Vul alle velden in!");
             return;
         }
 
         if (paswoord !== confirmPaswoord) {
-            alert('Wachtwoorden komen niet overeen!');
+            alert("Wachtwoorden komen niet overeen!");
             return;
         }
 
+        setLoading(true);
+
         try {
             await postAccount();
+            alert("Account succesvol aangemaakt!");
 
-            // Als succesvol, navigeer naar juiste pagina
-            if (rol === 'koper') {
-                navigate('/');
-            } else if (rol === 'verkoper') {
-                navigate('/verkoperDashboard');
-            }
-        } catch (error) {
-            alert('Er ging iets mis bij het aanmaken van je account.');
+            // Navigatie op basis van rol
+            if (rol === "koper") navigate("/");
+            else navigate("/aanvoerder-dashboard");
+        } catch (error: any) {
+            console.error(error);
+            alert(error.message || "Er ging iets mis bij het registreren.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -74,7 +92,6 @@ function Register() {
             <h1 className="register-title">Account aanmaken</h1>
 
             <div className="register-form">
-                {/* Linker kolom */}
                 <div className="register-column-left">
                     <div className="form-group">
                         <p>Naam</p>
@@ -99,10 +116,10 @@ function Register() {
                     </div>
 
                     <div className="form-group">
-                        <p>E-Mail</p>
+                        <p>Email</p>
                         <input
                             type="email"
-                            placeholder="Voer je E-Mail in"
+                            placeholder="Voer je email in"
                             className="input-field-Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -114,23 +131,22 @@ function Register() {
                         <div className="account-type-buttons">
                             <button
                                 type="button"
-                                className={`account-type-btn ${rol === 'koper' ? 'active' : ''}`}
-                                onClick={() => setRol('koper')}
+                                className={`account-type-btn ${rol === "koper" ? "active" : ""}`}
+                                onClick={() => setRol("koper")}
                             >
                                 Koper
                             </button>
                             <button
                                 type="button"
-                                className={`account-type-btn ${rol === 'verkoper' ? 'active' : ''}`}
-                                onClick={() => setRol('verkoper')}
+                                className={`account-type-btn ${rol === "aanvoerder" ? "active" : ""}`}
+                                onClick={() => setRol("aanvoerder")}
                             >
-                                Verkoper
+                                Aanvoerder
                             </button>
                         </div>
                     </div>
                 </div>
 
-                {/* Rechter kolom */}
                 <div className="register-column-right">
                     <div className="form-group">
                         <p>Wachtwoord</p>
@@ -147,20 +163,26 @@ function Register() {
                         <p>Bevestig wachtwoord</p>
                         <input
                             type="password"
-                            placeholder="Voer je wachtwoord opnieuw in"
+                            placeholder="Herhaal je wachtwoord"
                             className="input-field-Password"
                             value={confirmPaswoord}
                             onChange={(e) => setConfirmPaswoord(e.target.value)}
                         />
                     </div>
 
-                    <button className="login-button" onClick={handleRegister}>
-                        Registreren
+                    <button
+                        className="login-button"
+                        onClick={handleRegister}
+                        disabled={loading}
+                    >
+                        {loading ? "Even geduld..." : "Registreren"}
                     </button>
 
                     <div className="login-section">
                         <p>Heb je al een account?</p>
-                        <Link to="/inloggen" className="signup-link">Inloggen</Link>
+                        <Link to="/inloggen" className="signup-link">
+                            Inloggen
+                        </Link>
                     </div>
                 </div>
             </div>

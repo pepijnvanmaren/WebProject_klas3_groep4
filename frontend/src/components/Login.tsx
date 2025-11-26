@@ -1,19 +1,71 @@
-import React, { useState } from "react"; 
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleLogin = () => {
-        if (email && password) {
-            console.log('Inloggen met:', email);
-            // Hier komt de login logica
-        } else {
-            alert('Vul beide velden in!');
+    const handleLogin = async () => {
+        if (!email || !password) {
+            alert("Vul beide velden in!");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+
+            const loginResponse = await fetch("https://localhost:7020/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!loginResponse.ok) {
+                const message = await loginResponse.text();
+                alert(message || "Login mislukt");
+                setLoading(false);
+                return;
+            }
+
+            const meResponse = await fetch("https://localhost:7020/api/auth/me", {
+                method: "GET",
+                credentials: "include"
+            });
+
+            if (!meResponse.ok) {
+                alert("Kon gebruiker niet ophalen");
+                setLoading(false);
+                return;
+            }
+
+            const user = await meResponse.json();
+
+
+            if (user.rol === "Koper") {
+                navigate("/");
+            } else if (user.rol === "Aanvoerder") {
+                navigate("/verkoperDashboard");
+            } else if (user.rol == "Veilingmeester") {
+                navigate("/");  // aanpassen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            } else if (user.rol == "Admin") {
+                navigate("/"); // aanpassen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Er ging iets mis bij het verbinden met de server.");
+        } finally {
+            setLoading(false);
         }
     };
+
 
     return (
         <div className="app-container">
@@ -41,8 +93,12 @@ function Login() {
                 />
             </div>
 
-            <button className="login-button" onClick={handleLogin}>
-                Inloggen
+            <button
+                className="login-button"
+                onClick={handleLogin}
+                disabled={loading}
+            >
+                {loading ? "Even geduld..." : "Inloggen"}
             </button>
 
             <div className="signup-section">
