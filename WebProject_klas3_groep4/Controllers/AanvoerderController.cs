@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebProject_klas3_groep4.models;
 using WebProject_klas3_groep4.DTO;
+using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
     [Route("api/aanvoerders")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class AanvoerderController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -81,6 +83,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ------------------------------------------------------------
         // LOGIN
         // ------------------------------------------------------------
+        [AllowAnonymous]
         [HttpGet("login")]
         public async Task<ActionResult<AanvoerderDto>> Login([FromQuery] string email, [FromQuery] string password)
         {

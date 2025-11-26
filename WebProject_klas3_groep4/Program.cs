@@ -16,28 +16,18 @@ builder.Services.AddControllers()
         opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-// Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "WebProject API",
-        Version = "v1"
-    });
-
-    c.MapType<DateOnly>(() => new OpenApiSchema { Type = "string", Format = "date" });
-    c.MapType<TimeOnly>(() => new OpenApiSchema { Type = "string", Format = "time" });
-});
-
+// ----------------------------------------------------------
 // Database
+// ----------------------------------------------------------
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
         ?? "Server=(localdb)\\mssqllocaldb;Database=WebProject_klas3_groep4;Trusted_Connection=True;")
 );
 
+// ----------------------------------------------------------
 // Identity
+// ----------------------------------------------------------
 builder.Services.AddIdentity<GebruikerDB, IdentityRole<int>>(options =>
 {
     options.Password.RequireDigit = true;
@@ -50,33 +40,84 @@ builder.Services.AddIdentity<GebruikerDB, IdentityRole<int>>(options =>
 .AddEntityFrameworkStores<DatabaseContext>()
 .AddDefaultTokenProviders();
 
+// Dummy email sender (nodig voor MapIdentityApi)
 builder.Services.AddTransient<IEmailSender<GebruikerDB>, DummyEmailSender>();
+
+// ----------------------------------------------------------
+// Authentication — Bearer Token 
+// ----------------------------------------------------------
+builder.Services.AddAuthentication()
+    .AddBearerToken(IdentityConstants.BearerScheme, options =>
+    {
+        options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
+    });
+
+// ----------------------------------------------------------
+// Swagger
+// ----------------------------------------------------------
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "WebProject API",
+        Version = "v1"
+    });
+
+    // Support voor DateOnly / TimeOnly
+    options.MapType<DateOnly>(() => new OpenApiSchema { Type = "string", Format = "date" });
+    options.MapType<TimeOnly>(() => new OpenApiSchema { Type = "string", Format = "time" });
+
+    // Bearer token support
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Voer je Bearer token in.",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            new List<string>()
+        }
+    });
+});
 
 // ----------------------------------------------------------
 // Build app
 // ----------------------------------------------------------
 var app = builder.Build();
 
-// Swagger UI
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebProject API V1");
-    });
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 // ----------------------------------------------------------
-// ROLE SEEDING
+// Identity API Endpoints (login/register/token)
+// ----------------------------------------------------------
+app.MapIdentityApi<GebruikerDB>();
+
+// ----------------------------------------------------------
+// Role Seeding
 // ----------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
@@ -94,38 +135,36 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ----------------------------------------------------------
-// ADMIN USER SEEDING
+// Admin User Seeding
 // ----------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<GebruikerDB>>();
 
-    string adminPassword = "Admin123!"; // >>> In secrets.json plaatsen voor productie <<<
+    string adminPassword = "Admin123!"; // In secrets.json zetten!
 
-    var adminUser = new GebruikerDB
-    {
-        UserName = "adminUser",
-        Email = "admin@example.com",
-        EmailConfirmed = true
-    };
-
-    // Check of admin al bestaat
-    var existingUser = await userManager.FindByNameAsync(adminUser.UserName);
+    var existingUser = await userManager.FindByNameAsync("adminUser");
 
     if (existingUser == null)
     {
+        var adminUser = new GebruikerDB
+        {
+            UserName = "adminUser",
+            Email = "admin@example.com",
+            EmailConfirmed = true
+        };
+
         var createResult = await userManager.CreateAsync(adminUser, adminPassword);
 
         if (createResult.Succeeded)
         {
-            // Voeg toe aan Admin role zoals je slides willen
             await userManager.AddToRoleAsync(adminUser, "Admin");
         }
         else
         {
             foreach (var error in createResult.Errors)
             {
-                Console.WriteLine($"Admin creation error: {error.Description}");
+                Console.WriteLine($"[ADMIN ERROR] {error.Description}");
             }
         }
     }
