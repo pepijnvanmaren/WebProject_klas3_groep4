@@ -23,9 +23,7 @@ namespace WebProject_klas3_groep4
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(
-                    "Server=(localdb)\\mssqllocaldb;Database=WebProject_klas3_groep4;Trusted_Connection=True;"
-                );
+                optionsBuilder.UseSqlServer("Server=CRAPTOP\\SQLEXPRESS01;Database=WebProject_klas3_groep4;Trusted_Connection=True;");
             }
         }
 
