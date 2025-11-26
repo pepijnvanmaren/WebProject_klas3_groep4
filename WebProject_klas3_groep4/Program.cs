@@ -7,17 +7,16 @@ using WebProject_klas3_groep4.models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ------------------------------------------
-// Add Services
-// ------------------------------------------
+// ----------------------------------------------------------
+// Services
+// ----------------------------------------------------------
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>
     {
-        // voorkom object-cycli bij serialisatie (bijv. EF navigation properties)
         opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-// Swagger / OpenAPI
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -27,7 +26,6 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    // Map DateOnly / TimeOnly naar strings
     c.MapType<DateOnly>(() => new OpenApiSchema { Type = "string", Format = "date" });
     c.MapType<TimeOnly>(() => new OpenApiSchema { Type = "string", Format = "time" });
 });
@@ -42,21 +40,24 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 // Identity
 builder.Services.AddIdentity<GebruikerDB, IdentityRole<int>>(options =>
 {
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 6;
 })
+.AddRoles<IdentityRole<int>>()
 .AddEntityFrameworkStores<DatabaseContext>()
 .AddDefaultTokenProviders();
 
-// ------------------------------------------
-// Build App
-// ------------------------------------------
+builder.Services.AddTransient<IEmailSender<GebruikerDB>, DummyEmailSender>();
+
+// ----------------------------------------------------------
+// Build app
+// ----------------------------------------------------------
 var app = builder.Build();
 
-// Developer diagnostics — laat details zien bij runtime-fouten
+// Swagger UI
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -64,7 +65,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebProject API V1");
-        // geen RoutePrefix instellen = standaard /swagger/index.html
     });
 }
 
@@ -75,6 +75,76 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+// ----------------------------------------------------------
+// ROLE SEEDING
+// ----------------------------------------------------------
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
+    string[] roles = { "Admin", "Manager", "Teamlead", "User" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole<int>(role));
+        }
+    }
+}
+
+// ----------------------------------------------------------
+// ADMIN USER SEEDING
+// ----------------------------------------------------------
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<GebruikerDB>>();
+
+    string adminPassword = "Admin123!"; // >>> In secrets.json plaatsen voor productie <<<
+
+    var adminUser = new GebruikerDB
+    {
+        UserName = "adminUser",
+        Email = "admin@example.com",
+        EmailConfirmed = true
+    };
+
+    // Check of admin al bestaat
+    var existingUser = await userManager.FindByNameAsync(adminUser.UserName);
+
+    if (existingUser == null)
+    {
+        var createResult = await userManager.CreateAsync(adminUser, adminPassword);
+
+        if (createResult.Succeeded)
+        {
+            // Voeg toe aan Admin role zoals je slides willen
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+        else
+        {
+            foreach (var error in createResult.Errors)
+            {
+                Console.WriteLine($"Admin creation error: {error.Description}");
+            }
+        }
+    }
+}
+
+app.MapControllers();
 app.Run();
+
+// ----------------------------------------------------------
+// Dummy Email Sender
+// ----------------------------------------------------------
+public class DummyEmailSender : IEmailSender<GebruikerDB>
+{
+    public Task SendConfirmationLinkAsync(GebruikerDB user, string email, string link)
+        => Task.CompletedTask;
+
+    public Task SendPasswordResetLinkAsync(GebruikerDB user, string email, string link)
+        => Task.CompletedTask;
+
+    public Task SendPasswordResetCodeAsync(GebruikerDB user, string email, string code)
+        => Task.CompletedTask;
+}
