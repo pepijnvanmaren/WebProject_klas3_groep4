@@ -1,15 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using WebProject_klas3_groep4;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
+using WebProject_klas3_groep4.DTO;
 
 namespace WebProject_klas3_groep4.Controllers
 {
@@ -28,62 +20,60 @@ namespace WebProject_klas3_groep4.Controllers
             _env = env;
         }
 
-        //Getrequest
+        // GET ALL
         [HttpGet]
-        public ActionResult<IEnumerable<productDB>> GetProducten()
+        public ActionResult<IEnumerable<ProductOutputDto>> GetProducten()
         {
-            return Ok(_context.Producten.ToList());
+            var producten = _context.Producten
+                .Select(p => new ProductOutputDto
+                {
+                    Id = p.ID,
+                    Naam = p.Naam,
+                    Foto = p.Foto,
+                    Beschrijving = p.Beschrijving,
+                    Oogstdatum = p.Oogstdatum,
+                    Potmaat = p.Potmaat,
+                    Gewicht = p.Gewicht,
+                    Steellengte = p.Steellengte,
+                    Hoeveelheid = p.Hoeveelheid,
+                    MinimalePrijs = p.MinimalePrijs
+                })
+                .ToList();
+
+            return Ok(producten);
         }
 
-        //Getrequest (by id) //mag misschien weg?
-        [HttpGet("{ID}")]
-        public ActionResult<productDB> GetProduct(int ID)
+        // GET SINGLE
+        [HttpGet("{id:int}")]
+        public ActionResult<ProductOutputDto> GetProduct(int id)
         {
-            var product = _context.Producten.Find(ID);
+            var product = _context.Producten.Find(id);
             if (product == null)
                 return NotFound();
 
-            return Ok(product);
-        }
-
-        //Model voor product aanmaken
-        public class ProductCreateModel
-        {
-            public string Naam { get; set; }
-            public string Beschrijving { get; set; }
-            [Column(TypeName = "nvarchar(max)")]
-            public IFormFile Foto { get; set; }
-            public DateTime Oogstdatum { get; set; }
-            public int? Potmaat { get; set; } // <-- changed to int?
-            public double Gewicht { get; set; }
-            public double? Steellengte { get; set; }
-            public int Hoeveelheid { get; set; }
-            public int MinimalePrijs { get; set; }
-        }
-
-        //Post voor product
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm] ProductCreateModel model)
-        {
-            //naam niet nullable
-            if (string.IsNullOrWhiteSpace(model.Naam))
-                return BadRequest("Naam is required.");
-
-            //handles foto input
-            string? imageDataUri = null;
-            if (model.Foto != null && model.Foto.Length > 0)
+            var dto = new ProductOutputDto
             {
-                var allowedExt = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-                var ext = Path.GetExtension(model.Foto.FileName).ToLowerInvariant();
-                if (string.IsNullOrEmpty(ext) || Array.IndexOf(allowedExt, ext) < 0)
-                    return BadRequest("Invalid image type.");
+                Id = product.ID,
+                Naam = product.Naam,
+                Foto = product.Foto,
+                Beschrijving = product.Beschrijving,
+                Oogstdatum = product.Oogstdatum,
+                Potmaat = product.Potmaat,
+                Gewicht = product.Gewicht,
+                Steellengte = product.Steellengte,
+                Hoeveelheid = product.Hoeveelheid,
+                MinimalePrijs = product.MinimalePrijs
+            };
 
-                if (!model.Foto.ContentType.StartsWith("image/"))
-                    return BadRequest("Uploaded file is not an image.");
+            return Ok(dto);
+        }
 
-                await using var ms = new MemoryStream();
-                await model.Foto.CopyToAsync(ms);
-                var bytes = ms.ToArray();
+        // CREATE
+        [HttpPost]
+        public ActionResult<ProductOutputDto> PostProduct([FromBody] ProductCreateDto dto)
+        {
+            if (dto == null)
+                return BadRequest();
 
                 if (bytes.LongLength > 10 * 1024 * 1024) // 10 MB limit
                     return BadRequest("Image too large. Max 10 MB.");
@@ -124,14 +114,28 @@ namespace WebProject_klas3_groep4.Controllers
             _context.product.Add(product);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetProduct), new { ID = product.ID }, product);
+            var outDto = new ProductOutputDto
+            {
+                Id = product.ID,
+                Naam = product.Naam,
+                Foto = product.Foto,
+                Beschrijving = product.Beschrijving,
+                Oogstdatum = product.Oogstdatum,
+                Potmaat = product.Potmaat,
+                Gewicht = product.Gewicht,
+                Steellengte = product.Steellengte,
+                Hoeveelheid = product.Hoeveelheid,
+                MinimalePrijs = product.MinimalePrijs
+            };
+
+            return CreatedAtAction(nameof(GetProduct), new { id = product.ID }, outDto);
         }
 
-        //Putrequest
-        [HttpPut("{ID}")]
-        public ActionResult<productDB> PutProduct(int ID, [FromBody] ProductDto dto)
+        // UPDATE
+        [HttpPut("{id:int}")]
+        public ActionResult<ProductOutputDto> PutProduct(int id, [FromBody] ProductUpdateDto dto)
         {
-            var product = _context.Producten.Find(ID);
+            var product = _context.Producten.Find(id);
             if (product == null)
                 return NotFound();
 
@@ -146,14 +150,29 @@ namespace WebProject_klas3_groep4.Controllers
             product.MinimalePrijs = dto.MinimalePrijs;
 
             _context.SaveChanges();
-            return Ok(product);
+
+            var outDto = new ProductOutputDto
+            {
+                Id = product.ID,
+                Naam = product.Naam,
+                Foto = product.Foto,
+                Beschrijving = product.Beschrijving,
+                Oogstdatum = product.Oogstdatum,
+                Potmaat = product.Potmaat,
+                Gewicht = product.Gewicht,
+                Steellengte = product.Steellengte,
+                Hoeveelheid = product.Hoeveelheid,
+                MinimalePrijs = product.MinimalePrijs
+            };
+
+            return Ok(outDto);
         }
 
-        // DELETE product
-        [HttpDelete("{ID}")]
-        public ActionResult<productDB> DeleteProduct(int ID)
+        // DELETE
+        [HttpDelete("{id:int}")]
+        public ActionResult DeleteProduct(int id)
         {
-            var product = _context.product.Find(ID);
+            var product = _context.Producten.Find(id);
             if (product == null)
                 return NotFound();
 

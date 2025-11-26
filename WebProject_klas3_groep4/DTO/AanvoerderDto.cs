@@ -1,0 +1,44 @@
+namespace WebProject_klas3_groep4.DTO
+{
+    public class AanvoerderDto
+    {
+        public int Id { get; set; }
+        public string UserName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
+        public string? KvkNummer { get; set; }
+        public string? NaamVanBedrijf { get; set; }
+        public string? Postcode { get; set; }
+        public string? Adres { get; set; }
+        public string? BedrijfTelefoonnummer { get; set; }
+        public string? BedrijfEmail { get; set; }
+        public int ProductCount { get; set; }
+    }
+
+    public class AanvoerderCreateDto
+    {
+        public string UserName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
+        public string Password { get; set; } = null!;
+        public string? KvkNummer { get; set; }
+        public string? NaamVanBedrijf { get; set; }
+        public string? Postcode { get; set; }
+        public string? Adres { get; set; }
+        public string? BedrijfTelefoonnummer { get; set; }
+        public string? BedrijfEmail { get; set; }
+    }
+
+    public class AanvoerderUpdateDto
+    {
+        public string UserName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
+        public string? KvkNummer { get; set; }
+        public string? NaamVanBedrijf { get; set; }
+        public string? Postcode { get; set; }
+        public string? Adres { get; set; }
+        public string? BedrijfTelefoonnummer { get; set; }
+        public string? BedrijfEmail { get; set; }
+    }
+}

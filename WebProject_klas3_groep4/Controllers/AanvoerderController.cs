@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
+using WebProject_klas3_groep4.DTO;
 
 namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/aanvoerders")]
     public class AanvoerderController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -18,45 +19,106 @@ namespace WebProject_klas3_groep4.Controllers
             _userManager = userManager;
         }
 
+        // ------------------------------------------------------------
+        // GET ALL
+        // ------------------------------------------------------------
         [HttpGet]
-        public ActionResult<IEnumerable<GebruikerDB>> GetAanvoerders()
+        public async Task<ActionResult<IEnumerable<AanvoerderDto>>> GetAanvoerders()
         {
-            var aanvoerders = _context.Gebruikers
+            var aanvoerders = await _context.Gebruikers
                 .Where(u => u.Rol == "Aanvoerder")
                 .Include(u => u.Producten)
-                .ToList();
+                .Select(a => new AanvoerderDto
+                {
+                    Id = a.Id,
+                    UserName = a.UserName,
+                    Email = a.Email,
+                    PhoneNumber = a.PhoneNumber,
+                    KvkNummer = a.KvkNummer,
+                    NaamVanBedrijf = a.NaamVanBedrijf,
+                    Postcode = a.Postcode,
+                    Adres = a.Adres,
+                    BedrijfTelefoonnummer = a.BedrijfTelefoonnummer,
+                    BedrijfEmail = a.BedrijfEmail,
+                    ProductCount = a.Producten.Count
+                })
+                .ToListAsync();
+
             return Ok(aanvoerders);
         }
 
+        // ------------------------------------------------------------
+        // GET SINGLE
+        // ------------------------------------------------------------
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GebruikerDB>> GetAanvoerder(int id)
+        public async Task<ActionResult<AanvoerderDto>> GetAanvoerder(int id)
         {
-            var aanvoerder = await _context.Gebruikers
+            var a = await _context.Gebruikers
                 .Include(u => u.Producten)
                 .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Aanvoerder");
 
-            if (aanvoerder == null)
+            if (a == null)
                 return NotFound();
 
-            return Ok(aanvoerder);
+            var dto = new AanvoerderDto
+            {
+                Id = a.Id,
+                UserName = a.UserName,
+                Email = a.Email,
+                PhoneNumber = a.PhoneNumber,
+                KvkNummer = a.KvkNummer,
+                NaamVanBedrijf = a.NaamVanBedrijf,
+                Postcode = a.Postcode,
+                Adres = a.Adres,
+                BedrijfTelefoonnummer = a.BedrijfTelefoonnummer,
+                BedrijfEmail = a.BedrijfEmail,
+                ProductCount = a.Producten.Count
+            };
+
+            return Ok(dto);
         }
 
+        // ------------------------------------------------------------
+        // LOGIN
+        // ------------------------------------------------------------
         [HttpGet("login")]
-        public async Task<ActionResult<GebruikerDB>> Login([FromQuery] string email, [FromQuery] string password)
+        public async Task<ActionResult<AanvoerderDto>> Login([FromQuery] string email, [FromQuery] string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
+
             if (user == null || user.Rol != "Aanvoerder")
                 return NotFound();
 
-            var isValid = await _userManager.CheckPasswordAsync(user, password);
-            if (!isValid)
+            var valid = await _userManager.CheckPasswordAsync(user, password);
+
+            if (!valid)
                 return Unauthorized();
 
-            return Ok(user);
+            await _context.Entry(user).Collection(u => u.Producten).LoadAsync();
+
+            var dto = new AanvoerderDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                KvkNummer = user.KvkNummer,
+                NaamVanBedrijf = user.NaamVanBedrijf,
+                Postcode = user.Postcode,
+                Adres = user.Adres,
+                BedrijfTelefoonnummer = user.BedrijfTelefoonnummer,
+                BedrijfEmail = user.BedrijfEmail,
+                ProductCount = user.Producten.Count
+            };
+
+            return Ok(dto);
         }
 
+        // ------------------------------------------------------------
+        // CREATE
+        // ------------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult<GebruikerDB>> PostAanvoerder([FromBody] AanvoerderCreateDto dto)
+        public async Task<ActionResult<AanvoerderDto>> PostAanvoerder([FromBody] AanvoerderCreateDto dto)
         {
             if (dto == null)
                 return BadRequest();
@@ -80,70 +142,82 @@ namespace WebProject_klas3_groep4.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return CreatedAtAction(nameof(GetAanvoerder), new { id = aanvoerder.Id }, aanvoerder);
+            var returnDto = new AanvoerderDto
+            {
+                Id = aanvoerder.Id,
+                UserName = aanvoerder.UserName,
+                Email = aanvoerder.Email,
+                PhoneNumber = aanvoerder.PhoneNumber,
+                KvkNummer = aanvoerder.KvkNummer,
+                NaamVanBedrijf = aanvoerder.NaamVanBedrijf,
+                Postcode = aanvoerder.Postcode,
+                Adres = aanvoerder.Adres,
+                BedrijfTelefoonnummer = aanvoerder.BedrijfTelefoonnummer,
+                BedrijfEmail = aanvoerder.BedrijfEmail,
+                ProductCount = 0
+            };
+
+            return CreatedAtAction(nameof(GetAanvoerder), new { id = aanvoerder.Id }, returnDto);
         }
 
+        // ------------------------------------------------------------
+        // UPDATE
+        // ------------------------------------------------------------
         [HttpPut("{id}")]
-        public async Task<ActionResult<GebruikerDB>> PutAanvoerder(int id, [FromBody] AanvoerderUpdateDto dto)
+        public async Task<ActionResult<AanvoerderDto>> PutAanvoerder(int id, [FromBody] AanvoerderUpdateDto dto)
         {
-            var aanvoerder = await _context.Gebruikers
+            var a = await _context.Gebruikers
+                .Include(u => u.Producten)
                 .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Aanvoerder");
 
-            if (aanvoerder == null)
+            if (a == null)
                 return NotFound();
 
-            aanvoerder.UserName = dto.UserName;
-            aanvoerder.Email = dto.Email;
-            aanvoerder.PhoneNumber = dto.PhoneNumber;
-            aanvoerder.KvkNummer = dto.KvkNummer;
-            aanvoerder.NaamVanBedrijf = dto.NaamVanBedrijf;
-            aanvoerder.Postcode = dto.Postcode;
-            aanvoerder.Adres = dto.Adres;
-            aanvoerder.BedrijfTelefoonnummer = dto.BedrijfTelefoonnummer;
-            aanvoerder.BedrijfEmail = dto.BedrijfEmail;
+            a.UserName = dto.UserName;
+            a.Email = dto.Email;
+            a.PhoneNumber = dto.PhoneNumber;
+            a.KvkNummer = dto.KvkNummer;
+            a.NaamVanBedrijf = dto.NaamVanBedrijf;
+            a.Postcode = dto.Postcode;
+            a.Adres = dto.Adres;
+            a.BedrijfTelefoonnummer = dto.BedrijfTelefoonnummer;
+            a.BedrijfEmail = dto.BedrijfEmail;
 
-            await _userManager.UpdateAsync(aanvoerder);
-            return Ok(aanvoerder);
+            await _userManager.UpdateAsync(a);
+
+            var dtoReturn = new AanvoerderDto
+            {
+                Id = a.Id,
+                UserName = a.UserName,
+                Email = a.Email,
+                PhoneNumber = a.PhoneNumber,
+                KvkNummer = a.KvkNummer,
+                NaamVanBedrijf = a.NaamVanBedrijf,
+                Postcode = a.Postcode,
+                Adres = a.Adres,
+                BedrijfTelefoonnummer = a.BedrijfTelefoonnummer,
+                BedrijfEmail = a.BedrijfEmail,
+                ProductCount = a.Producten.Count
+            };
+
+            return Ok(dtoReturn);
         }
 
+        // ------------------------------------------------------------
+        // DELETE
+        // ------------------------------------------------------------
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAanvoerder(int id)
         {
-            var aanvoerder = await _context.Gebruikers
+            var a = await _context.Gebruikers
                 .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Aanvoerder");
 
-            if (aanvoerder == null)
+            if (a == null)
                 return NotFound();
 
-            await _userManager.DeleteAsync(aanvoerder);
+            await _userManager.DeleteAsync(a);
+
             return NoContent();
         }
-    }
-
-    public class AanvoerderCreateDto
-    {
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Password { get; set; }
-        public string? KvkNummer { get; set; }
-        public string? NaamVanBedrijf { get; set; }
-        public string? Postcode { get; set; }
-        public string? Adres { get; set; }
-        public string? BedrijfTelefoonnummer { get; set; }
-        public string? BedrijfEmail { get; set; }
-    }
-
-    public class AanvoerderUpdateDto
-    {
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string? KvkNummer { get; set; }
-        public string? NaamVanBedrijf { get; set; }
-        public string? Postcode { get; set; }
-        public string? Adres { get; set; }
-        public string? BedrijfTelefoonnummer { get; set; }
-        public string? BedrijfEmail { get; set; }
     }
 }

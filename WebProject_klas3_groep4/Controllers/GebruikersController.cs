@@ -1,11 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
-    [Route("api/test")]
+    [Route("api/gebruikers")]
     public class GebruikersController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -17,23 +19,53 @@ namespace WebProject_klas3_groep4.Controllers
             _userManager = userManager;
         }
 
+        // ------------------------------------------------------------
+        // GET ALL
+        // ------------------------------------------------------------
         [HttpGet]
-        public ActionResult<IEnumerable<GebruikerDB>> GetGebruikers()
+        public async Task<ActionResult<IEnumerable<GebruikerDto>>> GetGebruikers()
         {
-            return Ok(_context.Gebruikers.ToList());
+            var gebruikers = await _context.Gebruikers
+                .Select(g => new GebruikerDto
+                {
+                    Id = g.Id,
+                    UserName = g.UserName,
+                    Email = g.Email,
+                    PhoneNumber = g.PhoneNumber,
+                    Rol = g.Rol
+                })
+                .ToListAsync();
+
+            return Ok(gebruikers);
         }
 
+        // ------------------------------------------------------------
+        // GET SINGLE
+        // ------------------------------------------------------------
         [HttpGet("{id}")]
-        public async Task<ActionResult<GebruikerDB>> GetGebruiker(int id)
+        public async Task<ActionResult<GebruikerDto>> GetGebruiker(int id)
         {
             var gebruiker = await _userManager.FindByIdAsync(id.ToString());
             if (gebruiker == null)
                 return NotFound();
-            return Ok(gebruiker);
+
+            var dto = new GebruikerDto
+            {
+                Id = gebruiker.Id,
+                UserName = gebruiker.UserName,
+                Email = gebruiker.Email,
+                PhoneNumber = gebruiker.PhoneNumber,
+                Rol = gebruiker.Rol
+            };
+
+            return Ok(dto);
         }
 
+        // ------------------------------------------------------------
+        // CREATE
+        // ------------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult<GebruikerDB>> PostGebruiker([FromBody] GebruikerCreateDto dto)
+        public async Task<ActionResult<GebruikerDto>> PostGebruiker([FromBody] GebruikerCreateDto dto)
         {
             if (dto == null)
                 return BadRequest();
@@ -51,11 +83,23 @@ namespace WebProject_klas3_groep4.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return CreatedAtAction(nameof(GetGebruiker), new { id = gebruiker.Id }, gebruiker);
+            var returnDto = new GebruikerDto
+            {
+                Id = gebruiker.Id,
+                UserName = gebruiker.UserName,
+                Email = gebruiker.Email,
+                PhoneNumber = gebruiker.PhoneNumber,
+                Rol = gebruiker.Rol
+            };
+
+            return CreatedAtAction(nameof(GetGebruiker), new { id = gebruiker.Id }, returnDto);
         }
 
+        // ------------------------------------------------------------
+        // UPDATE
+        // ------------------------------------------------------------
         [HttpPut("{id}")]
-        public async Task<ActionResult<GebruikerDB>> PutGebruiker(int id, [FromBody] GebruikerUpdateDto dto)
+        public async Task<ActionResult<GebruikerDto>> PutGebruiker(int id, [FromBody] GebruikerUpdateDto dto)
         {
             var gebruiker = await _userManager.FindByIdAsync(id.ToString());
             if (gebruiker == null)
@@ -66,20 +110,32 @@ namespace WebProject_klas3_groep4.Controllers
             gebruiker.PhoneNumber = dto.PhoneNumber;
 
             var result = await _userManager.UpdateAsync(gebruiker);
-
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            // Als password moet worden gewijzigd
             if (!string.IsNullOrEmpty(dto.NewPassword))
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(gebruiker);
-                await _userManager.ResetPasswordAsync(gebruiker, token, dto.NewPassword);
+                var passwordResult = await _userManager.ResetPasswordAsync(gebruiker, token, dto.NewPassword);
+                if (!passwordResult.Succeeded)
+                    return BadRequest(passwordResult.Errors);
             }
 
-            return Ok(gebruiker);
+            var returnDto = new GebruikerDto
+            {
+                Id = gebruiker.Id,
+                UserName = gebruiker.UserName,
+                Email = gebruiker.Email,
+                PhoneNumber = gebruiker.PhoneNumber,
+                Rol = gebruiker.Rol
+            };
+
+            return Ok(returnDto);
         }
 
+        // ------------------------------------------------------------
+        // DELETE
+        // ------------------------------------------------------------
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteGebruiker(int id)
         {
@@ -90,23 +146,5 @@ namespace WebProject_klas3_groep4.Controllers
             await _userManager.DeleteAsync(gebruiker);
             return NoContent();
         }
-    }
-
-    // DTOs voor veilige data transfer
-    public class GebruikerCreateDto
-    {
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Password { get; set; }
-        public string? Rol { get; set; }
-    }
-
-    public class GebruikerUpdateDto
-    {
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string? NewPassword { get; set; }
     }
 }
