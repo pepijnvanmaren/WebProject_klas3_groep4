@@ -32,6 +32,12 @@ function SellerDashboard() {
                         nep tekst
                     </p>
                     <h1>
+                        Oogstdatum
+                    </h1>
+                    <p className="input-field-Naam">
+                        nep tekst
+                    </p>
+                    <h1>
                         Product foto
                     </h1>
                     <img src="" alt="Foto van het gekozen product">
