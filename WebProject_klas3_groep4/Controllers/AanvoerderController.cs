@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebProject_klas3_groep4.models;
+using System.Data;
 using WebProject_klas3_groep4.DTO;
+using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
 {
@@ -76,6 +78,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ------------------------------------------------------------
         // CREATE
         // ------------------------------------------------------------
+       [ Authorize(Roles = "Aanvoerder")]
         [HttpPost]
         public async Task<ActionResult<AanvoerderOutputDto>> PostAanvoerder([FromBody] AanvoerderCreateDto dto)
         {
