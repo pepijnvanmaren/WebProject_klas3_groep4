@@ -27,53 +27,51 @@ function SellerDashboard() {
 
     //Handle aanmaken product
     const handleCreateProduct = async () => {
-        //Validatie van het oogstdatum veld
+        // Validatie
         if (oogstdatum && oogstdatum > localToday) {
             setOogstError("Oogstdatum mag niet in de toekomst liggen.");
             return;
         }
 
-        //Voeg alle data van elk veld toe aan een object
-        //Dit stuk is voor de foto alleen.
-        const form = new FormData();
-        form.append("naam", naam);
-        form.append("beschrijving", beschrijving);
-        if (fotoFile) form.append("foto", fotoFile);
+        // JSON payload maken
+        const payload = {
+            naam,
+            beschrijving,
+            foto: fotoFile ? fotoFile.name : null,
+            oogstdatum,
+            potmaat: potmaat ? Number(potmaat) : null,
+            gewicht: gewicht ? Number(gewicht) : null,
+            steellengte: steellengte ? Number(steellengte) : null,
+            hoeveelheid: hoeveelheid ? Number(hoeveelheid) : null,
+            minimalePrijs: minimalePrijs ? Number(minimalePrijs) : null
+        };
 
-        //Voeg alle data van elk veld toe aan een object
-        //Dit stuk is voor de andere velden
-        form.append("oogstdatum", oogstdatum);
-        form.append("potmaat", potmaat);
-        form.append("gewicht", gewicht);
-        form.append("steellengte", steellengte);
-        form.append("hoeveelheid", hoeveelheid);
-        form.append("minimalePrijs", minimalePrijs);
-
-        //Dit stuurt het gemaakte object van hierboven als Post naar de backend API.
         try {
             const resp = await fetch("https://localhost:7020/api/Product", {
                 method: "POST",
-                body: form
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
             });
 
-            //Als het niet ok is stuur error text
             if (!resp.ok) {
                 const text = await resp.text();
                 console.error("Upload failed:", text);
                 alert("Upload failed: " + resp.statusText);
                 return;
             }
-            //Als wel ok is stuur dan een response text
+
             const data = await resp.json();
             console.log("Server response:", data);
             alert("Uw product is gemaakt.");
 
-        //Catch Error
         } catch (err) {
             console.error(err);
             alert("Er is iets misgegaan met het versturen.");
         }
     };
+
 
     //Handelt de Terug knop
     const handleGoBack = () => navigate('/verkoperDashboard');

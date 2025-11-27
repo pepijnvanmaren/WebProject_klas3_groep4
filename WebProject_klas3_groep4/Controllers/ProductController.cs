@@ -134,7 +134,7 @@ namespace WebProject_klas3_groep4.Controllers
             if (dto.Hoeveelheid.HasValue) p.Hoeveelheid = dto.Hoeveelheid.Value;
             if (dto.MinimalePrijs.HasValue) p.MinimalePrijs = dto.MinimalePrijs.Value;
 
-            await _context.SaveChangesAsync(); // ✅ werkt nu
+            await _context.SaveChangesAsync();
 
             var outDto = new ProductOutputDto
             {
