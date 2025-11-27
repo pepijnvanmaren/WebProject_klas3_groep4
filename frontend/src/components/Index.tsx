@@ -151,7 +151,7 @@ function Index() {
             <div className="about-us">
                 <h2>Over Onze Bloemenveiling</h2>
                 <p>
-                    Bij Go Roos Yourself B.V. bieden we dagelijks verse bloemen van topkwaliteit
+                    Bij Go Roos B.V. bieden we dagelijks verse bloemen van topkwaliteit
                     aan, rechtstreeks van de kweker. Onze veiling brengt kwekers en bloemliefhebbers
                     samen in een dynamische, transparante omgeving. Van prachtige rozen tot
                     kleurrijke tulpen: elke bloem vindt hier zijn weg naar een liefdevol thuis.

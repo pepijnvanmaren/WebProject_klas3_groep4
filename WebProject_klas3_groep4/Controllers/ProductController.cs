@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
 using WebProject_klas3_groep4.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebProject_klas3_groep4.Controllers
 {
@@ -74,6 +75,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // CREATE
         // ---------------------------------------------------------
+        //[Authorize(Roles ="Aanvoerder")]
         [HttpPost]
         public async Task<ActionResult<ProductOutputDto>> PostProduct([FromBody] ProductCreateDto dto)
         {
