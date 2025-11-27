@@ -1,5 +1,5 @@
 import "../styles/ProductPlaatsenDashboard.css";
-import { useNavigate } from 'react-router-dom';
+import { Navigate, Route, useNavigate } from 'react-router-dom';
 import { useState } from "react";
 
 function SellerDashboard() {
@@ -65,6 +65,7 @@ function SellerDashboard() {
             const data = await resp.json();
             console.log("Server response:", data);
             alert("Uw product is gemaakt.");
+            navigate("/VerkoperDashboard")
 
         } catch (err) {
             console.error(err);

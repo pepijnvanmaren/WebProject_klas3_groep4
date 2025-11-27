@@ -21,6 +21,7 @@ namespace WebProject_klas3_groep4.DTO
         public string Email { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;
         public string Rol { get; set; } = "Koper";
+        public string Password { get; set; } = null!;
         public string? KvkNummer { get; set; }
         public string? NaamVanBedrijf { get; set; }
         public string? Postcode { get; set; }

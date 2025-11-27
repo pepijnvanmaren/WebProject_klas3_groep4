@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
+    [Authorize(Roles ="Aanvoerder")]
     [Route("api/aanvoerders")]
     public class AanvoerderController : ControllerBase
     {
@@ -77,8 +77,8 @@ namespace WebProject_klas3_groep4.Controllers
 
         // ------------------------------------------------------------
         // CREATE
-        // ------------------------------------------------------------
-       [ Authorize(Roles = "Aanvoerder")]
+
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<AanvoerderOutputDto>> PostAanvoerder([FromBody] AanvoerderCreateDto dto)
         {
