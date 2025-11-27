@@ -20,6 +20,11 @@
     margin-top: 14em;
 }
 
+.BloemFoto {
+    width: 14rem;
+    height: 14rem;
+}
+
 .pt_dashboard-box {
     border: 1px solid #ccc;
     border-radius: 12px;

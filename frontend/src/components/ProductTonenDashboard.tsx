@@ -1,5 +1,6 @@
 import '../styles/ProductTonenDashboard.css';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/tulp.png';
 
 function SellerDashboard() {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ function SellerDashboard() {
     return (
         <>
             <main className="dashboard-container">
-                <h1 className="title">Product</h1>
+                <h1 className="title">Productinformatie</h1>
                 <div className="pt_dashboard-box ">
                     {/*Rechts*/}
                     <div className="PT-box">
@@ -23,24 +24,18 @@ function SellerDashboard() {
                         Product naam
                     </h1>
                     <p className="input-field-Naam">
-                        nep tekst
+                        Tulp Royal Ruby
                     </p>
                     <h1>
                         Product infomatie
                     </h1>
                     <p   className="input-field-infomatie">
-                        nep tekst
-                    </p>
-                    <h1>
-                        Oogstdatum
-                    </h1>
-                    <p className="input-field-Naam">
-                        nep tekst
+                            Breng een vleugje voorjaar in huis of tuin met de prachtige Tulp Royal Ruby. Deze klassieke tulp valt op door haar diepe robijnrode kleur en perfecte, slanke bloemvorm. De stevige stelen maken haar ideaal voor zowel de tuin als in een vaas: ze blijft lang mooi en rechtop staan.
                     </p>
                     <h1>
                         Product foto
                     </h1>
-                    <img src="" alt="Foto van het gekozen product">
+                        <img className="BloemFoto" src={logo} alt="Foto van het gekozen product">
                     </img>
                     </div>
 
@@ -50,37 +45,37 @@ function SellerDashboard() {
                             Oogstdatum
                         </h1>
                         <p className="input-field-Naam">
-                            nep tekst
+                            13/04/2025
                         </p>
                         <h1>
                             Potmaat (cm)
                         </h1>
                         <p className="input-field-Naam">
-                            nep tekst
+                            40 cm
                         </p>
                         <h1>
                             Gewicht (kg)
                         </h1>
                         <p className="input-field-Naam">
-                            nep tekst
+                            5 kg
                         </p>
                         <h1>
                             Steellengte (cm)
                         </h1>
                         <p className="input-field-Naam">
-                            nep tekst
+                            5 cm
                         </p>
                         <h1>
                             Hoeveelheid
                         </h1>
                         <p className="input-field-Naam">
-                            nep tekst
+                            20
                         </p>
                         <h1>
                             Minimale prijs
                         </h1>
                         <p className="input-field-Naam">
-                            nep tekst
+                            5 euro
                         </p>
                     </div>
                 </div>
