@@ -3,13 +3,50 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    height: 100vh;
     font-family: "Inter", sans-serif;
     margin-top: 8em;
+    width: 100%;
 }
 
+.about-us {
+    width: 40%;
+    margin-top: 3em;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2em;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2em;
+}
+
+    .about-us h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1em;
+    }
+
+    .about-us p {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #555;
+    }
+
+.scroll-button {
+    margin-top: 1.5em;
+    padding: 10px 20px;
+    background-color: #698a55;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+    .scroll-button:hover {
+        background-color: #9eba8d;
+    }
+
 .container {
-    position: relative; /* Needed for absolute-positioned progress bar */
+    position: relative;
     display: flex;
     height: 200px;
     width: 80%;
@@ -36,6 +73,10 @@
         border-right: none;
     }
 
+.button, .scroll-button {
+    transition: all 0.3s ease;
+}
+
 .button {
     padding: 10px 20px;
     background-color: #698a55;
@@ -52,9 +93,11 @@
     }
 
 .page-title {
-    text-align: center;
-    font-size: 2rem;
-    color: #333;
+    width: 80%;
+    text-align: left;
+    margin-left: 2em;
+    margin-right: 0;
+    margin-bottom: -1em;
     margin-top: 1em;
 }
 
@@ -63,21 +106,23 @@
     width: 10em;
 }
 
-/* Price box */
+    .Roses:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+    }
+
 .box-price {
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-/* Price and button on one line */
 .price-row {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Product description under "Rozen" */
 .box-description {
     flex-direction: column;
     align-items: center;
@@ -99,7 +144,6 @@
     padding: 0 0.5em;
 }
 
-/* Integrated progress bar (inside container at bottom) */
 .integrated-bar {
     position: absolute;
     bottom: 0;
@@ -114,4 +158,11 @@
 .progress-bar {
     height: 100%;
     border-radius: 0 0 0 12px;
+}
+
+.container-current {
+    border: 2px solid #698a55;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    background-color: #f9f9f9;
 }
