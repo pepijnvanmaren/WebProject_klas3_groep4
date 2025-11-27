@@ -1,6 +1,7 @@
 import '../styles/ProductTonenDashboard.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/tulp.png';
+import { useEffect } from 'react';
 
 function SellerDashboard() {
     const navigate = useNavigate();
@@ -12,6 +13,10 @@ function SellerDashboard() {
     const ProductGemaaktAlert = () => {
         alert("Uw prodcut is gemaakt.");
     }
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
 
     return (
         <>

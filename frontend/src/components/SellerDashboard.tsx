@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SellerDashboard.css';
+import { useEffect } from 'react';
 
 const apiBase = 'https://localhost:5174';
 
@@ -8,6 +9,10 @@ function SellerDashboard() {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
 
     const ProductTonenKnop = () => {
         navigate('/ProductDashboard') 

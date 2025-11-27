@@ -8,7 +8,6 @@ import ProductToneneDashboardPage from "./pages/ProductToneneDashboard.jsx";
 import ProductPlaatsenDashboardPage from "./pages/ProductPlaatsenDashboard.jsx";
 import PrivacyPage from "./pages/PrivacyPage.jsx";
 
-
 function App() {
     return (
         <BrowserRouter>
