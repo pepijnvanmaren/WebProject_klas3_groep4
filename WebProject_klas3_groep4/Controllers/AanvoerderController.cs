@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.models;
+using WebProject_klas3_groep4.DTO;
 
 namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
     [Route("api/aanvoerders")]
-    [Authorize] // Verwijder AuthenticationSchemes = "Bearer"
     public class AanvoerderController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -21,47 +19,134 @@ namespace WebProject_klas3_groep4.Controllers
             _userManager = userManager;
         }
 
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<ActionResult<AanvoerderDto>> Login([FromBody] LoginDto dto)
+        // ------------------------------------------------------------
+        // GET ALL
+        // ------------------------------------------------------------
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<GebruikerDto>>> GetAanvoerders()
         {
-            if (dto == null)
-                return BadRequest("Login data is leeg.");
+            var aanvoerders = await _context.Gebruikers
+                .Where(u => u.Rol == "Aanvoerder")
+                .Select(u => new GebruikerDto
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                    Rol = u.Rol
+                })
+                .ToListAsync();
 
-            var user = await _userManager.FindByEmailAsync(dto.Email);
-
-            if (user == null || user.Rol != "Aanvoerder")
-                return NotFound("Gebruiker niet gevonden of verkeerde rol.");
-
-            var valid = await _userManager.CheckPasswordAsync(user, dto.Password);
-            if (!valid)
-                return Unauthorized("Ongeldig wachtwoord.");
-
-            await _context.Entry(user).Collection(u => u.Producten).LoadAsync();
-
-            // Login via Identity cookies
-            var signInManager = HttpContext.RequestServices.GetRequiredService<SignInManager<GebruikerDB>>();
-            await signInManager.SignInAsync(user, isPersistent: true);
-
-            var result = new AanvoerderDto
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                KvkNummer = user.KvkNummer,
-                NaamVanBedrijf = user.NaamVanBedrijf,
-                Postcode = user.Postcode,
-                Adres = user.Adres,
-                BedrijfTelefoonnummer = user.BedrijfTelefoonnummer,
-                BedrijfEmail = user.BedrijfEmail,
-                ProductCount = user.Producten.Count
-            };
-
-            return Ok(result);
+            return Ok(aanvoerders);
         }
 
+        // ------------------------------------------------------------
+        // GET SINGLE
+        // ------------------------------------------------------------
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<GebruikerDto>> GetAanvoerder(int id)
+        {
+            var aanvoerder = await _userManager.FindByIdAsync(id.ToString());
 
-        // Overige endpoints (GET, POST, PUT, DELETE) blijven hetzelfde, [Authorize] gebruiken
+            if (aanvoerder == null || aanvoerder.Rol != "aanvoerder")
+                return NotFound();
+
+            var dto = new GebruikerDto
+            {
+                Id = aanvoerder.Id,
+                UserName = aanvoerder.UserName,
+                Email = aanvoerder.Email,
+                PhoneNumber = aanvoerder.PhoneNumber,
+                Rol = aanvoerder.Rol
+            };
+
+            return Ok(dto);
+        }
+
+        // ------------------------------------------------------------
+        // CREATE
+        // ------------------------------------------------------------
+        [HttpPost]
+        public async Task<ActionResult<GebruikerDto>> PostAanvoerder([FromBody] AanvoerderCreateDto dto)
+        {
+            if (dto == null)
+                return BadRequest();
+
+            var aanvoerder = new GebruikerDB
+            {
+                UserName = dto.UserName,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Rol = "Aanvoerder",
+                Adres = dto.Adres,
+                Postcode = dto.Postcode
+            };
+
+            var result = await _userManager.CreateAsync(aanvoerder, dto.Password);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            var outDto = new GebruikerDto
+            {
+                Id = aanvoerder.Id,
+                UserName = aanvoerder.UserName,
+                Email = aanvoerder.Email,
+                PhoneNumber = aanvoerder.PhoneNumber,
+                Rol = aanvoerder.Rol
+            };
+
+            return CreatedAtAction(nameof(GetAanvoerder), new { id = aanvoerder.Id }, outDto);
+        }
+
+        // ------------------------------------------------------------
+        // UPDATE
+        // ------------------------------------------------------------
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<GebruikerDto>> PutAanvoerder(int id, [FromBody] AanvoerderUpdateDto dto)
+        {
+            var aanvoerder = await _userManager.FindByIdAsync(id.ToString());
+
+            if (aanvoerder == null || aanvoerder.Rol != "Aanvoerder")
+                return NotFound();
+
+            aanvoerder.UserName = dto.UserName;
+            aanvoerder.Email = dto.Email;
+            aanvoerder.PhoneNumber = dto.PhoneNumber;
+            aanvoerder.Adres = dto.Adres;
+            aanvoerder.Postcode = dto.Postcode;
+
+            var result = await _userManager.UpdateAsync(aanvoerder);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            var returnDto = new GebruikerDto
+            {
+                Id = aanvoerder.Id,
+                UserName = aanvoerder.UserName,
+                Email = aanvoerder.Email,
+                PhoneNumber = aanvoerder.PhoneNumber,
+                Rol = aanvoerder.Rol
+            };
+
+            return Ok(returnDto);
+        }
+
+        // ------------------------------------------------------------
+        // DELETE
+        // ------------------------------------------------------------
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteAanvoerder(int id)
+        {
+            var aanvoerder = await _userManager.FindByIdAsync(id.ToString());
+
+            if (aanvoerder == null || aanvoerder.Rol != "Aanvoerder")
+                return NotFound();
+
+            await _userManager.DeleteAsync(aanvoerder);
+
+            return NoContent();
+        }
     }
 }
