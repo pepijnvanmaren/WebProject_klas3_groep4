@@ -78,6 +78,7 @@ namespace WebProject_klas3_groep4.Controllers
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
                 Rol = "Koper",
+
                 BankGegevens = dto.BankGegevens,
                 Adres = dto.Adres,
                 Postcode = dto.Postcode

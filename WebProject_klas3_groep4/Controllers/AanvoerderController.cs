@@ -23,17 +23,22 @@ namespace WebProject_klas3_groep4.Controllers
         // GET ALL
         // ------------------------------------------------------------
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GebruikerDto>>> GetAanvoerders()
+        public async Task<ActionResult<IEnumerable<AanvoerderOutputDto>>> GetAanvoerders()
         {
             var aanvoerders = await _context.Gebruikers
                 .Where(u => u.Rol == "Aanvoerder")
-                .Select(u => new GebruikerDto
+                .Select(u => new AanvoerderOutputDto
                 {
-                    Id = u.Id,
                     UserName = u.UserName,
                     Email = u.Email,
                     PhoneNumber = u.PhoneNumber,
-                    Rol = u.Rol
+                    Password = "", // GEEN wachtwoord teruggeven
+                    NaamVanBedrijf = u.NaamVanBedrijf,
+                    KvkNummer = u.KvkNummer,
+                    Adres = u.Adres,
+                    Postcode = u.Postcode,
+                    BedrijfTelefoonnummer = u.BedrijfTelefoonnummer,
+                    BedrijfEmail = u.BedrijfEmail
                 })
                 .ToListAsync();
 
@@ -44,20 +49,25 @@ namespace WebProject_klas3_groep4.Controllers
         // GET SINGLE
         // ------------------------------------------------------------
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GebruikerDto>> GetAanvoerder(int id)
+        public async Task<ActionResult<AanvoerderOutputDto>> GetAanvoerder(int id)
         {
             var aanvoerder = await _userManager.FindByIdAsync(id.ToString());
 
-            if (aanvoerder == null || aanvoerder.Rol != "aanvoerder")
+            if (aanvoerder == null || aanvoerder.Rol != "Aanvoerder")
                 return NotFound();
 
-            var dto = new GebruikerDto
+            var dto = new AanvoerderOutputDto
             {
-                Id = aanvoerder.Id,
                 UserName = aanvoerder.UserName,
                 Email = aanvoerder.Email,
                 PhoneNumber = aanvoerder.PhoneNumber,
-                Rol = aanvoerder.Rol
+                Password = "",
+                NaamVanBedrijf = aanvoerder.NaamVanBedrijf,
+                KvkNummer = aanvoerder.KvkNummer,
+                Adres = aanvoerder.Adres,
+                Postcode = aanvoerder.Postcode,
+                BedrijfTelefoonnummer = aanvoerder.BedrijfTelefoonnummer,
+                BedrijfEmail = aanvoerder.BedrijfEmail
             };
 
             return Ok(dto);
@@ -67,7 +77,7 @@ namespace WebProject_klas3_groep4.Controllers
         // CREATE
         // ------------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult<GebruikerDto>> PostAanvoerder([FromBody] AanvoerderCreateDto dto)
+        public async Task<ActionResult<AanvoerderOutputDto>> PostAanvoerder([FromBody] AanvoerderCreateDto dto)
         {
             if (dto == null)
                 return BadRequest();
@@ -78,8 +88,13 @@ namespace WebProject_klas3_groep4.Controllers
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
                 Rol = "Aanvoerder",
+
+                NaamVanBedrijf = dto.NaamVanBedrijf,
+                KvkNummer = dto.KvkNummer,
                 Adres = dto.Adres,
-                Postcode = dto.Postcode
+                Postcode = dto.Postcode,
+                BedrijfTelefoonnummer = dto.BedrijfTelefoonnummer,
+                BedrijfEmail = dto.BedrijfEmail
             };
 
             var result = await _userManager.CreateAsync(aanvoerder, dto.Password);
@@ -90,7 +105,7 @@ namespace WebProject_klas3_groep4.Controllers
             var outDto = new GebruikerDto
             {
                 Id = aanvoerder.Id,
-                UserName = aanvoerder.UserName,
+                UserName = aanvoerder.UserName, 
                 Email = aanvoerder.Email,
                 PhoneNumber = aanvoerder.PhoneNumber,
                 Rol = aanvoerder.Rol
@@ -103,7 +118,7 @@ namespace WebProject_klas3_groep4.Controllers
         // UPDATE
         // ------------------------------------------------------------
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<GebruikerDto>> PutAanvoerder(int id, [FromBody] AanvoerderUpdateDto dto)
+        public async Task<ActionResult<AanvoerderOutputDto>> PutAanvoerder(int id, [FromBody] AanvoerderUpdateDto dto)
         {
             var aanvoerder = await _userManager.FindByIdAsync(id.ToString());
 
@@ -113,24 +128,34 @@ namespace WebProject_klas3_groep4.Controllers
             aanvoerder.UserName = dto.UserName;
             aanvoerder.Email = dto.Email;
             aanvoerder.PhoneNumber = dto.PhoneNumber;
+
+            aanvoerder.NaamVanBedrijf = dto.NaamVanBedrijf;
+            aanvoerder.KvkNummer = dto.KvkNummer;
             aanvoerder.Adres = dto.Adres;
             aanvoerder.Postcode = dto.Postcode;
+            aanvoerder.BedrijfTelefoonnummer = dto.BedrijfTelefoonnummer;
+            aanvoerder.BedrijfEmail = dto.BedrijfEmail;
 
             var result = await _userManager.UpdateAsync(aanvoerder);
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            var returnDto = new GebruikerDto
+            var outDto = new AanvoerderOutputDto
             {
-                Id = aanvoerder.Id,
                 UserName = aanvoerder.UserName,
                 Email = aanvoerder.Email,
                 PhoneNumber = aanvoerder.PhoneNumber,
-                Rol = aanvoerder.Rol
+                Password = "",
+                NaamVanBedrijf = aanvoerder.NaamVanBedrijf,
+                KvkNummer = aanvoerder.KvkNummer,
+                Adres = aanvoerder.Adres,
+                Postcode = aanvoerder.Postcode,
+                BedrijfTelefoonnummer = aanvoerder.BedrijfTelefoonnummer,
+                BedrijfEmail = aanvoerder.BedrijfEmail
             };
 
-            return Ok(returnDto);
+            return Ok(outDto);
         }
 
         // ------------------------------------------------------------

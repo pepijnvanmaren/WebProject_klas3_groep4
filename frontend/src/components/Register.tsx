@@ -22,28 +22,27 @@ function Register() {
                 : "https://localhost:7020/api/aanvoerders";
 
         let body: any = {
-            userName: email,
-            email,
-            phoneNumber: telefoonnummer,
-            password: paswoord,
+            UserName: naam,       
+            Email: email,
+            PhoneNumber: telefoonnummer,
+            Password: paswoord,
         };
 
         if (rol === "koper") {
-            body.bankGegevens = "";
-            body.postcode = "";
-            body.adres = "";
+            body.BankGegevens = "";
+            body.Postcode = "";
+            body.Adres = "";
         } else {
-            // Aanvoerder-specifiek
-            body.naamVanBedrijf = naam;
-            body.kvkNummer = "";
-            body.postcode = "";
-            body.adres = "";
-            body.bedrijfTelefoonnummer = telefoonnummer;
-            body.bedrijfEmail = email;
+            body.NaamVanBedrijf = "";
+            body.KvkNummer = "";
+            body.Postcode = "";
+            body.Adres = "";
+            body.BedrijfTelefoonnummer = "";
+            body.BedrijfEmail = "";
         }
 
         const response = await fetch(url, {
-            method: "POST", // GEEN /login endpoint
+            method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
         });
@@ -55,7 +54,6 @@ function Register() {
 
         return response.json();
     };
-
 
 
 
@@ -78,7 +76,7 @@ function Register() {
 
             // Navigatie op basis van rol
             if (rol === "koper") navigate("/");
-            else navigate("/aanvoerder-dashboard");
+            else navigate("/verkoperDashboard");
         } catch (error: any) {
             console.error(error);
             alert(error.message || "Er ging iets mis bij het registreren.");
