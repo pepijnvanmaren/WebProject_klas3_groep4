@@ -54,7 +54,7 @@ function SellerDashboard() {
     return (
         <>
             <main className="dashboard-container">
-                <h1 className="VerkoperDashboard-title">Dashboard</h1>
+                <h1 className="VerkoperDashboard-title">Verkoper dashboard</h1>
                 <div className="dashboard-box">
                     <button className="btn" onClick={ProductMakenKnop}>
                         Product Plaatsen
