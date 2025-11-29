@@ -15,9 +15,7 @@ function Login() {
         }
 
         setLoading(true);
-
         try {
-
             const loginResponse = await fetch("https://localhost:7020/api/auth/login", {
                 method: "POST",
                 headers: {
@@ -47,17 +45,19 @@ function Login() {
 
             const user = await meResponse.json();
 
+            // Sla login status op in localStorage
+            localStorage.setItem("loggedIn", "true");
+            localStorage.setItem("userRole", user.rol);
 
             if (user.rol === "Koper") {
-                navigate("/");
+                navigate("/koperdashboard");
             } else if (user.rol === "Aanvoerder") {
                 navigate("/verkoperDashboard");
-            } else if (user.rol == "Veilingmeester") {
-                navigate("/");  // aanpassen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            } else if (user.rol == "Admin") {
-                navigate("/"); // aanpassen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            } else if (user.rol === "Veilingmeester") {
+                navigate("/");
+            } else if (user.rol === "Admin") {
+                navigate("/");
             }
-
         } catch (error) {
             console.error(error);
             alert("Er ging iets mis bij het verbinden met de server.");
@@ -66,12 +66,10 @@ function Login() {
         }
     };
 
-
     return (
         <div className="app-container">
             <div className="giveEmail">
                 <h1>Inloggen</h1>
-
                 <p>E-Mail</p>
                 <input
                     type="email"
@@ -81,7 +79,6 @@ function Login() {
                     onChange={(e) => setEmail(e.target.value)}
                 />
             </div>
-
             <div className="givePassword">
                 <p>Wachtwoord</p>
                 <input
@@ -92,7 +89,6 @@ function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
-
             <button
                 className="login-button"
                 onClick={handleLogin}
@@ -100,7 +96,6 @@ function Login() {
             >
                 {loading ? "Even geduld..." : "Inloggen"}
             </button>
-
             <div className="signup-section">
                 <p>Heb je nog geen account?</p>
                 <Link to="/registreren" className="signup-link">

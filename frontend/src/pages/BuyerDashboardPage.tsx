@@ -1,12 +1,12 @@
 import React from "react";
 import Navbar from "../components/Navbar.jsx";
-import Index from "../components/Index.jsx";
+import Koper from "../components/koperdashboard.jsx";
 import Footer from "../components/Footer.jsx";
 export default function BuyerDashboardPage() {
     return (
         <>
             <Navbar />
-            <Index />
+            < Koper />
             <Footer />
         </>
     );
