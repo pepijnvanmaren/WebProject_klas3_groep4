@@ -189,9 +189,14 @@ namespace WebProject_klas3_groep4.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("VeilingmeesterId")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
                     b.HasIndex("GebruikerDBId");
+
+                    b.HasIndex("VeilingmeesterId");
 
                     b.ToTable("Veilingen");
                 });
@@ -300,6 +305,9 @@ namespace WebProject_klas3_groep4.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<int?>("AanvoerderId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Beschrijving")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -332,9 +340,16 @@ namespace WebProject_klas3_groep4.Migrations
                     b.Property<double?>("Steellengte")
                         .HasColumnType("float");
 
+                    b.Property<int?>("VeilingId")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
+                    b.HasIndex("AanvoerderId");
+
                     b.HasIndex("GebruikerDBId");
+
+                    b.HasIndex("VeilingId");
 
                     b.ToTable("Producten");
                 });
@@ -396,14 +411,37 @@ namespace WebProject_klas3_groep4.Migrations
                         .WithMany("Veilingen")
                         .HasForeignKey("GebruikerDBId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WebProject_klas3_groep4.models.GebruikerDB", "Veilingmeester")
+                        .WithMany()
+                        .HasForeignKey("VeilingmeesterId");
+
+                    b.Navigation("Veilingmeester");
                 });
 
             modelBuilder.Entity("WebProject_klas3_groep4.models.productDB", b =>
                 {
+                    b.HasOne("WebProject_klas3_groep4.models.GebruikerDB", "Aanvoerder")
+                        .WithMany()
+                        .HasForeignKey("AanvoerderId");
+
                     b.HasOne("WebProject_klas3_groep4.models.GebruikerDB", null)
                         .WithMany("Producten")
                         .HasForeignKey("GebruikerDBId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WebProject_klas3_groep4.VeilingDB", "Veiling")
+                        .WithMany("Producten")
+                        .HasForeignKey("VeilingId");
+
+                    b.Navigation("Aanvoerder");
+
+                    b.Navigation("Veiling");
+                });
+
+            modelBuilder.Entity("WebProject_klas3_groep4.VeilingDB", b =>
+                {
+                    b.Navigation("Producten");
                 });
 
             modelBuilder.Entity("WebProject_klas3_groep4.models.GebruikerDB", b =>

@@ -1,11 +1,11 @@
 import "../styles/ProductPlaatsenDashboard.css";
-import { Navigate, Route, useNavigate } from 'react-router-dom';
-import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
 
 function SellerDashboard() {
     const navigate = useNavigate();
 
-    //States voor elk veld
+    // States voor elk veld
     const [naam, setNaam] = useState("");
     const [beschrijving, setBeschrijving] = useState("");
     const [fotoFile, setFotoFile] = useState<File | null>(null);
@@ -16,68 +16,129 @@ function SellerDashboard() {
     const [hoeveelheid, setHoeveelheid] = useState("");
     const [minimalePrijs, setMinimalePrijs] = useState("");
     const [oogstError, setOogstError] = useState("");
-   
+    const [veilingId, setVeilingId] = useState<number | null>(null);
+    const [veilingen, setVeilingen] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
 
-    //Maakt een locaal atribuut aan voor de datum van vandaag
+    // Maakt een locaal atribuut aan voor de datum van vandaag
     const localToday = (() => {
         const d = new Date();
         const tzOffset = d.getTimezoneOffset();
         return new Date(d.getTime() - tzOffset * 60000).toISOString().split("T")[0];
     })();
 
-    //Handle aanmaken product
+    // Fetch veilingen wanneer component laadt
+    useEffect(() => {
+        const fetchVeilingen = async () => {
+            try {
+                const response = await fetch("https://localhost:7020/api/veiling", {
+                    credentials: "include"
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setVeilingen(data);
+                }
+            } catch (err) {
+                console.error("Error fetching veilingen:", err);
+            }
+        };
+
+        fetchVeilingen();
+    }, []);
+
+    // Handle aanmaken product
     const handleCreateProduct = async () => {
         // Validatie
+        if (!naam) {
+            alert("Productnaam is verplicht");
+            return;
+        }
+
         if (oogstdatum && oogstdatum > localToday) {
             setOogstError("Oogstdatum mag niet in de toekomst liggen.");
             return;
         }
 
-        // JSON payload maken
-        const payload = {
-            naam,
-            beschrijving,
-            foto: fotoFile ? fotoFile.name : null,
-            oogstdatum,
-            potmaat: potmaat ? Number(potmaat) : null,
-            gewicht: gewicht ? Number(gewicht) : null,
-            steellengte: steellengte ? Number(steellengte) : null,
-            hoeveelheid: hoeveelheid ? Number(hoeveelheid) : null,
-            minimalePrijs: minimalePrijs ? Number(minimalePrijs) : null
-        };
+        setLoading(true);
 
         try {
-            const resp = await fetch("https://localhost:7020/api/Product", {
+            // Stap 1: Zet foto om naar base64 (optioneel)
+            let fotoBase64 = null;
+            if (fotoFile) {
+                fotoBase64 = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        // Extract only the base64 part (remove the data:image/...;base64, prefix)
+                        const result = e.target?.result as string;
+                        const base64 = result.split(',')[1];
+                        resolve(base64);
+                    };
+                    reader.readAsDataURL(fotoFile);
+                });
+            }
+
+            // Stap 2: Maak product aan
+            const payload = {
+                naam,
+                beschrijving,
+                foto: fotoBase64,
+                oogstdatum: oogstdatum || null,
+                potmaat: potmaat ? Number(potmaat) : null,
+                gewicht: gewicht ? Number(gewicht) : 0,
+                steellengte: steellengte ? Number(steellengte) : null,
+                hoeveelheid: hoeveelheid ? Number(hoeveelheid) : 0,
+                minimalePrijs: minimalePrijs ? Number(minimalePrijs) : 0,
+                veilingId: veilingId || null // NIEUW: Veiling meegeven
+            };
+
+            const resp = await fetch("https://localhost:7020/api/Product", {  // Hoofdletter P
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: "include", // NIEUW: Credentials voor authenticatie
                 body: JSON.stringify(payload)
             });
 
             if (!resp.ok) {
                 const text = await resp.text();
                 console.error("Upload failed:", text);
-                alert("Upload failed: " + resp.statusText);
+                alert("Upload mislukt: " + resp.statusText);
+                setLoading(false);
                 return;
             }
 
             const data = await resp.json();
-            console.log("Server response:", data);
-            alert("Uw product is gemaakt.");
-            navigate("/VerkoperDashboard")
+            console.log("Product aangemaakt:", data);
+            alert("Uw product is succesvol aangemaakt!");
+
+            // Reset form
+            setNaam("");
+            setBeschrijving("");
+            setFotoFile(null);
+            setOogstdatum("");
+            setPotmaat("");
+            setGewicht("");
+            setSteellengte("");
+            setHoeveelheid("");
+            setMinimalePrijs("");
+            setVeilingId(null);
+            setOogstError("");
+
+            navigate("/VerkoperDashboard");
 
         } catch (err) {
             console.error(err);
             alert("Er is iets misgegaan met het versturen.");
+        } finally {
+            setLoading(false);
         }
     };
 
+    // Handelt de Terug knop
+    const handleGoBack = () => navigate('/VerkoperDashboard');
 
-    //Handelt de Terug knop
-    const handleGoBack = () => navigate('/verkoperDashboard');
-
-    //Handle voor Oogstdatum
+    // Handle voor Oogstdatum
     const handleOogstdatumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
         if (!val) {
@@ -86,7 +147,6 @@ function SellerDashboard() {
             return;
         }
 
-        //Compare datums (Vandaag/Invoer)
         if (val > localToday) {
             setOogstdatum(localToday);
             setOogstError("Oogstdatum kon niet in de toekomst liggen; is ingesteld op vandaag.");
@@ -96,7 +156,7 @@ function SellerDashboard() {
         }
     };
 
-    //HTML REACT
+    // HTML REACT
     return (
         <main className="pp_dashboard-container">
             <h1 className="pp_title">Product aanmaken</h1>
@@ -106,7 +166,7 @@ function SellerDashboard() {
                 {/*Linker colom*/}
                 <div className="pp_dashboard-column">
                     <label>
-                        <h2>Naam</h2>
+                        <h2>Naam *</h2>
                         <input
                             className="pp_input-container"
                             placeholder="Voer je Naam in"
@@ -147,6 +207,7 @@ function SellerDashboard() {
                         {oogstError && <div style={{ color: 'red', marginTop: 6 }}>{oogstError}</div>}
                     </label>
                 </div>
+
                 {/*Rechter colom*/}
                 <div className="pp_dashboard-column">
                     <label>
@@ -194,7 +255,7 @@ function SellerDashboard() {
                     </label>
 
                     <label>
-                        <h2>Minimale prijs (€)</h2>
+                        <h2>Minimale prijs (€) *</h2>
                         <input
                             className="pp_input-container"
                             type="number"
@@ -203,13 +264,41 @@ function SellerDashboard() {
                             onChange={e => setMinimalePrijs(e.target.value)}
                         />
                     </label>
+
+                    <label>
+                        <h2>Veiling (optioneel)</h2>
+                        <select
+                            className="pp_input-container"
+                            value={veilingId || ""}
+                            onChange={e => setVeilingId(e.target.value ? Number(e.target.value) : null)}
+                        >
+                            <option value="">-- Geen veiling --</option>
+                            {veilingen.map((veiling) => (
+                                <option key={veiling.id} value={veiling.id}>
+                                    {veiling.starTijd} - {veiling.klokLocatie}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
                 </div>
             </div>
 
             {/*Buttons*/}
             <div className="pp_buttons-row">
-                <button className="pp_btn" onClick={handleCreateProduct}>Product Maken</button>
-                <button className="pp_btn" onClick={handleGoBack}>Terug</button>
+                <button
+                    className="pp_btn"
+                    onClick={handleCreateProduct}
+                    disabled={loading}
+                >
+                    {loading ? "Bezig met uploaden..." : "Product Maken"}
+                </button>
+                <button
+                    className="pp_btn"
+                    onClick={handleGoBack}
+                    disabled={loading}
+                >
+                    Terug
+                </button>
             </div>
         </main>
     );

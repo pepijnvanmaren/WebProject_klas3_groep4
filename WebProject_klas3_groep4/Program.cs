@@ -109,11 +109,12 @@ app.UseAuthorization();
 app.MapIdentityApi<GebruikerDB>();
 
 // ----------------------------------------------------------
-// Role Seeding
+// Role Seeding - GECORRIGEERD
+// ----------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-    string[] roles = { "Admin", "Manager", "Teamlead", "User" };
+    string[] roles = { "Admin", "Koper", "Aanvoerder", "Veilingmeester" };
 
     foreach (var role in roles)
     {
@@ -126,6 +127,7 @@ using (var scope = app.Services.CreateScope())
 
 // ----------------------------------------------------------
 // Admin User Seeding
+// ----------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<GebruikerDB>>();
@@ -138,7 +140,8 @@ using (var scope = app.Services.CreateScope())
         {
             UserName = "adminUser",
             Email = "admin@example.com",
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            Rol = "Admin"  // NIEUW: Zet de rol op Admin
         };
 
         var createResult = await userManager.CreateAsync(adminUser, adminPassword);
@@ -156,11 +159,13 @@ using (var scope = app.Services.CreateScope())
 
 // ----------------------------------------------------------
 // Controllers
+// ----------------------------------------------------------
 app.MapControllers();
 app.Run();
 
 // ----------------------------------------------------------
 // Dummy Email Sender
+// ----------------------------------------------------------
 public class DummyEmailSender : IEmailSender<GebruikerDB>
 {
     public Task SendConfirmationLinkAsync(GebruikerDB user, string email, string link) => Task.CompletedTask;
