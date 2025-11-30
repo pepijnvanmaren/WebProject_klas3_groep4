@@ -123,3 +123,22 @@ Dashboard.css
     margin-bottom: 8px;
     border-radius: 4px;
 }
+
+.user-welcome {
+    background-color: #f0f8ff;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem auto;
+    max-width: 800px;
+    text-align: center;
+}
+
+    .user-welcome p {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .user-welcome strong {
+        color: #007bff;
+    }

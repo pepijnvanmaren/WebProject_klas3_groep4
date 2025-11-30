@@ -1,26 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SellerDashboard.css';
 
-const apiBase = 'https://localhost:5174';
+const apiBase = 'https://localhost:7020'; // Let op: gebruik dezelfde port als je API
+
+type User = {
+    id: number;
+    userName: string;
+    email: string;
+    phoneNumber: string;
+    rol: string;
+    veilingVestiging: string | null;
+};
 
 function SellerDashboard() {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    // NIEUW: State voor gebruiker en login status
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+
+    // NIEUW: Fetch gebruikersgegevens bij laden
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            const loggedIn = localStorage.getItem("loggedIn") === "true";
+            console.log("Is logged in:", loggedIn);
+            setIsLoggedIn(loggedIn);
+
+            if (loggedIn) {
+                try {
+                    const response = await fetch("https://localhost:7020/api/Auth/me", {
+                        credentials: "include",
+                    });
+                    console.log("Me endpoint response status:", response.status);
+                    if (response.ok) {
+                        const userData = await response.json();
+                        console.log("User data fetched:", userData);
+                        setUser(userData);
+                    } else {
+                        console.log("Me endpoint response not ok:", response.status);
+                    }
+                } catch (err) {
+                    console.error("Error fetching user data:", err);
+                }
+            }
+        };
+
+        checkLoginStatus();
+    }, []);
+
     const ProductTonenKnop = () => {
-        navigate('/ProductDashboard') 
-    }
+        navigate('/ProductDashboard');
+    };
 
     const ProductMakenKnop = () => {
-        navigate('/ProductMakenDashboard')
-    }
+        navigate('/ProductMakenDashboard');
+    };
 
     async function fetchProducts() {
         setLoading(true);
         try {
-            const res = await fetch(`${apiBase}/api/products`);
+            const res = await fetch(`${apiBase}/api/Product`);
             if (!res.ok) throw new Error("Failed to fetch");
             const data = await res.json();
             setProducts(data);
@@ -32,11 +74,12 @@ function SellerDashboard() {
         }
     }
 
-    async function deleteProduct(id) {
+    async function deleteProduct(id: number) {
         if (!window.confirm("Weet je zeker dat je dit product wilt verwijderen?")) return;
         try {
-            const res = await fetch(`${apiBase}/api/products/${id}`, {
+            const res = await fetch(`${apiBase}/api/Product/${id}`, {
                 method: "DELETE",
+                credentials: "include",
             });
             if (!res.ok) throw new Error("Failed to delete");
             await fetchProducts();
@@ -47,20 +90,30 @@ function SellerDashboard() {
     }
 
     return (
-        <><div className="dashboard-root">
-            <header className="dashboard-header">
-                <div className="header-inner">
-                    <img
-                        src="/header-trees.jpg"
-                        alt="header"
-                        className="header-image" />
-                    <nav className="header-nav">
-                        <a href="/registreren">Registreren</a>
-                        <a href="/login">Inloggen</a>
-                    </nav>
+        <>
+            <div className="dashboard-root">
+                <header className="dashboard-header">
+                    <div className="header-inner">
+                        <img
+                            src="/header-trees.jpg"
+                            alt="header"
+                            className="header-image"
+                        />
+                        <nav className="header-nav">
+                            <a href="/registreren">Registreren</a>
+                            <a href="/login">Inloggen</a>
+                        </nav>
+                    </div>
+                </header>
+            </div>
+
+            {/* NIEUW: Gebruiker welkom bericht */}
+            {isLoggedIn && user && (
+                <div className="user-welcome">
+                    <p>Welkom, <strong>{user.userName}</strong>!</p>
                 </div>
-            </header>
-        </div>
+            )}
+
             <main className="dashboard-container">
                 <h1 className="VerkoperDashboard-title">Dashboard</h1>
                 <div className="dashboard-box">
@@ -77,12 +130,14 @@ function SellerDashboard() {
                                 alert("Geen producten om te verwijderen.");
                                 return;
                             }
-                         //   deleteProduct(products[products.length - 1].id);
-                        }}>
+                            deleteProduct(products[products.length - 1].id);
+                        }}
+                    >
                         Product Verwijderen
                     </button>
                 </div>
             </main>
+
             <div className="product-list-box">
                 {loading ? (
                     <div className="loader">Laden...</div>
@@ -92,9 +147,9 @@ function SellerDashboard() {
                     </div>
                 ) : (
                     <ul className="product-list">
-                        {products.map((product) => (
+                        {products.map((product: any) => (
                             <li key={product.id} className="product-item">
-                                <span>{product.name}</span>
+                                <span>{product.naam}</span>
                             </li>
                         ))}
                     </ul>
@@ -103,6 +158,5 @@ function SellerDashboard() {
         </>
     );
 }
-
 
 export default SellerDashboard;

@@ -88,7 +88,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // CREATE
         // ---------------------------------------------------------
-        [Authorize(Roles = "Aanvoerder")]
+       // [Authorize(Roles = "Aanvoerder")]
         [HttpPost]
         public async Task<ActionResult<ProductOutputDto>> PostProduct([FromBody] ProductCreateDto dto)
         {
@@ -147,7 +147,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // UPDATE
         // ---------------------------------------------------------
-        [Authorize(Roles = "Aanvoerder")]
+       // [Authorize(Roles = "Aanvoerder")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ProductOutputDto>> PutProduct(int id, [FromBody] ProductUpdateDto dto)
         {
@@ -205,7 +205,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // DELETE
         // ---------------------------------------------------------
-        [Authorize(Roles = "Aanvoerder")]
+       // [Authorize(Roles = "Aanvoerder")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {

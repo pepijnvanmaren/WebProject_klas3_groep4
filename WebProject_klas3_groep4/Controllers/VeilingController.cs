@@ -96,7 +96,6 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // CREATE
         // ---------------------------------------------------------
-        [Authorize(Roles = "Veilingmeester")]
         [HttpPost]
         public async Task<ActionResult<VeilingOutputDto>> PostVeiling([FromBody] VeilingCreateDto dto)
         {
@@ -140,7 +139,6 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // UPDATE
         // ---------------------------------------------------------
-        [Authorize(Roles = "Veilingmeester")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<VeilingOutputDto>> PutVeiling(int id, [FromBody] VeilingUpdateDto dto)
         {

@@ -1,64 +1,197 @@
-.AccountInfo-page {
+.account-info-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    width: 100%;
-    padding-top: 30vh;
-    max-width: 200rem;
-    margin: 0 auto;
+    align-items: center;
+    padding: 2rem;
 }
 
-.AccountInfo-title {
+.account-container {
+    width: 100%;
+    max-width: 600px;
+}
+
+.account-title {
+    text-align: center;
+    color: white;
     font-size: 2.5rem;
     margin-bottom: 2rem;
-    color: #000;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.account-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.account-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 3rem 2rem;
     text-align: center;
-    white-space: nowrap;
+    color: white;
 }
 
-.info-box{
-    width: 360px;
-    align-content: flex-start;
-    align-items: flex-start;
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: white;
+    color: #667eea;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-    .info-box p {
-        font-size: 1.3rem;
+.account-header h2 {
+    margin: 0.5rem 0;
+    font-size: 2rem;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+    .role-badge.aanvoerder {
+        background: rgba(255, 255, 255, 0.3);
+        border: 2px solid white;
     }
 
-.change-accountinfo {
-    font-size: 1rem;
-    width: 100%;
-    padding: 0.5rem;
-    border: 2px solid #777;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    margin-bottom: 2rem;
+    .role-badge.koper {
+        background: rgba(255, 255, 255, 0.3);
+        border: 2px solid white;
+    }
+
+    .role-badge.veilingmeester {
+        background: rgba(255, 255, 255, 0.3);
+        border: 2px solid white;
+    }
+
+.account-details {
+    padding: 2rem;
 }
 
-.AccountSaveDeleteButtons {
+.detail-row {
     display: flex;
-    width: 100%;
-    align-content: center;
-    justify-content: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.saveAccountInfo {
-    padding: 0.7rem 2rem;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #047B00;
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+.detail-label {
+    font-weight: 600;
+    color: #666;
+}
+
+.detail-value {
+    color: #333;
+    font-weight: 500;
+}
+
+.account-actions {
+    padding: 2rem;
+    display: flex;
+    gap: 1rem;
+    background: #f8f9fa;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    flex: 1;
+    padding: 1rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    width: 200px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.deleteAccount{
-    margin-left: 1rem;
-    margin-top: 10px;
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+    }
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+    .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    }
+
+.loading,
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.error-message {
+    color: #dc3545;
+    margin-bottom: 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .account-info-page {
+        padding: 1rem;
+    }
+
+    .account-title {
+        font-size: 2rem;
+    }
+
+    .account-actions {
+        flex-direction: column;
+    }
+
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 2.5rem;
+    }
+
+    .account-header h2 {
+        font-size: 1.5rem;
+    }
 }
