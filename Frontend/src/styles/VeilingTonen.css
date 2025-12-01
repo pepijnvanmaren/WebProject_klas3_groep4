@@ -1,0 +1,9 @@
+.Veiling_product-list-box {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 1em;
+    margin-bottom: 1rem;
+    min-width: 41.6em;
+}
