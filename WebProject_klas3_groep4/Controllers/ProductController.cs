@@ -35,7 +35,9 @@ namespace WebProject_klas3_groep4.Controllers
                     Naam = p.Naam,
                     Foto = p.Foto,
                     Beschrijving = p.Beschrijving,
-                    Oogstdatum = p.Oogstdatum,
+                    Oogstdatum = p.Oogstdatum.HasValue
+                        ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                        : DateOnly.FromDateTime(DateTime.UtcNow),
                     Potmaat = p.Potmaat,
                     Gewicht = p.Gewicht,
                     Steellengte = p.Steellengte ?? 0,
@@ -70,7 +72,9 @@ namespace WebProject_klas3_groep4.Controllers
                 Naam = p.Naam,
                 Foto = p.Foto,
                 Beschrijving = p.Beschrijving,
-                Oogstdatum = p.Oogstdatum,
+                Oogstdatum = p.Oogstdatum.HasValue
+                    ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                    : DateOnly.FromDateTime(DateTime.UtcNow),
                 Potmaat = p.Potmaat,
                 Gewicht = p.Gewicht,
                 Steellengte = p.Steellengte ?? 0,
@@ -88,7 +92,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // CREATE
         // ---------------------------------------------------------
-       // [Authorize(Roles = "Aanvoerder")]
+        // [Authorize(Roles = "Aanvoerder")]
         [HttpPost]
         public async Task<ActionResult<ProductOutputDto>> PostProduct([FromBody] ProductCreateDto dto)
         {
@@ -130,7 +134,9 @@ namespace WebProject_klas3_groep4.Controllers
                 Naam = product.Naam,
                 Foto = product.Foto,
                 Beschrijving = product.Beschrijving,
-                Oogstdatum = product.Oogstdatum,
+                Oogstdatum = product.Oogstdatum.HasValue
+                    ? DateOnly.FromDateTime(product.Oogstdatum.Value)
+                    : DateOnly.FromDateTime(DateTime.UtcNow),
                 Potmaat = product.Potmaat,
                 Gewicht = product.Gewicht,
                 Steellengte = product.Steellengte ?? 0,
@@ -147,7 +153,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // UPDATE
         // ---------------------------------------------------------
-       // [Authorize(Roles = "Aanvoerder")]
+        // [Authorize(Roles = "Aanvoerder")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ProductOutputDto>> PutProduct(int id, [FromBody] ProductUpdateDto dto)
         {
@@ -189,7 +195,9 @@ namespace WebProject_klas3_groep4.Controllers
                 Naam = p.Naam,
                 Foto = p.Foto,
                 Beschrijving = p.Beschrijving,
-                Oogstdatum = p.Oogstdatum,
+                Oogstdatum = p.Oogstdatum.HasValue
+                    ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                    : DateOnly.FromDateTime(DateTime.UtcNow),
                 Potmaat = p.Potmaat,
                 Gewicht = p.Gewicht,
                 Steellengte = p.Steellengte ?? 0,
@@ -205,7 +213,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // DELETE
         // ---------------------------------------------------------
-       // [Authorize(Roles = "Aanvoerder")]
+        // [Authorize(Roles = "Aanvoerder")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
@@ -240,7 +248,9 @@ namespace WebProject_klas3_groep4.Controllers
                     Naam = p.Naam,
                     Foto = p.Foto,
                     Beschrijving = p.Beschrijving,
-                    Oogstdatum = p.Oogstdatum,
+                    Oogstdatum = p.Oogstdatum.HasValue
+                        ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                        : DateOnly.FromDateTime(DateTime.UtcNow),
                     Potmaat = p.Potmaat,
                     Gewicht = p.Gewicht,
                     Steellengte = p.Steellengte ?? 0,
@@ -271,7 +281,9 @@ namespace WebProject_klas3_groep4.Controllers
                     Naam = p.Naam,
                     Foto = p.Foto,
                     Beschrijving = p.Beschrijving,
-                    Oogstdatum = p.Oogstdatum,
+                    Oogstdatum = p.Oogstdatum.HasValue
+                        ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                        : DateOnly.FromDateTime(DateTime.UtcNow),
                     Potmaat = p.Potmaat,
                     Gewicht = p.Gewicht,
                     Steellengte = p.Steellengte ?? 0,

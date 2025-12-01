@@ -78,7 +78,9 @@ namespace WebProject_klas3_groep4.Controllers
                     Naam = p.Naam,
                     Foto = p.Foto,
                     Beschrijving = p.Beschrijving,
-                    Oogstdatum = p.Oogstdatum,
+                    Oogstdatum = p.Oogstdatum.HasValue
+                        ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                        : DateOnly.FromDateTime(DateTime.UtcNow),
                     Potmaat = p.Potmaat,
                     Gewicht = p.Gewicht,
                     Steellengte = p.Steellengte ?? 0,
@@ -139,6 +141,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // UPDATE
         // ---------------------------------------------------------
+        [Authorize(Roles = "Veilingmeester")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<VeilingOutputDto>> PutVeiling(int id, [FromBody] VeilingUpdateDto dto)
         {

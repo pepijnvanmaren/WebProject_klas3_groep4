@@ -324,6 +324,12 @@ namespace WebProject_klas3_groep4.Migrations
                     b.Property<int>("Hoeveelheid")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsGekocht")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("KoperID")
+                        .HasColumnType("int");
+
                     b.Property<int>("MinimalePrijs")
                         .HasColumnType("int");
 
@@ -337,11 +343,26 @@ namespace WebProject_klas3_groep4.Migrations
                     b.Property<int?>("Potmaat")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<double?>("Steellengte")
                         .HasColumnType("float");
 
                     b.Property<int?>("VeilingId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("VeilingStartTijd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("VeilingVolgorde")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("VerkochtOp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double?>("VerkochtePrijs")
+                        .HasColumnType("float");
 
                     b.HasKey("ID");
 

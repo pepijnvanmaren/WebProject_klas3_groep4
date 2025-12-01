@@ -65,5 +65,114 @@ namespace WebProject_klas3_groep4.Controllers
                 user.VeilingVestiging
             });
         }
+        [Authorize]
+        [HttpPut("update-username")]
+        public async Task<IActionResult> UpdateUsername([FromBody] UpdateUsernameRequest dto)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
+            var existingUser = await _userManager.FindByNameAsync(dto.NewUsername);
+            if (existingUser != null && existingUser.Id != user.Id)
+                return BadRequest("Deze gebruikersnaam is al in gebruik");
+
+            user.UserName = dto.NewUsername;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            return Ok(new { message = "Gebruikersnaam succesvol gewijzigd" });
+        }
+
+        // ------------------------ UPDATE EMAIL ------------------------
+        [Authorize]
+        [HttpPut("update-email")]
+        public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailRequest dto)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
+            var existingUser = await _userManager.FindByEmailAsync(dto.NewEmail);
+            if (existingUser != null && existingUser.Id != user.Id)
+                return BadRequest("Dit e-mailadres is al in gebruik");
+
+            user.Email = dto.NewEmail;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            return Ok(new { message = "E-mail succesvol gewijzigd" });
+        }
+
+        // ------------------------ UPDATE PASSWORD ------------------------
+        [Authorize]
+        [HttpPut("update-password")]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordRequest dto)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
+            var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+
+            if (!result.Succeeded)
+                return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            return Ok(new { message = "Wachtwoord succesvol gewijzigd" });
+        }
+
+        // ------------------------ DELETE ACCOUNT ------------------------
+        [Authorize]
+        [HttpDelete("delete-account")]
+        public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountRequest dto)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
+            if (!await _userManager.CheckPasswordAsync(user, dto.Password))
+                return BadRequest("Onjuist wachtwoord");
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            return Ok(new { message = "Account succesvol verwijderd" });
+        }
+    }
+
+    // ------------------------ REQUEST MODELS ------------------------
+    public class LoginRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class UpdateUsernameRequest
+    {
+        public string NewUsername { get; set; }
+    }
+
+    public class UpdateEmailRequest
+    {
+        public string NewEmail { get; set; }
+    }
+
+    public class UpdatePasswordRequest
+    {
+        public string CurrentPassword { get; set; }
+        public string NewPassword { get; set; }
+    }
+
+    public class DeleteAccountRequest
+    {
+        public string Password { get; set; }
     }
 }
+    
+

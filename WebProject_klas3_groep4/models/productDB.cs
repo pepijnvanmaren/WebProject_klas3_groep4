@@ -19,6 +19,16 @@ namespace WebProject_klas3_groep4.models
         public string Beschrijving { get; set; }
         public int MinimalePrijs { get; set; }
 
+        public VeilingStatus Status { get; set; } = VeilingStatus.InWachtrij;
+        public int? VeilingVolgorde { get; set; }
+        public DateTime? VeilingStartTijd { get; set; }
+        public DateTime? VerkochtOp { get; set; }
+        public int? KoperID { get; set; }
+        public double? VerkochtePrijs { get; set; }
+        public bool IsGekocht { get; set; } = false;
+
+       
+
         // ===== NIEUW: Relatie naar Aanvoerder (GebruikerDB) =====
         [ForeignKey("Aanvoerder")]
         public int? AanvoerderId { get; set; }
@@ -28,5 +38,15 @@ namespace WebProject_klas3_groep4.models
         [ForeignKey("Veiling")]
         public int? VeilingId { get; set; }
         public VeilingDB? Veiling { get; set; }
-    }
+
+
+    } 
+    public enum VeilingStatus
+        {
+            InWachtrij = 0,      // Product wacht om geveild te worden
+            Actief = 1,          // Product is nu actief in de veiling
+            Verkocht = 2,        // Product is verkocht (na pauze)
+            Geannuleerd = 3,     // Product is uit veiling gehaald
+            VerlatenVeiling = 4  // Veiling gestopt zonder verkoop
+        }
 }
