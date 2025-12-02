@@ -9,7 +9,10 @@ import ProductToneneDashboardPage from "./pages/ProductToneneDashboard.jsx";
 import ProductPlaatsenDashboardPage from "./pages/ProductPlaatsenDashboard.jsx";
 import PrivacyPage from "./pages/PrivacyPage.jsx";
 import BuyerDashboardPage from "./pages/BuyerDashboardPage.js";
-
+import VeilingMeesterDashboardPage from "./pages/VeilingMeesterDashboardPage.jsx";
+import VeilingTonenPage from "./pages/VeilingTonenPage.jsx";
+import VeilingBewerkenPage from "./pages/VeilingBewerkenPage.jsx";
+import VeilingPlaatsenPage from "./pages/VeilingPlaatsenPage.jsx";
 function App() {
     return (
         <BrowserRouter>
@@ -64,6 +67,39 @@ function App() {
                     element={
                         <ProtectedRoute requiredRoles={["Koper", "Aanvoerder", "Veilingmeester", "Admin"]}>
                             <AccountInfoPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/VeilingMeesterDashboard"
+                    element={
+                    <ProtectedRoute requiredRoles={["Veilingmeester"]}>
+                        <VeilingMeesterDashboardPage />
+                </ProtectedRoute>
+                    }                
+                />
+                <Route
+                    path="/VeilingBewerken"
+                    element={
+                        <ProtectedRoute requiredRoles={["Veilingmeester"]}>
+                            <VeilingBewerkenPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/VeilingPlaatsen"
+                    element={
+                        <ProtectedRoute requiredRoles={["Veilingmeester"]}>
+                            <VeilingPlaatsenPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/VeilingTonen"
+                    element={
+                        <ProtectedRoute requiredRoles={["Veilingmeester"]}>
+                            <VeilingTonenPage />
                         </ProtectedRoute>
                     }
                 />

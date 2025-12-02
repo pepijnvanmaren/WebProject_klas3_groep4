@@ -1,0 +1,32 @@
+.vp_dashboard-container {
+    max-width: 900px;
+    margin: 8em auto 2em auto;
+    padding: 10px;
+}
+
+.vp_dashboard-box {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 1em;
+}
+
+.vp_dashboard-flex {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.pp_input-container-beschrijving {
+    min-height: 13rem;
+}
+
+.vp_selector {
+    font-size: 1rem;
+    padding: 0.5rem;
+    border: 2px solid #777;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
