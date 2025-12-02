@@ -1,0 +1,50 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.dashboard-root {
+    font-family: "Segoe UI", sans-serif;
+    background: #fff;
+    min-height: 30vh;
+}
+
+.dashboard-container {
+    max-width: 420px;
+    margin: 5px auto 0;
+    padding: 10px;
+}
+
+.dashboard-box {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 1em;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .btn.primary {
+        background: #2f8d2f;
+        color: #fff;
+    }
+
+    .btn.secondary {
+        background: #1b7d1b;
+        color: #fff;
+    }
+
+    .btn.danger {
+        background: #2a7d2a;
+        color: #fff;
+    }
