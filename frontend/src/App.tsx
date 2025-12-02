@@ -11,7 +11,6 @@ import PrivacyPage from "./pages/PrivacyPage.jsx";
 import BuyerDashboardPage from "./pages/BuyerDashboardPage.js";
 import VeilingMeesterDashboardPage from "./pages/VeilingMeesterDashboardPage.jsx";
 import VeilingTonenPage from "./pages/VeilingTonenPage.jsx";
-import VeilingBewerkenPage from "./pages/VeilingBewerkenPage.jsx";
 import VeilingPlaatsenPage from "./pages/VeilingPlaatsenPage.jsx";
 function App() {
     return (
@@ -78,14 +77,6 @@ function App() {
                         <VeilingMeesterDashboardPage />
                 </ProtectedRoute>
                     }                
-                />
-                <Route
-                    path="/VeilingBewerken"
-                    element={
-                        <ProtectedRoute requiredRoles={["Veilingmeester"]}>
-                            <VeilingBewerkenPage />
-                        </ProtectedRoute>
-                    }
                 />
                 <Route
                     path="/VeilingPlaatsen"
