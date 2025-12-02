@@ -30,10 +30,11 @@ function VeilingPlaatsen() {
         try {
             const payload = {
                 starTijd,
-                beschrijving,
+                bechrijving: beschrijving,
                 startDatum,
                 klokLocatie
             };
+
 
             const resp = await fetch("https://localhost:7020/api/Veiling", {
                 method: "POST",
@@ -133,10 +134,10 @@ function VeilingPlaatsen() {
                     <label>
                         <h2>StarTijd</h2>
                         <select name="Tijd selector" className="vp_selector"
-                            value={startDatum}
+                            value={starTijd}
                             onChange={e => setStarTijd(e.target.value)}
 >
-                            <option value="" disabled selected>Select uw optie</option>
+                            <option value="" disabled>Select uw optie</option>
                             <option value="07:00">07:00</option>
                             <option value="08:00">08:00</option>
                             <option value="09:00">09:00</option>
