@@ -1,78 +1,161 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/VeilingMeesterDashboard.css';
+import '../styles/VeilingPlaatsen.css';
 import { useEffect } from 'react';
 
-const apiBase = 'https://localhost:5174';
-
-function VeilingMeesterDashboard() {
+function VeilingPlaatsen() {
     const navigate = useNavigate();
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
+
+    //States voor elk veld
+    const [starTijd, setStarTijd] = useState("");
+    const [beschrijving, setBeschrijving] = useState("");
+    const [startDatum, setStartDatum] = useState("");
+    const [klokLocatie, setKlokLocatie] = useState("");
+    const [StartDatumError, setStartDatumError] = useState("");
+
+
+    const handleCreateVeiling = async () => {
+
+        if (startDatum && startDatum < localToday) {
+            setStartDatumError("StartDatum mag niet in het verleden liggen.");
+            return;
+        }
+
+        const form = new FormData();
+        form.append("starTijd", starTijd);
+        form.append("beschrijving", beschrijving);
+        form.append("startDatum", startDatum);
+        form.append("klokLocatie", klokLocatie);
+
+        try {
+            const payload = {
+                starTijd,
+                beschrijving,
+                startDatum,
+                klokLocatie
+            };
+
+            const resp = await fetch("https://localhost:7020/api/Veiling", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include", // NIEUW: Credentials voor authenticatie
+                body: JSON.stringify(payload)
+            });
+
+            //Als het niet ok is stuur error text
+            if (!resp.ok) {
+                const text = await resp.text();
+                console.error("Upload failed:", text);
+                alert("Upload failed: " + resp.statusText);
+                return;
+            }
+            //Als wel ok is stuur dan een response text
+            const data = await resp.json();
+            console.log("Server response:", data);
+            alert("Uw veiling is gemaakt.");
+
+            setStarTijd("");
+            setBeschrijving("");
+            setStartDatum("");
+            setKlokLocatie("");
+
+            //Catch Error
+        } catch (err) {
+            console.error(err);
+            alert("Er is iets misgegaan met het versturen.");
+        }
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [])
 
-    const VeiulingPlaatsenKnop = () => {
-        navigate('/VeilingPlaatsen')
-    }
+    const handleGoBack = () => navigate('/VeilingMeesterDashboard');
 
-    const VeilingenTonenKnop = () => {
-        navigate('/VeilingTonen')
-    }
+    //Maakt een locaal atribuut aan voor de datum van vandaag
+    const localToday = (() => {
+        const d = new Date();
+        const tzOffset = d.getTimezoneOffset();
+        return new Date(d.getTime() - tzOffset * 60000).toISOString().split("T")[0];
+    })();
 
-    const VeilingBewerkenKnop = () => {
-        navigate('/VeilingBewerken')
-    }
-
+    //HTML REACT
     return (
-        <>
-            <main className="dashboard-container">
-                <h1 className="VerkoperDashboard-title">Veilingmeester dashboard</h1>
-                <div className="dashboard-box">
-                    <button className="btn" onClick={VeiulingPlaatsenKnop}>
-                        Veilingen Plaatsen
-                    </button>
-                    <button className="btn" onClick={VeilingenTonenKnop}>
-                        Veilingen Tonen
-                    </button>
-                    <button className="btn" onClick={VeilingBewerkenKnop}>
-                        Producten Toevoegen
-                    </button>
-                    <button
-                        className="btn"
-                        onClick={() => {
-                            if (products.length === 0) {
-                                alert("Geen producten om te verwijderen.");
-                                return;
-                            }
-                            //   deleteProduct(products[products.length - 1].id);
-                        }}>
-                        Veilingen Verwijderen
-                    </button>
+        <main className="vp_dashboard-container">
+            <h1 className="pp_title">Veiling aanmaken</h1>
+
+            <div className="vp_dashboard-box vp_dashboard-flex">
+
+                {/*Linker colom*/}
+                <div className="pp_dashboard-column">
+                    <label>
+                        <h2>Beschrijving</h2>
+                        <textarea
+                            className="pp_input-container-beschrijving"
+                            placeholder="Voer je Beschrijving in"
+                            onChange={e => setBeschrijving(e.target.value)}
+                        />
+                    </label>
                 </div>
-            </main>
-            <div className="product-list-box">
-                {loading ? (
-                    <div className="loader">Laden...</div>
-                ) : products.length === 0 ? (
-                    <div className="placeholder">
-                        Geen Veilingen beschikbaar
-                    </div>
-                ) : (
-                    <ul className="product-list">
-                        {products.map((product) => (
-                            <li key={product.id} className="product-item">
-                                <span>{product.name}</span>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                {/*Rechter colom*/}
+                <div className="pp_dashboard-column">
+                    <label>
+                        <h2>KlokLocatie</h2>
+                        <select
+                            name="Locatie selector"
+                            className="vp_selector"
+                            value={klokLocatie}
+                            onChange={e => setKlokLocatie(e.target.value)}
+                        >
+                            <option value="" disabled>
+                                Select uw optie
+                            </option>
+                            <option value="Den Haag">Den Haag</option>
+                            <option value="Rotterdam">Rotterdam</option>
+                            <option value="Amsterdam">Amsterdam</option>
+                            <option value="Leiden">Leiden</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        <h2>StartDatum</h2>
+                        <input
+                            className="pp_input-container"
+                            type="date"
+                            min={localToday}
+                            onChange={e => setStartDatum(e.target.value)}
+                        />
+                        {StartDatumError && <div style={{ color: 'red', marginTop: 6 }}>{StartDatumError}</div>}
+                    </label>
+
+                    <label>
+                        <h2>StarTijd</h2>
+                        <select name="Tijd selector" className="vp_selector"
+                            value={startDatum}
+                            onChange={e => setStarTijd(e.target.value)}
+>
+                            <option value="" disabled selected>Select uw optie</option>
+                            <option value="07:00">07:00</option>
+                            <option value="08:00">08:00</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="12:00">12:00</option>
+                        </select>
+                    </label>
+                </div>
             </div>
-        </>
-    );
-}
+
+            {/*Buttons*/}
+            <div className="pp_buttons-row">
+                <button className="pp_btn" onClick={handleCreateVeiling} >Veiling Maken</button>
+                <button className="pp_btn" onClick={handleGoBack}>Terug</button>
+            </div>
+        </main>
+        )
+      }
 
 
-export default VeilingMeesterDashboard;
+export default VeilingPlaatsen;

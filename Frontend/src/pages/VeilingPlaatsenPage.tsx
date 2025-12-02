@@ -1,12 +1,12 @@
 import Navbar from "../components/Navbar.js";
-import VeilingTonen from "../components/VeilingTonen.js";
+import VeilingPlaatsen from "../components/VeilingPlaatsen.js";
 import Footer from "../components/Footer.js";
 
-export default function VeilingTonenPage() {
+export default function VeilingPlaatsenPage() {
     return (
         <>
             <Navbar />
-            <VeilingTonen />
+            <VeilingPlaatsen />
             <Footer />
         </>
     );

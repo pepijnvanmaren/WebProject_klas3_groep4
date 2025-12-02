@@ -1,13 +1,12 @@
-import React from "react";
-import Navbar from "../components/Navbar.jsx";
-import SellerDashboard from "../components/SellerDashboard.jsx";
-import Footer from "../components/Footer.jsx";
+import Navbar from "../components/Navbar.js";
+import VeilingTonen from "../components/VeilingTonen.js";
+import Footer from "../components/Footer.js";
 
-export default function SellerDashboardPage() {
+export default function VeilingTonenPage() {
     return (
         <>
             <Navbar />
-            <SellerDashboard />
+            <VeilingTonen />
             <Footer />
         </>
     );

@@ -102,8 +102,8 @@ function VeilingBewerken() {
 
             {/*Buttons*/}
             <div className="pp_buttons-row">
-                <button className="pp_btn" onClick={handleGoBack}>Terug</button>
                 <button className="pp_btn" onClick={ProductToeveogen}>Product Toevoegen</button>
+                <button className="pp_btn" onClick={handleGoBack}>Terug</button>
             </div>
         </main>
     );

@@ -30,8 +30,8 @@ function VeilingTonen({ id }) {
     if (loading) return (
         <>
             <main className="dashboard-container">
-                <p>Loading...</p>
-            </main>
+                    <p>Loading...</p>
+        </main>
         </>
     )
 
@@ -81,7 +81,7 @@ function VeilingTonen({ id }) {
                         </h1>
                         <p className="input-field-Naam">
                             <strong>Starttijd:</strong> {veiling.starTijd}
-                        </p>
+                        </p>                                                                                                                     
                     </div>
                 </div>
                 <div className="Veiling_product-list-box">
