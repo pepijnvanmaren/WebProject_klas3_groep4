@@ -114,6 +114,12 @@ function VeilingTonen() {
 
     return (
         <div className="product-dashboard">
+            <header className="dashboard-header">
+                <div className="header-content">
+                    <h1>Mijn Veilingen</h1>
+                </div>
+            </header>
+
             <main className="dashboard-main">
                 <div className="dashboard-controls">
                     <button onClick={handleBack} className="btn-back">

@@ -136,23 +136,6 @@ function SellerDashboard() {
                     </button>
                 </div>
             </main>
-            <div className="product-list-box">
-                {loading ? (
-                    <div className="loader">Laden...</div>
-                ) : products.length === 0 ? (
-                    <div className="placeholder">
-                        Geen producten beschikbaar
-                    </div>
-                ) : (
-                    <ul className="product-list">
-                        {products.map((product) => (
-                            <li key={product.id} className="product-item">
-                                <span>{product.name}</span>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
         </>
     );
 }
