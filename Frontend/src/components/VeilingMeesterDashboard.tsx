@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/VeilingMeesterDashboard.css';
 import { useEffect } from 'react';
 
-useEffect(() => {
-    window.scrollTo(0, 0);
-}, [])
+
 
 const apiBase = 'https://localhost:5174';
 type User = {
@@ -20,6 +18,11 @@ function VeilingMeesterDashboard() {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
+
 
     // NIEUW: Fetch gebruikersgegevens bij laden
     useEffect(() => {

@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/Register.css";
 
-useEffect(() => {
-    window.scrollTo(0, 0);
-}, [])
-
 function Register() {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
+
 
     // Form states
     const [naam, setNaam] = useState("");

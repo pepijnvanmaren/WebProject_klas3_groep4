@@ -2,9 +2,6 @@ import "../styles/index.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-useEffect(() => {
-    window.scrollTo(0, 0);
-}, [])
 
 // Refereerd naar de DTO
 type Product = {
@@ -55,6 +52,10 @@ function Index() {
     const lastProductIdRef = useRef<number | null>(null);
 
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
 
     const scrollToCurrentProduct = () => {
         if (!currentProductTitleRef.current) return;

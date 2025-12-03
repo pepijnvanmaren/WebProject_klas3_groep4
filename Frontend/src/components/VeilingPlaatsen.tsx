@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/VeilingPlaatsen.css';
 import { useEffect } from 'react';
 
-useEffect(() => {
-    window.scrollTo(0, 0);
-}, [])
+
 
 function VeilingPlaatsen() {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
+
 
     //States voor elk veld
     const [starTijd, setStarTijd] = useState("");

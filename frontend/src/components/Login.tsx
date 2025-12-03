@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
@@ -8,6 +8,10 @@ function Login() {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
 
     const handleLogin = async () => {
         if (!email || !password) {

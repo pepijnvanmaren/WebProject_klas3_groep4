@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ProductTonenDashboard.css';
 
-useEffect(() => {
-    window.scrollTo(0, 0);
-}, [])
+
 
 type Product = {
     id: number;
@@ -47,6 +45,10 @@ function ProductDashboard() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
 
     // Fetch gebruiker en producten
     useEffect(() => {

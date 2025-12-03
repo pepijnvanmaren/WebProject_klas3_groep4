@@ -10,6 +10,8 @@ function ProtectedRoute({ children, requiredRoles }: ProtectedRouteProps) {
     const isLoggedIn = localStorage.getItem("loggedIn") === "true";
     const userRole = localStorage.getItem("userRole");
 
+
+
     // Niet ingelogd? Ga naar login
     if (!isLoggedIn) {
         return <Navigate to="/inloggen" replace />;
