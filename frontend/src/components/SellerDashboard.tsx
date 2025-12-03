@@ -66,36 +66,6 @@ function SellerDashboard() {
         navigate('/ProductMakenDashboard');
     };
 
-    async function fetchProducts() {
-        setLoading(true);
-        try {
-            const res = await fetch(`${apiBase}/api/Product`);
-            if (!res.ok) throw new Error("Failed to fetch");
-            const data = await res.json();
-            setProducts(data);
-        } catch (err) {
-            console.error(err);
-            alert("Kon producten niet laden.");
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    async function deleteProduct(id: number) {
-        if (!window.confirm("Weet je zeker dat je dit product wilt verwijderen?")) return;
-        try {
-            const res = await fetch(`${apiBase}/api/Product/${id}`, {
-                method: "DELETE",
-                credentials: "include",
-            });
-            if (!res.ok) throw new Error("Failed to delete");
-            await fetchProducts();
-        } catch (err) {
-            console.error(err);
-            alert("Kon product niet verwijderen.");
-        }
-    }
-
     return (
         <>
             <div className="dashboard-root">
@@ -129,17 +99,6 @@ function SellerDashboard() {
                     </button>
                     <button className="btn" onClick={ProductTonenKnop}>
                         Product Tonen
-                    </button>
-                    <button
-                        className="btn"
-                        onClick={() => {
-                            if (products.length === 0) {
-                                alert("Geen producten om te verwijderen.");
-                                return;
-                            }
-                            //   deleteProduct(products[products.length - 1].id);
-                        }}>
-                        Product Verwijderen
                     </button>
                 </div>
             </main>

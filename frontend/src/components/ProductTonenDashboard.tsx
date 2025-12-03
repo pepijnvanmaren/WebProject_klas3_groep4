@@ -96,7 +96,7 @@ function ProductDashboard() {
     }, [navigate]);
 
     const handleBack = () => {
-        navigate('/SellerDashboard');
+        navigate('/VerkoperDashboard');
     };
 
     const handleDeleteProduct = async (productId: number) => {

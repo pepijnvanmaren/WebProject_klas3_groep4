@@ -65,10 +65,6 @@ function VeilingMeesterDashboard() {
         navigate('/VeilingTonen')
     }
 
-    const VeilingBewerkenKnop = () => {
-        navigate('/VeilingBewerken')
-    }
-
     return (
         <>
             <div className="dashboard-root">
@@ -102,9 +98,6 @@ function VeilingMeesterDashboard() {
                     </button>
                     <button className="btn" onClick={VeilingenTonenKnop}>
                         Veilingen Tonen
-                    </button>
-                    <button className="btn" onClick={VeilingBewerkenKnop}>
-                        Producten Toevoegen
                     </button>
                 </div>
             </main>

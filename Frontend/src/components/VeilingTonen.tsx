@@ -68,8 +68,8 @@ function VeilingTonen() {
         navigate('/VeilingMeesterDashboard');
     };
 
-    const handleDeleteProduct = async (id: number) => {
-        if (!window.confirm("Weet je zeker dat je dit product wilt verwijderen?")) {
+    const handleDeleteVeiling = async (id: number) => {
+        if (!window.confirm("Weet je zeker dat je dit veiling wilt verwijderen?")) {
             return;
         }
 
@@ -80,8 +80,8 @@ function VeilingTonen() {
             });
 
             if (response.ok || response.status === 204) {
-                alert("Product succesvol verwijderd!");
-                // Verwijder product uit state
+                alert("veiling succesvol verwijderd!");
+                // Verwijder veiling uit state
                 setVeilingen(veilingen.filter(p => p.id !== id));
             } else {
                 alert("Kon veiling niet verwijderen");
@@ -130,7 +130,7 @@ function VeilingTonen() {
                         Terug naar Dashboard
                     </button>
                     <button onClick={() => navigate('/VeilingPlaatsen')} className="btn-add">
-                        + Nieuw Product
+                        + Nieuw veiling
                     </button>
                 </div>
 
@@ -181,7 +181,7 @@ function VeilingTonen() {
 
                                     <div className="product-actions">
                                         <button
-                                            onClick={() => handleDeleteProduct(veiling.id)}
+                                            onClick={() => handleDeleteVeiling(veiling.id)}
                                             className="btn-delete"
                                         >
                                             Verwijderen
