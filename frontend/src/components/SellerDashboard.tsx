@@ -13,6 +13,10 @@ type User = {
     veilingVestiging: string | null;
 };
 
+useEffect(() => {
+    window.scrollTo(0, 0);
+}, [])
+
 function SellerDashboard() {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);

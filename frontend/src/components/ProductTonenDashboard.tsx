@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ProductTonenDashboard.css';
 
+useEffect(() => {
+    window.scrollTo(0, 0);
+}, [])
+
 type Product = {
     id: number;
     naam: string;

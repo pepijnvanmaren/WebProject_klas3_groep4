@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/Register.css";
 
+useEffect(() => {
+    window.scrollTo(0, 0);
+}, [])
+
 function Register() {
     const navigate = useNavigate();
 

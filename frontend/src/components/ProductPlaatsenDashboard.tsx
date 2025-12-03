@@ -2,6 +2,9 @@ import "../styles/ProductPlaatsenDashboard.css";
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
 
+useEffect(() => {
+    window.scrollTo(0, 0);
+}, [])
 function SellerDashboard() {
     const navigate = useNavigate();
 

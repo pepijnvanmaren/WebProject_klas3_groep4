@@ -23,6 +23,10 @@ function VeilingTonen() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
+
+    useEffect(() => {
         const fetchVeilingen = async () => {
             const loggedIn = localStorage.getItem("loggedIn") === "true";
 

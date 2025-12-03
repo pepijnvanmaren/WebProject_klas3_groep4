@@ -2,6 +2,10 @@ import "../styles/index.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+useEffect(() => {
+    window.scrollTo(0, 0);
+}, [])
+
 // Refereerd naar de DTO
 type Product = {
     id: number;
