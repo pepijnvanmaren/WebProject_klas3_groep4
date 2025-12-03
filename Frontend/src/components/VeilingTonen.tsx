@@ -169,11 +169,11 @@ function VeilingTonen() {
                                             <span className="detail-label">KlokLocatie:</span>
                                             <span className="detail-value">{veiling.KlokLocatie}</span>
                                         </div>
-                                        {veiling.StarTijd && (
+                                        {veiling.StartDatum && (
                                             <div className="detail-item">
-                                                <span className="detail-label">StarTijd:</span>
+                                                <span className="detail-label">StartDatum:</span>
                                                 <span className="detail-value">
-                                                    {new Date(veiling.StarTijd).toLocaleDateString('nl-NL')}
+                                                    {new Date(veiling.StartDatum).toLocaleDateString('nl-NL')}
                                                 </span>
                                             </div>
                                         )}
