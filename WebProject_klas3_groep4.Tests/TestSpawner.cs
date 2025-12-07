@@ -117,5 +117,70 @@ namespace WebProject_klas3_groep4.Tests.TestHelpers
                 Rol = rol
             };
         }
+
+        public static GebruikerDB CreateValidAanvoerder(
+                   int id = 1,
+                   string email = "test@test.nl",
+                   string userName = "TestUser",
+                   string phoneNumber = "0612345678",
+                   string rol = "Aanvoerder")
+        {
+            return new GebruikerDB
+            {
+                Id = id,
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                Rol = rol,
+                EmailConfirmed = true,
+                NormalizedEmail = email.ToUpper(),
+                NormalizedUserName = userName.ToUpper(),
+                KvkNummer = "12345678",
+                NaamVanBedrijf = "Test Bedrijf",
+                BedrijfTelefoonnummer = "0701234567",
+                BedrijfEmail = "Bedrijf@email"
+            };
+        }
+
+        public static AanvoerderCreateDto CreateValidAanvoerderCreateDto(
+            string email = "newuser@test.nl",
+            string userName = "NewUser",
+            string password = "Password123!",
+            string phoneNumber = "0612345678")
+        {
+            return new AanvoerderCreateDto
+            {
+                Adres = "Test Adres",
+                KvkNummer = "12345678",
+                NaamVanBedrijf = "Test Bedrijf",
+                Postcode = "1234AB",
+                BedrijfTelefoonnummer = "0701234567",
+                BedrijfEmail = "Bedrijf@email",
+                UserName = userName,
+                Email = email,
+                Password = password,
+                PhoneNumber = phoneNumber,
+            };
+        }
+
+        public static AanvoerderUpdateDto CreateValidAanvoerderUpdateDto(
+            string email = "newuser@test.nl",
+            string userName = "NewUser",
+            string password = "Password123!",
+            string phoneNumber = "0612345678")
+        {
+            return new AanvoerderUpdateDto
+            {
+                Adres = "Updated Adres",
+                KvkNummer = "87654321",
+                NaamVanBedrijf = "Updated Bedrijf",
+                Postcode = "4321BA",
+                BedrijfTelefoonnummer = "0707654321",
+                BedrijfEmail = "UpdatedBedrijf@email",
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+            };
+        }
     }
 }
