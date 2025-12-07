@@ -92,11 +92,11 @@ function VeilingMeesterDashboard() {
 
             <main className="dashboard-container">
                 <h1 className="VerkoperDashboard-title">Veilingmeester dashboard</h1>
-                <div className="dashboard-box">
-                    <button className="btn" onClick={VeiulingPlaatsenKnop}>
+                <div className="VL_dashboard-box">
+                    <button className="VL_pp_btn" onClick={VeiulingPlaatsenKnop}>
                         Veilingen Plaatsen
                     </button>
-                    <button className="btn" onClick={VeilingenTonenKnop}>
+                    <button className="VL_pp_btn" onClick={VeilingenTonenKnop}>
                         Veilingen Tonen
                     </button>
                 </div>
