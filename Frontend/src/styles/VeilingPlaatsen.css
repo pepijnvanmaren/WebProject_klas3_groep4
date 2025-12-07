@@ -30,3 +30,7 @@
     width: 100%;
     box-sizing: border-box;
 }
+
+.vp_dashboard-container {
+  margin-top: 14rem;
+}

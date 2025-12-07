@@ -74,21 +74,6 @@ function SellerDashboard() {
         }
     }
 
-    async function deleteProduct(id: number) {
-        if (!window.confirm("Weet je zeker dat je dit product wilt verwijderen?")) return;
-        try {
-            const res = await fetch(`${apiBase}/api/Product/${id}`, {
-                method: "DELETE",
-                credentials: "include",
-            });
-            if (!res.ok) throw new Error("Failed to delete");
-            await fetchProducts();
-        } catch (err) {
-            console.error(err);
-            alert("Kon product niet verwijderen.");
-        }
-    }
-
     return (
         <>
             <div className="dashboard-root">
@@ -123,38 +108,8 @@ function SellerDashboard() {
                     <button className="btn secondary" onClick={ProductTonenKnop}>
                         Product Tonen
                     </button>
-                    <button
-                        className="btn danger"
-                        onClick={() => {
-                            if (products.length === 0) {
-                                alert("Geen producten om te verwijderen.");
-                                return;
-                            }
-                            deleteProduct(products[products.length - 1].id);
-                        }}
-                    >
-                        Product Verwijderen
-                    </button>
                 </div>
             </main>
-
-            <div className="product-list-box">
-                {loading ? (
-                    <div className="loader">Laden...</div>
-                ) : products.length === 0 ? (
-                    <div className="placeholder">
-                        Geen producten beschikbaar
-                    </div>
-                ) : (
-                    <ul className="product-list">
-                        {products.map((product: any) => (
-                            <li key={product.id} className="product-item">
-                                <span>{product.naam}</span>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
         </>
     );
 }
