@@ -182,5 +182,113 @@ namespace WebProject_klas3_groep4.Tests.TestHelpers
                 PhoneNumber = phoneNumber,
             };
         }
+
+        public static GebruikerDB CreateValidKoper(
+           int id = 1,
+           string email = "test@test.nl",
+           string userName = "TestUser",
+           string phoneNumber = "0612345678",
+           string rol = "Koper")
+        {
+            return new GebruikerDB
+            {
+                Id = id,
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                Rol = rol,
+                EmailConfirmed = true,
+                NormalizedEmail = email.ToUpper(),
+                NormalizedUserName = userName.ToUpper(),
+                BankGegevens = "NL00BANK0123456789",
+                Postcode = "1234AB",
+                Adres = "Test Adres"
+            };
+        }
+
+        public static KoperCreateDto CreateValidKoperCreateDto(
+           int id = 1,
+           string email = "test@test.nl",
+           string userName = "TestUser",
+           string phoneNumber = "0612345678")
+        {
+            return new KoperCreateDto
+            {
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                BankGegevens = "NL00BANK0123456789",
+                Postcode = "1234AB",
+                Adres = "Test Adres"
+            };
+        }
+
+        public static KoperUpdateDto CreateValidKoperUpdateDto(
+           int id = 1,
+           string email = "test@test.nl",
+           string userName = "TestUser",
+           string phoneNumber = "0612345678")
+        {
+            return new KoperUpdateDto
+            {
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                BankGegevens = "NL00BANK0123456789",
+                Postcode = "1234AB",
+                Adres = "Test Adres"
+            };
+        }
+
+        public static GebruikerDB CreateValidVeilingmeester(
+           int id = 1,
+           string email = "test@test.nl",
+           string userName = "TestUser",
+           string phoneNumber = "0612345678",
+           string rol = "Veilingmeester")
+        {             
+            return new GebruikerDB
+            {
+                Id = id,
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                Rol = rol,
+                EmailConfirmed = true,
+                NormalizedEmail = email.ToUpper(),
+                NormalizedUserName = userName.ToUpper(),
+                VeilingVestiging = "Test Vestiging"
+            };
+        }
+
+        public static VeilingmeesterCreateDto CreateValidVeilingmeesterCreateDto(
+           int id = 1,
+           string email = "test@test.nl",
+           string userName = "TestUser",
+           string phoneNumber = "0612345678")
+        {             return new VeilingmeesterCreateDto
+            {
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                Password = "Password123!",
+                VeilingVestiging = "Test Vestiging"
+            };
+        }
+
+        public static VeilingmeesterUpdateDto CreateValidVeilingmeesterUpdateDto(
+           int id = 1,
+           string email = "test@test.nl",
+           string userName = "TestUser",
+           string phoneNumber = "0612345678")
+        {
+            return new VeilingmeesterUpdateDto
+            {
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                VeilingVestiging = "Test Vestiging"
+            };
+        }
     }
 }
