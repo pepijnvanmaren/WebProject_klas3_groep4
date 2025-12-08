@@ -63,6 +63,7 @@ namespace WebProject_klas3_groep4.Tests
 
         // ---------------------------------------------------------
         // TEST 1 — GET ALL
+        // ---------------------------------------------------------
         [Fact]
         public async Task GetVeilingen_ReturnsList()
         {
@@ -84,6 +85,7 @@ namespace WebProject_klas3_groep4.Tests
 
         // ---------------------------------------------------------
         // TEST 2 — GET BY ID
+        // ---------------------------------------------------------
         [Fact]
         public async Task GetVeiling_ReturnsNotFound_IfMissing()
         {
@@ -116,6 +118,7 @@ namespace WebProject_klas3_groep4.Tests
 
         // ---------------------------------------------------------
         // TEST 3 — POST
+        // ---------------------------------------------------------
         [Fact]
         public async Task PostVeiling_CreatesVeiling()
         {
@@ -142,6 +145,7 @@ namespace WebProject_klas3_groep4.Tests
 
         // ---------------------------------------------------------
         // TEST 4 — PUT
+        // ---------------------------------------------------------
         [Fact]
         public async Task PutVeiling_Forbid_WhenNotOwner()
         {
@@ -177,6 +181,7 @@ namespace WebProject_klas3_groep4.Tests
 
         // ---------------------------------------------------------
         // TEST 5 — DELETE
+        // ---------------------------------------------------------
         [Fact]
         public async Task DeleteVeiling_Forbid_WhenNotOwner()
         {
@@ -210,6 +215,7 @@ namespace WebProject_klas3_groep4.Tests
 
         // ---------------------------------------------------------
         // TEST 6 — GET BY VEILINGMEESTER
+        // ---------------------------------------------------------
         [Fact]
         public async Task GetVeilingenByVeilingmeester_FiltersCorrect()
         {

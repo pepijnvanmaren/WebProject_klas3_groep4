@@ -163,6 +163,9 @@ using (var scope = app.Services.CreateScope())
 app.MapControllers();
 app.Run();
 
+// Voor integratie tests
+public partial class Program { }
+
 // ----------------------------------------------------------
 // Dummy Email Sender
 // ----------------------------------------------------------

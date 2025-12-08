@@ -40,7 +40,8 @@ namespace WebProject_klas3_groep4.Tests
         }
 
         // ------------------------------------------------------------
-        // TEST 1 - GET ALL TESTS
+        // GET ALL TESTS
+        // ------------------------------------------------------------
         [Fact]
         public async Task GetGebruikers_ReturnsAllGebruikers()
         {
@@ -73,7 +74,8 @@ namespace WebProject_klas3_groep4.Tests
         }
 
         // ------------------------------------------------------------
-        // TEST 2 - GET SINGLE TESTS
+        // GET SINGLE TESTS
+        // ------------------------------------------------------------
         [Fact]
         public async Task GetGebruiker_ReturnsGebruiker_WhenExists()
         {
@@ -108,7 +110,8 @@ namespace WebProject_klas3_groep4.Tests
         }
 
         // ------------------------------------------------------------
-        // TEST 3 - CREATE TESTS
+        // CREATE TESTS
+        // ------------------------------------------------------------
         [Fact]
         public async Task PostGebruiker_CreatesGebruiker_WhenValid()
         {
@@ -158,7 +161,8 @@ namespace WebProject_klas3_groep4.Tests
         }
 
         // ------------------------------------------------------------
-        // TEST 4 - UPDATE TESTS
+        // UPDATE TESTS
+        // ------------------------------------------------------------
         [Fact]
         public async Task PutGebruiker_UpdatesGebruiker_WhenValid()
         {
@@ -222,7 +226,8 @@ namespace WebProject_klas3_groep4.Tests
         }
 
         // ------------------------------------------------------------
-        // TEST 5 - DELETE TESTS
+        // DELETE TESTS
+        // ------------------------------------------------------------
         [Fact]
         public async Task DeleteGebruiker_DeletesGebruiker_WhenExists()
         {

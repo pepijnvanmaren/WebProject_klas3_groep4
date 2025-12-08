@@ -66,7 +66,8 @@ namespace WebProject_klas3_groep4.Tests
         }
 
         // ---------------------------------------------------------
-        // TEST 1 - GetProducten
+        // TEST 1: GetProducten
+        // ---------------------------------------------------------
         [Fact]
         public async Task GetProducten_ReturnsOk_WithListOfProducts()
         {
@@ -88,7 +89,8 @@ namespace WebProject_klas3_groep4.Tests
         }
 
         // ---------------------------------------------------------
-        // TEST 2 - PostProduct
+        // TEST 2: PostProduct
+        // ---------------------------------------------------------
         [Fact]
         public async Task PostProduct_CreatesProduct_ForLoggedInUser()
         {
@@ -125,7 +127,8 @@ namespace WebProject_klas3_groep4.Tests
         }
 
         // ---------------------------------------------------------
-        // TEST 3 - Delete blokkeert bij verkeerde eigenaar
+        // TEST 3: Delete blokkeert bij verkeerde eigenaar
+        // ---------------------------------------------------------
         [Fact]
         public async Task DeleteProduct_ReturnsForbid_IfUserIsNotOwner()
         {
