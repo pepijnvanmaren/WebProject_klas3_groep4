@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using WebProject_klas3_groep4;
-using WebProject_klas3_groep4.Tests;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace WebProject_klas3_groep4.Tests.Infrastructure
 {
@@ -14,41 +13,20 @@ namespace WebProject_klas3_groep4.Tests.Infrastructure
         {
             builder.ConfigureServices(services =>
             {
-                // Verwijder de echte database voor de test
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(DbContextOptions<DatabaseContext>));
+                // Verwijder echte database
+                services.RemoveAll(typeof(DbContextOptions<DatabaseContext>));
 
-                if (descriptor != null)
-                    services.Remove(descriptor);
-
-                // Voeg InMemory database toe voor testen
+                // Voeg InMemory database toe
                 services.AddDbContext<DatabaseContext>(options =>
                 {
                     options.UseInMemoryDatabase("TestDB");
                 });
 
+                // Fake authentication toevoegen
                 services.AddAuthentication("Test")
                     .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
                         "Test", options => { });
-
-                services.AddAuthorization(options =>
-                {
-                    options.AddPolicy("TestPolicy", policy =>
-                    {
-                        policy.AuthenticationSchemes.Add("Test");
-                        policy.RequireAuthenticatedUser();
-                    });
-                });
-
-                // Build provider en seed testdata
-                var sp = services.BuildServiceProvider();
-
-                using (var scope = sp.CreateScope())
-                {
-                    var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-                    db.Database.EnsureCreated();
-
-                }
+            
             });
         }
     }

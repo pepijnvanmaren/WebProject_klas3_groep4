@@ -6,12 +6,13 @@ using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.DTO;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using WebProject_klas3_groep4.Tests.Infrastructure;
 
-public class VeilingSwaggerTest : IClassFixture<WebApplicationFactory<Program>>
+public class VeilingSwaggerTest : IClassFixture<WebAppFactory>
 {
     private readonly HttpClient _client;
 
-    public VeilingSwaggerTest(WebApplicationFactory<Program> factory)
+    public VeilingSwaggerTest(WebAppFactory factory)
     {
         _client = factory.WithWebHostBuilder(builder =>
         {
@@ -87,6 +88,7 @@ public class VeilingSwaggerTest : IClassFixture<WebApplicationFactory<Program>>
         };
 
         var createResponse = await _client.PostAsJsonAsync("/api/Veiling", createDto);
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
         var created = await createResponse.Content.ReadFromJsonAsync<VeilingOutputDto>();
 
         // en verwijdert hier
