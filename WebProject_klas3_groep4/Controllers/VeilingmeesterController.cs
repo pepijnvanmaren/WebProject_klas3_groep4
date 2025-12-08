@@ -156,7 +156,7 @@ namespace WebProject_klas3_groep4.Controllers
         public async Task<ActionResult> DeleteVeilingmeester(int id)
         {
             var veilingmeester = await _context.Gebruikers
-                .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "veilingmeester");
+                .FirstOrDefaultAsync(u => u.Id == id && u.Rol == "Veilingmeester");
 
             if (veilingmeester == null)
                 return NotFound();
