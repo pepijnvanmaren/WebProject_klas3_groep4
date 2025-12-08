@@ -114,10 +114,12 @@ namespace WebProject_klas3_groep4.Controllers
                 StartDatum = dto.StartDatum ?? DateTime.Now.ToString("yyyy-MM-dd"),
                 AantalProducten = dto.AantalProducten,
                 KlokLocatie = dto.KlokLocatie,
-                HuidigeSituatieVanVeiling = dto.HuidigeSituatieVanVeiling,
+                HuidigeSituatieVanVeiling = "Dicht",
                 Bechrijving = dto.Bechrijving,
                 VeilingmeesterId = dto.VeilingmeesterId ?? user.Id
             };
+
+
 
             _context.Veilingen.Add(veiling);
             await _context.SaveChangesAsync();

@@ -61,10 +61,11 @@ Dashboard.css
 }
 
 .dashboard-box {
-    background: linear-gradient(#cfe6c8, #dbeed5);
-    border: 4px solid #a3c69b;
-    padding: 18px;
-    border-radius: 2px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 1em;
 }
 
 .btn {
