@@ -19,10 +19,12 @@ function Register() {
         const url =
             rol === "koper"
                 ? "https://localhost:7020/api/kopers"
-                : "https://localhost:7020/api/aanvoerders";
+                : rol === "aanvoerder"
+                    ? "https://localhost:7020/api/aanvoerders"
+                    : "https://localhost:7020/api/veilingmeester"
 
         let body: any = {
-            UserName: naam,       
+            UserName: naam,
             Email: email,
             PhoneNumber: telefoonnummer,
             Password: paswoord,
@@ -32,13 +34,15 @@ function Register() {
             body.BankGegevens = "";
             body.Postcode = "";
             body.Adres = "";
-        } else {
+        } else if (rol === "aanvoerder") {
             body.NaamVanBedrijf = "";
             body.KvkNummer = "";
             body.Postcode = "";
             body.Adres = "";
             body.BedrijfTelefoonnummer = "";
             body.BedrijfEmail = "";
+        } else if (rol === "veiligmeester") {
+            body.VeilingVestiging = "";
         }
 
         const response = await fetch(url, {
@@ -54,7 +58,6 @@ function Register() {
 
         return response.json();
     };
-
 
 
     const handleRegister = async () => {
@@ -75,8 +78,9 @@ function Register() {
             alert("Account succesvol aangemaakt!");
 
             // Navigatie op basis van rol
-            if (rol === "koper") navigate("/");
-            else navigate("/verkoperDashboard");
+            if (rol === "koper") navigate("/koperdashboard");
+            else if (rol === "aanvoerder") navigate("/verkoperDashboard");
+            else if (rol === "veilingmeester") navigate("/veilingmeesterdashboard");
         } catch (error: any) {
             console.error(error);
             alert(error.message || "Er ging iets mis bij het registreren.");
@@ -140,6 +144,13 @@ function Register() {
                                 onClick={() => setRol("aanvoerder")}
                             >
                                 Aanvoerder
+                            </button>
+                            <button
+                                type="button"
+                                className={`account-type-btn ${rol === "veilingmeester" ? "active" : ""}`}
+                                onClick={() => setRol("veilingmeester")}
+                            >
+                                veilingmeester
                             </button>
                         </div>
                     </div>

@@ -173,8 +173,8 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // DELETE
         // ---------------------------------------------------------
-        [Authorize(Roles = "Veilingmeester")]
-        [HttpDelete("{id:int}")]
+      //  [Authorize(Roles = "Veilingmeester")]
+        [HttpDelete("{id:String}")]
         public async Task<ActionResult> DeleteVeiling(int id)
         {
             var veiling = await _context.Veilingen.FindAsync(id);

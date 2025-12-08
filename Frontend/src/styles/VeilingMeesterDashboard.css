@@ -1,0 +1,49 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.dashboard-root {
+    font-family: "Segoe UI", sans-serif;
+    background: #fff;
+    min-height: 30vh;
+}
+
+.dashboard-container {
+    max-width: 420px;
+    margin: 5px auto 0;
+    padding: 10px;
+}
+
+.dashboard-box {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 1em;
+}
+
+.VL_pp_btn {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #77C77A;
+    color: #fff;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    margin-bottom: 14px;
+}
+
+.VL_dashboard-box {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 1em;
+}

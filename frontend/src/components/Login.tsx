@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
 function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -15,51 +16,66 @@ function Login() {
         }
 
         setLoading(true);
+
         try {
+            // Login
             const loginResponse = await fetch("https://localhost:7020/api/auth/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify({ email, password })
             });
 
             if (!loginResponse.ok) {
-                const message = await loginResponse.text();
-                alert(message || "Login mislukt");
+                const msg = await loginResponse.text();
+                alert(msg || "Login mislukt");
                 setLoading(false);
                 return;
             }
 
+            // User ophalen
             const meResponse = await fetch("https://localhost:7020/api/auth/me", {
                 method: "GET",
                 credentials: "include"
             });
 
             if (!meResponse.ok) {
-                alert("Kon gebruiker niet ophalen");
+                alert("Kon gebruiker niet ophalen.");
                 setLoading(false);
                 return;
             }
 
             const user = await meResponse.json();
 
-            // Sla login status op in localStorage
+            // Opslaan in localStorage
             localStorage.setItem("loggedIn", "true");
             localStorage.setItem("userRole", user.rol);
 
-            if (user.rol === "Koper") {
-                navigate("/koperdashboard");
-            } else if (user.rol === "Aanvoerder") {
-                navigate("/verkoperDashboard");
-            } else if (user.rol === "Veilingmeester") {
-                navigate("/");
-            } else if (user.rol === "Admin") {
-                navigate("/");
+            // Navigatie op basis van rol
+            switch (user.rol) {
+                case "Koper":
+                    navigate("/koperdashboard");
+                    break;
+
+                case "Aanvoerder":
+                    navigate("/verkoperDashboard");
+                    break;
+
+                case "Veilingmeester":
+                    navigate("/veilingmeesterdashboard");
+                    break;
+
+                case "Admin":
+                    navigate("/admindashboard");
+                    break;
+
+                default:
+                    alert("Onbekende rol: " + user.rol);
+                    break;
             }
-        } catch (error) {
-            console.error(error);
+
+        } catch (err) {
+            console.error(err);
             alert("Er ging iets mis bij het verbinden met de server.");
         } finally {
             setLoading(false);
@@ -70,15 +86,17 @@ function Login() {
         <div className="app-container">
             <div className="giveEmail">
                 <h1>Inloggen</h1>
-                <p>E-Mail</p>
+
+                <p>E-mail</p>
                 <input
                     type="email"
-                    placeholder="Voer je E-Mail in"
+                    placeholder="Voer je E-mail in"
                     className="input-field-Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
             </div>
+
             <div className="givePassword">
                 <p>Wachtwoord</p>
                 <input
@@ -89,6 +107,7 @@ function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
+
             <button
                 className="login-button"
                 onClick={handleLogin}
@@ -96,6 +115,7 @@ function Login() {
             >
                 {loading ? "Even geduld..." : "Inloggen"}
             </button>
+
             <div className="signup-section">
                 <p>Heb je nog geen account?</p>
                 <Link to="/registreren" className="signup-link">
