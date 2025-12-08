@@ -16,11 +16,22 @@ type Veiling = {
     producten?: Array<any>;
 };
 
+type User = {
+    id: number;
+    userName: string;
+    email: string;
+    phoneNumber: string;
+    rol: string;
+    veilingVestiging: string | null;
+};
+
 function VeilingTonen() {
     const navigate = useNavigate();
     const [veilingen, setVeilingen] = useState<Veiling[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -41,9 +52,12 @@ function VeilingTonen() {
                 });
 
                 if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    setUser(userData);
 
                     const productsResponse = await fetch(
-                        `https://localhost:7020/api/veiling`
+                        `https://localhost:7020/api/veiling/veilingmeester/${userData.id}`
+
                     );
                     if (productsResponse.ok) {
                         const veilingData = await productsResponse.json();

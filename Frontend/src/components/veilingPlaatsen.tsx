@@ -34,7 +34,6 @@ function VeilingPlaatsen() {
             klokLocatie,
             aantalProducten: 1,
             huidigeSituatieVanVeiling: "gesloten",
-            veilingmeesterId: 1 
         };
 
         try {
