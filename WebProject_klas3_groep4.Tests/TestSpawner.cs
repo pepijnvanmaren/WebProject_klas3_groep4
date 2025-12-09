@@ -290,5 +290,28 @@ namespace WebProject_klas3_groep4.Tests.TestHelpers
                 VeilingVestiging = "Test Vestiging"
             };
         }
+            public static productDB CreateValidProductStatus(
+            int id = 1,
+            VeilingStatus status = VeilingStatus.InWachtrij)
+                {
+            
+            return new productDB
+            {
+                ID = id,
+                Naam = "Test Product",
+                Beschrijving = "Beschrijving test",
+                MinimalePrijs = 10,
+                Hoeveelheid = 5,
+                Gewicht = 1.2,
+                Potmaat = 12,
+                Steellengte = 30,
+                Oogstdatum = DateTime.Now,
+                Status = status,
+                Foto = null,
+                VerkochtePrijs = null,
+                AanvoerderId = null,
+                VeilingId = null
+            };
+        }
     }
 }
