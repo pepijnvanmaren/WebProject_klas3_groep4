@@ -3,64 +3,84 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
 function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+    const navigate = useNavigate(); //gebruikt voor redirect
 
+    //runs als je op login klikt
     const handleLogin = async () => {
-        if (!email || !password) {
-            alert("Vul beide velden in!");
+        if (!email || !password) {      //Checkt of de velden ingevuld zijn
+            alert("Fill in both fields");
             return;
         }
 
         setLoading(true);
+
         try {
+            //Stuurt de credentials naar de backend
             const loginResponse = await fetch("https://localhost:7020/api/auth/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
             });
 
+            //Returns de foutmelding uit de backend
             if (!loginResponse.ok) {
                 const message = await loginResponse.text();
-                alert(message || "Login mislukt");
+                alert(message || "Login failed");
                 setLoading(false);
                 return;
             }
 
+            //Haalt token en rol op
+            const loginData = await loginResponse.json();
+            const token = loginData.token;
+            const role = loginData.rol;
+
+            if (!token) {
+                alert("No token received");
+                setLoading(false);
+                return;
+            }
+
+            //slaat token en rol op
+            localStorage.setItem("token", token);
+            localStorage.setItem("userRole", role);
+
+            //Fetch voor user
             const meResponse = await fetch("https://localhost:7020/api/auth/me", {
                 method: "GET",
-                credentials: "include"
+                headers: {
+                    Authorization: `Bearer ${token}`,   //checkt de bearer token jwt
+                    "Content-Type": "application/json"
+                }
             });
 
-            if (!meResponse.ok) {
-                alert("Kon gebruiker niet ophalen");
-                setLoading(false);
-                return;
+            if (meResponse.ok) {
+                const user = await meResponse.json();
+                localStorage.setItem("userName", user.userName);    //Slaat username op
+            } else {
+                console.warn("Failed to fetch user info. Status:", meResponse.status);
             }
-
-            const user = await meResponse.json();
-
-            // Sla login status op in localStorage
-            localStorage.setItem("loggedIn", "true");
-            localStorage.setItem("userRole", user.rol);
-
-            if (user.rol === "Koper") {
-                navigate("/koperdashboard");
-            } else if (user.rol === "Aanvoerder") {
-                navigate("/verkoperDashboard");
-            } else if (user.rol === "Veilingmeester") {
-                navigate("/");
-            } else if (user.rol === "Admin") {
-                navigate("/");
+            
+            //Navigatie naar de juiste pagina op basis van rol
+            switch (role) {
+                case "Koper":
+                    navigate("/koperdashboard");
+                    break;
+                case "Aanvoerder":
+                    navigate("/verkoperDashboard");
+                    break;
+                case "Admin":
+                    navigate("/adminDashboard");
+                    break;
+                default:
+                    navigate("/");
             }
         } catch (error) {
-            console.error(error);
-            alert("Er ging iets mis bij het verbinden met de server.");
+            console.error("Login error:", error);
+            alert("Cannot connect to server.");
         } finally {
             setLoading(false);
         }
@@ -69,37 +89,38 @@ function Login() {
     return (
         <div className="app-container">
             <div className="giveEmail">
-                <h1>Inloggen</h1>
-                <p>E-Mail</p>
+                <h1>Login</h1>
+                <p>Email</p>
                 <input
                     type="email"
-                    placeholder="Voer je E-Mail in"
-                    className="input-field-Email"
+                    placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
             </div>
+
             <div className="givePassword">
-                <p>Wachtwoord</p>
+                <p>Password</p>
                 <input
                     type="password"
-                    placeholder="Voer je wachtwoord in"
-                    className="input-field-Password"
+                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
+
             <button
                 className="login-button"
                 onClick={handleLogin}
                 disabled={loading}
             >
-                {loading ? "Even geduld..." : "Inloggen"}
+                {loading ? "Please wait..." : "Login"}
             </button>
+
             <div className="signup-section">
-                <p>Heb je nog geen account?</p>
+                <p>Don't have an account?</p>
                 <Link to="/registreren" className="signup-link">
-                    Account aanmaken
+                    Create account
                 </Link>
             </div>
         </div>

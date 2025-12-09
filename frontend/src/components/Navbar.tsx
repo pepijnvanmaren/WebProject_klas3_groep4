@@ -7,53 +7,48 @@ import UserIcon from "../assets/userIcon3.png";
 
 function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userRole, setUserRole] = useState<string | null>(null);
+    const [userRole, setUserRole] = useState(null);
     const [homePath, setHomePath] = useState("/");
     const navigate = useNavigate();
 
-    // Check of gebruiker is ingelogd bij het laden van de component
     useEffect(() => {
         checkLoginStatus();
 
-        // Luister naar localStorage changes
-        window.addEventListener('storage', checkLoginStatus);
-
+        window.addEventListener("storage", checkLoginStatus);
         return () => {
-            window.removeEventListener('storage', checkLoginStatus);
+            window.removeEventListener("storage", checkLoginStatus);
         };
     }, []);
 
-    // Update home path wanneer rol verandert
     useEffect(() => {
         if (userRole === "Aanvoerder") {
             setHomePath("/verkoperDashboard");
+        } else if (userRole === "Koper") {
+            setHomePath("/koperdashboard");
         } else {
             setHomePath("/");
         }
     }, [userRole]);
 
-    // Functie om login status en rol te checken
     const checkLoginStatus = async () => {
-        const loggedIn = localStorage.getItem("loggedIn") === "true";
+        const token = localStorage.getItem("token");
 
-        if (loggedIn) {
-            setIsLoggedIn(true);
-
-            // Haal rol op van de server
-            await fetchUserRole();
-        } else {
+        if (!token) {
             setIsLoggedIn(false);
             setUserRole(null);
+            return;
         }
+
+        setIsLoggedIn(true);
+        await fetchUserRole(token);
     };
 
-    // Functie om gebruikersrol op te halen
-    const fetchUserRole = async () => {
+    const fetchUserRole = async (token) => {
         try {
             const response = await fetch("https://localhost:7020/api/auth/me", {
                 method: "GET",
-                credentials: "include",
                 headers: {
+                    Authorization: "Bearer " + token,
                     "Content-Type": "application/json"
                 }
             });
@@ -62,40 +57,27 @@ function Navbar() {
                 const data = await response.json();
                 setUserRole(data.rol);
 
-                // Optioneel: sla rol ook op in localStorage voor snellere toegang
                 if (data.rol) {
                     localStorage.setItem("userRole", data.rol);
                 }
             } else {
-                // Cookie is ongeldig
                 handleLogout();
             }
         } catch (error) {
-            console.error("Fout bij ophalen gebruikersrol:", error);
+            console.error("Error loading user role:", error);
         }
     };
 
-    // Functie om uit te loggen
-    const handleLogout = async () => {
-        try {
-            await fetch("https://localhost:7020/api/auth/logout", {
-                method: "POST",
-                credentials: "include"
-            });
-        } catch (error) {
-            console.error("Logout error:", error);
-        } finally {
-            // Verwijder gegevens
-            localStorage.removeItem("loggedIn");
-            localStorage.removeItem("userRole");
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userRole");
 
-            setIsLoggedIn(false);
-            setUserRole(null);
-            navigate("/");
-        }
+        setIsLoggedIn(false);
+        setUserRole(null);
+
+        navigate("/");
     };
 
-    // Functie om login/logout te handelen
     const handleAuthClick = () => {
         if (isLoggedIn) {
             handleLogout();
@@ -107,6 +89,7 @@ function Navbar() {
     return (
         <header className="header-container">
             <img src={Trees} alt="tree picture" className="tree-picture" />
+
             <nav className="navbar">
                 <div className="nav-content">
                     <li>
@@ -114,11 +97,12 @@ function Navbar() {
                             <img src={Logo} alt="Royale Flora" className="nav-logo" />
                         </Link>
                     </li>
+
                     <ul className="nav-links">
                         <li
                             className="auth-button"
                             onClick={handleAuthClick}
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: "pointer" }}
                         >
                             {isLoggedIn ? "Uitloggen" : "Inloggen"}
                         </li>

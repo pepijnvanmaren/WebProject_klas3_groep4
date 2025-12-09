@@ -1,35 +1,21 @@
-using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using WebProject_klas3_groep4;
 using WebProject_klas3_groep4.models;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);   //initializes de app en dependency injection
 
-// ----------------------------------------------------------
-// Services
-// ----------------------------------------------------------
-builder.Services.AddControllers()
-    .AddJsonOptions(opts =>
-    {
-        opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
-
-// ----------------------------------------------------------
-// Database
-// ----------------------------------------------------------
-builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? "Server=(localdb)\\mssqllocaldb;Database=WebProject_klas3_groep4;Trusted_Connection=True;")
+builder.Services.AddDbContext<DatabaseContext>(options =>   //add service: databaseContext
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))    //database connectie uit appsettings.json halen
 );
 
-// ----------------------------------------------------------
-// Identity
-// ----------------------------------------------------------
 builder.Services.AddIdentity<GebruikerDB, IdentityRole<int>>(options =>
 {
+    //password requirements
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
@@ -38,57 +24,72 @@ builder.Services.AddIdentity<GebruikerDB, IdentityRole<int>>(options =>
 })
 .AddRoles<IdentityRole<int>>()
 .AddEntityFrameworkStores<DatabaseContext>()
-.AddDefaultTokenProviders();
+.AddDefaultTokenProviders();    //token provider
 
-// Dummy email sender
-builder.Services.AddTransient<IEmailSender<GebruikerDB>, DummyEmailSender>();
+var jwtKey = builder.Configuration["Jwt:Key"];  //Haalt JWT key van configuration
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
 
-// ----------------------------------------------------------
-// Authentication — Cookies
-// ----------------------------------------------------------
-builder.Services.ConfigureApplicationCookie(options =>
+builder.Services.AddAuthentication(options =>
 {
-    options.LoginPath = "/api/auth/login";
-    options.LogoutPath = "/api/auth/logout";
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
-    options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
+    };
+    options.RequireHttpsMetadata = false;   //Hier nog ff naar kijken. Op true als het project klaar is?
 });
 
-// ----------------------------------------------------------
-// CORS
-// ----------------------------------------------------------
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // React frontend
+        policy.WithOrigins("http://localhost:5173") //Localhost adres
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
     });
 });
 
-// ----------------------------------------------------------
-// Swagger
-// ----------------------------------------------------------
+//Swagger dingen
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddSwaggerGen(c =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebProject API", Version = "v1" });
+
+    //Authenticatie plek in swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Title = "WebProject API",
-        Version = "v1"
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter Bearer {token}"
     });
 
-    // DateOnly / TimeOnly support
-    options.MapType<DateOnly>(() => new OpenApiSchema { Type = "string", Format = "date" });
-    options.MapType<TimeOnly>(() => new OpenApiSchema { Type = "string", Format = "time" });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
-// ----------------------------------------------------------
-// Build app
-// ----------------------------------------------------------
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -103,36 +104,24 @@ app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
-// ----------------------------------------------------------
-// Identity API Endpoints (login/register)
-app.MapIdentityApi<GebruikerDB>();
-
-// ----------------------------------------------------------
-// Role Seeding - GECORRIGEERD
-// ----------------------------------------------------------
+//Role Seeding
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
     string[] roles = { "Admin", "Koper", "Aanvoerder", "Veilingmeester" };
-
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
-        {
             await roleManager.CreateAsync(new IdentityRole<int>(role));
-        }
     }
 }
 
-// ----------------------------------------------------------
-// Admin User Seeding
-// ----------------------------------------------------------
+//Maakt Admin aan (Seeder)
 using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<GebruikerDB>>();
-    string adminPassword = "Admin123!"; // In secrets.json zetten!
-
     var existingUser = await userManager.FindByNameAsync("adminUser");
     if (existingUser == null)
     {
@@ -141,34 +130,15 @@ using (var scope = app.Services.CreateScope())
             UserName = "adminUser",
             Email = "admin@example.com",
             EmailConfirmed = true,
-            Rol = "Admin"  // NIEUW: Zet de rol op Admin
+            Rol = "Admin"
         };
-
-        var createResult = await userManager.CreateAsync(adminUser, adminPassword);
+        var createResult = await userManager.CreateAsync(adminUser, "Admin123!");
         if (createResult.Succeeded)
-        {
             await userManager.AddToRoleAsync(adminUser, "Admin");
-        }
         else
-        {
             foreach (var error in createResult.Errors)
-                Console.WriteLine($"[ADMIN ERROR] {error.Description}");
-        }
+                Console.WriteLine("[ADMIN ERROR] " + error.Description);
     }
 }
 
-// ----------------------------------------------------------
-// Controllers
-// ----------------------------------------------------------
-app.MapControllers();
 app.Run();
-
-// ----------------------------------------------------------
-// Dummy Email Sender
-// ----------------------------------------------------------
-public class DummyEmailSender : IEmailSender<GebruikerDB>
-{
-    public Task SendConfirmationLinkAsync(GebruikerDB user, string email, string link) => Task.CompletedTask;
-    public Task SendPasswordResetLinkAsync(GebruikerDB user, string email, string link) => Task.CompletedTask;
-    public Task SendPasswordResetCodeAsync(GebruikerDB user, string email, string code) => Task.CompletedTask;
-}
