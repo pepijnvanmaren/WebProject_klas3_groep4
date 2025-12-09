@@ -376,20 +376,6 @@ function Index() {
                 )}
             </div>
 
-            <div className="about-us">
-                <h2>Over Onze Bloemenveiling</h2>
-                <p>
-                    Bij Go Roos B.V. bieden we dagelijks verse bloemen van topkwaliteit aan,
-                    rechtstreeks van de kweker. Onze veiling brengt kwekers en
-                    bloemliefhebbers samen in een dynamische, transparante omgeving.
-                </p>
-                {veilingStatus?.isActief && (
-                    <button className="scroll-button" onClick={scrollToCurrentProduct}>
-                        Bekijk de veiling
-                    </button>
-                )}
-            </div>
-
             {!veilingStatus?.isActief && (
                 <div style={{ textAlign: 'center', padding: '50px' }}>
                     <h2>Er is momenteel geen actieve veiling</h2>
