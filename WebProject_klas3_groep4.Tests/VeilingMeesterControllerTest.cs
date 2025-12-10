@@ -73,19 +73,21 @@ namespace WebProject_klas3_groep4.Tests
         public async Task GetVeilingmeester_ReturnsGebruiker_WhenExists()
         {
             // Arrange
-            var Veilingmeester = TestSpawner.CreateValidVeilingmeester(1, "test@test.nl");
+            var Veilingmeester = TestSpawner.CreateValidVeilingmeester(1, "Veilingmeester", "test@test.nl");
 
-            _userManagerMock.Setup(x => x.FindByIdAsync("1"))
-                .ReturnsAsync(Veilingmeester);
+            _context.Gebruikers.Add(Veilingmeester);
+            await _context.SaveChangesAsync();
 
             // Act
             var result = await _controller.GetVeilingmeester(1);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var dto = Assert.IsType<GebruikerDto>(okResult.Value);
+            var dto = Assert.IsType<VeilingmeesterOutputDto>(okResult.Value);
+
             Assert.Equal(Veilingmeester.Id, dto.Id);
             Assert.Equal(Veilingmeester.Email, dto.Email);
+            Assert.Equal(Veilingmeester.UserName, dto.UserName);
         }
 
         [Fact]
@@ -161,25 +163,23 @@ namespace WebProject_klas3_groep4.Tests
         public async Task PutVeilingmeester_UpdatesGebruiker_WhenValid()
         {
             // Arrange
-            var gebruiker = TestSpawner.CreateValidVeilingmeester(1, "old@test.nl");
+            var gebruiker = TestSpawner.CreateValidVeilingmeester(1, "Veilingmeester", "test@test.nl");
+
+
+            _context.Gebruikers.Add(gebruiker);
+            await _context.SaveChangesAsync();
+
             var updateDto = TestSpawner.CreateValidVeilingmeesterUpdateDto(1, "new@test.nl");
 
-            // Mock authenticated user
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
-             new Claim(ClaimTypes.NameIdentifier, "1")
+            new Claim(ClaimTypes.NameIdentifier, "1")
             }, "TestAuth"));
 
             _controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext { User = user }
             };
-
-            // Mock UserManager
-            _userManagerMock.Setup(x => x.FindByIdAsync("1")).ReturnsAsync(gebruiker);
-
-            _userManagerMock.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
-                            .ReturnsAsync(gebruiker);
 
             _userManagerMock.Setup(x => x.UpdateAsync(It.IsAny<GebruikerDB>()))
                             .ReturnsAsync(IdentityResult.Success);
@@ -189,9 +189,11 @@ namespace WebProject_klas3_groep4.Tests
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var dto = Assert.IsType<GebruikerDto>(okResult.Value);
+            var dto = Assert.IsType<VeilingmeesterOutputDto>(okResult.Value);
 
             Assert.Equal(updateDto.Email, dto.Email);
+            Assert.Equal(updateDto.UserName, dto.UserName);
+            Assert.Equal(updateDto.PhoneNumber, dto.PhoneNumber);
         }
 
         [Fact]
@@ -217,10 +219,11 @@ namespace WebProject_klas3_groep4.Tests
         public async Task DeleteVeilingmeester_DeletesGebruiker_WhenExists()
         {
             // Arrange
-            var gebruiker = TestSpawner.CreateValidVeilingmeester(1, "test@test.nl");
+            var gebruiker = TestSpawner.CreateValidVeilingmeester(1, "Veilingmeester", "test@test.nl");
 
-            _userManagerMock.Setup(x => x.FindByIdAsync("1"))
-                .ReturnsAsync(gebruiker);
+            _context.Gebruikers.Add(gebruiker);
+            await _context.SaveChangesAsync();
+
             _userManagerMock.Setup(x => x.DeleteAsync(It.IsAny<GebruikerDB>()))
                 .ReturnsAsync(IdentityResult.Success);
 
@@ -228,8 +231,11 @@ namespace WebProject_klas3_groep4.Tests
             var result = await _controller.DeleteVeilingmeester(1);
 
             // Assert
-            Assert.IsType<OkResult>(result); // <-- Not NotFound
-            _userManagerMock.Verify(x => x.DeleteAsync(gebruiker), Times.Once);
+            Assert.IsType<NoContentResult>(result);
+
+            _userManagerMock.Verify(
+                x => x.DeleteAsync(It.Is<GebruikerDB>(u => u.Id == gebruiker.Id)),
+                Times.Once);
         }
         [Fact]
         public async Task DeleteVeilingmeester_ReturnsNotFound_WhenGebruikerDoesNotExist()
