@@ -1,61 +1,79 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using WebProject_klas3_groep4.models;
 using WebProject_klas3_groep4.DTO;
 
 namespace WebProject_klas3_groep4.Controllers
 {
+    //Auth Controller in Swagger
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly SignInManager<GebruikerDB> _signInManager;
+        //UserManager<GebruikerDB> wordt gebruikt voor gebruikers vinden/wachtwoorden/roles
         private readonly UserManager<GebruikerDB> _userManager;
+        //IConfiguration leest settings van appsettings.json
+        private readonly IConfiguration _config;
 
-        public AuthController(SignInManager<GebruikerDB> signInManager, UserManager<GebruikerDB> userManager)
+        public AuthController(UserManager<GebruikerDB> userManager, IConfiguration config)
         {
-            _signInManager = signInManager;
             _userManager = userManager;
+            _config = config;
         }
 
-        // -------------------- LOGIN --------------------
-        [AllowAnonymous]
+        //login endpoint
+        [AllowAnonymous] //Iedereen mag inloggen
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user == null)
-                return Unauthorized("Wrong email or password.");
+            var user = await _userManager.FindByEmailAsync(dto.Email);  //zoekt email
+            if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password)) //check wachtwoord
+                return Unauthorized("Wrong email or password.");    //401
 
-            var result = await _signInManager.PasswordSignInAsync(user, dto.Password, true, false);
+            var claims = new[]  //alle data in de token
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Rol)
+            };
 
-            if (!result.Succeeded)
-                return Unauthorized("Wrong email or password.");
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])); //Pakt de secretkey van appsettings.json
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256); //Signed de token met HMAC SHA256?
 
-            return Ok(new { message = "Logged in successfully." });
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],  //sets Issuer
+                claims: claims, //add claims
+                expires: DateTime.UtcNow.AddHours(3), //3 uur expirement
+                signingCredentials: creds //sign met HMAC SHA256
+            );
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),    //token = JWT string
+                rol = user.Rol //Slaat Rol op in Rol voor Frontend
+            });
         }
 
-        // -------------------- LOGOUT --------------------
-        [Authorize]
-        [HttpPost("logout")]
-        public async Task<ActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return Ok(new { message = "Logged out successfully." });
-        }
-
-        // -------------------- GET CURRENT USER --------------------
-        [Authorize]
+        //Me Endpoint, gebruikt de JWT token.
+        [Authorize] //JWT token nodig om te gebruiken
         [HttpGet("me")]
         public async Task<ActionResult> Me()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;  //Slaat ID op van User
 
-            if (user == null)
+            if (string.IsNullOrEmpty(userId))   //Checkt of je authorized bent, anders return
                 return Unauthorized();
 
-            return Ok(new
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)   //checkt of de user nog bestaat
+                return Unauthorized();
+
+            return Ok(new   //return de info
             {
                 user.Id,
                 user.UserName,
@@ -65,114 +83,11 @@ namespace WebProject_klas3_groep4.Controllers
                 user.VeilingVestiging
             });
         }
-        [Authorize]
-        [HttpPut("update-username")]
-        public async Task<IActionResult> UpdateUsername([FromBody] UpdateUsernameRequest dto)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
-
-            var existingUser = await _userManager.FindByNameAsync(dto.NewUsername);
-            if (existingUser != null && existingUser.Id != user.Id)
-                return BadRequest("Deze gebruikersnaam is al in gebruik");
-
-            user.UserName = dto.NewUsername;
-            var result = await _userManager.UpdateAsync(user);
-
-            if (!result.Succeeded)
-                return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
-
-            return Ok(new { message = "Gebruikersnaam succesvol gewijzigd" });
-        }
-
-        // ------------------------ UPDATE EMAIL ------------------------
-        [Authorize]
-        [HttpPut("update-email")]
-        public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailRequest dto)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
-
-            var existingUser = await _userManager.FindByEmailAsync(dto.NewEmail);
-            if (existingUser != null && existingUser.Id != user.Id)
-                return BadRequest("Dit e-mailadres is al in gebruik");
-
-            user.Email = dto.NewEmail;
-            var result = await _userManager.UpdateAsync(user);
-
-            if (!result.Succeeded)
-                return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
-
-            return Ok(new { message = "E-mail succesvol gewijzigd" });
-        }
-
-        // ------------------------ UPDATE PASSWORD ------------------------
-        [Authorize]
-        [HttpPut("update-password")]
-        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordRequest dto)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
-
-            var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
-
-            if (!result.Succeeded)
-                return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
-
-            return Ok(new { message = "Wachtwoord succesvol gewijzigd" });
-        }
-
-        // ------------------------ DELETE ACCOUNT ------------------------
-        [Authorize]
-        [HttpDelete("delete-account")]
-        public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountRequest dto)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
-
-            if (!await _userManager.CheckPasswordAsync(user, dto.Password))
-                return BadRequest("Onjuist wachtwoord");
-
-            var result = await _userManager.DeleteAsync(user);
-
-            if (!result.Succeeded)
-                return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
-
-            return Ok(new { message = "Account succesvol verwijderd" });
-        }
     }
 
-    // ------------------------ REQUEST MODELS ------------------------
-    public class LoginRequest
+    public class LoginDto
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
-
-    public class UpdateUsernameRequest
-    {
-        public string NewUsername { get; set; }
-    }
-
-    public class UpdateEmailRequest
-    {
-        public string NewEmail { get; set; }
-    }
-
-    public class UpdatePasswordRequest
-    {
-        public string CurrentPassword { get; set; }
-        public string NewPassword { get; set; }
-    }
-
-    public class DeleteAccountRequest
-    {
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }
-    
-
