@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using WebProject_klas3_groep4.DTO;
+﻿using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.models;
 
-namespace WebProject_klas3_groep4.Tests.TestHelpers
+namespace WebProject_klas3_groep4.Tests.Infrastructure
 {
     public static class TestSpawner
     {
