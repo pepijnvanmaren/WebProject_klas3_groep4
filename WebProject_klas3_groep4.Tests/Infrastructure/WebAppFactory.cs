@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,21 +12,41 @@ namespace WebProject_klas3_groep4.Tests.Infrastructure
         {
             builder.ConfigureServices(services =>
             {
+
                 // Verwijder echte database
+                var descriptor = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(DbContextOptions<DatabaseContext>)
+                );
+                if (descriptor != null)
+                    services.Remove(descriptor);
+
                 services.RemoveAll(typeof(DbContextOptions<DatabaseContext>));
 
-                // Voeg InMemory database toe
+                // Voeg in-memory database toe
                 services.AddDbContext<DatabaseContext>(options =>
                 {
-                    options.UseInMemoryDatabase("TestDB");
+                    options.UseInMemoryDatabase("IntegrationTestDB");
                 });
 
-                // Fake authentication toevoegen
+                // Verwijder alle authentication
+                services.RemoveAll(typeof(Microsoft.AspNetCore.Authentication.IAuthenticationService));
+                services.RemoveAll(typeof(Microsoft.AspNetCore.Authorization.IAuthorizationHandler));
+                services.RemoveAll(typeof(Microsoft.AspNetCore.Authorization.IAuthorizationPolicyProvider));
+
+                // Zorg dat Authorize ALTIJD true teruggeeft
+                services.AddAuthorization(options =>
+                {
+                    options.AddPolicy("AllowAll", policy =>
+                        policy.RequireAssertion(_ => true));
+                });
+
                 services.AddAuthentication("Test")
-                    .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
-                        "Test", options => { });
-            
+                    .AddScheme<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions,
+                               TestStaAnoniemToe>("Test", o => { });
             });
+
+            // Forceer altijd Test-auth scheme
+            builder.UseSetting("Authentication:DefaultScheme", "Test");
         }
     }
 }

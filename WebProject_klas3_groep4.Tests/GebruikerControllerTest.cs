@@ -137,7 +137,7 @@ namespace WebProject_klas3_groep4.Tests
         {
             // Arrange
             var createDto = TestSpawner.CreateValidGebruikerCreateDto();
-            var errors = new[] { new IdentityError { Description = "Password too weak" } };
+            var errors = new[] { new IdentityError { Description = "Wachtwoord is te zwak" } };
 
             _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<GebruikerDB>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Failed(errors));
