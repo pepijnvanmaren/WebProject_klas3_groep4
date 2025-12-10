@@ -23,10 +23,11 @@ function Navbar() {
     useEffect(() => {
         if (userRole === "Aanvoerder") {
             setHomePath("/verkoperDashboard");
-        } else if (userRole === "Koper") {
-            setHomePath("/koperdashboard");
+
+        } else if (userRole === "Veilingmeester") {
+            setHomePath("/VeilingMeesterDashboard")
         } else {
-            setHomePath("/");
+            setHomePath("/Koperdashboard");
         }
     }, [userRole]);
 

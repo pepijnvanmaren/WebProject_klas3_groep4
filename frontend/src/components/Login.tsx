@@ -89,11 +89,13 @@ function Login() {
     return (
         <div className="app-container">
             <div className="giveEmail">
-                <h1>Login</h1>
-                <p>Email</p>
+                <h1>Inloggen</h1>
+
+                <p>E-mail</p>
                 <input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="Voer je E-mail in"
+                    className="input-field-Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
