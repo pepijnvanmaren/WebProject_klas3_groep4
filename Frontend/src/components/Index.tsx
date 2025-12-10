@@ -147,6 +147,19 @@ function Index() {
 
     return (
         <div className="page">
+            {/* Over ons */}
+            <div className="about-us">
+                <h2>Over Onze Bloemenveiling</h2>
+                <p>
+                    Bij Go Roos B.V. bieden we dagelijks verse bloemen van topkwaliteit
+                    aan, rechtstreeks van de kweker. Onze veiling brengt kwekers en bloemliefhebbers
+                    samen in een dynamische, transparante omgeving. Van prachtige rozen tot
+                    kleurrijke tulpen: elke bloem vindt hier zijn weg naar een liefdevol thuis.
+                </p>
+                <button className="scroll-button" onClick={scrollToCurrentProduct}>
+                    Bekijk de veiling
+                </button>
+            </div>
 
             {/* Current Product */}
             <h2 className="page-title" ref={currentProductTitleRef}>
