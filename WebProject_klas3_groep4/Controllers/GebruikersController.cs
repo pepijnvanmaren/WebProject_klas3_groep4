@@ -107,7 +107,11 @@ namespace WebProject_klas3_groep4.Controllers
 
             gebruiker.UserName = dto.UserName;
             gebruiker.Email = dto.Email;
-            gebruiker.PhoneNumber = dto.PhoneNumber;
+
+            if (dto.PhoneNumber != null)
+            {
+                gebruiker.PhoneNumber = dto.PhoneNumber;
+            }
 
             var result = await _userManager.UpdateAsync(gebruiker);
             if (!result.Succeeded)
@@ -131,6 +135,26 @@ namespace WebProject_klas3_groep4.Controllers
             };
 
             return Ok(returnDto);
+        }
+
+        // ------------------------------------------------------------
+        // UPDATE PASSWORD
+        // ------------------------------------------------------------
+        [HttpPut("{id}/update-password")]
+        public async Task<ActionResult> UpdatePassword(int id, [FromBody] UpdatePasswordDto dto)
+        {
+            var gebruiker = await _userManager.FindByIdAsync(id.ToString());
+            if (gebruiker == null) return NotFound();
+
+            if (!await _userManager.CheckPasswordAsync(gebruiker, dto.CurrentPassword))
+                return BadRequest("Huidig wachtwoord klopt niet");
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(gebruiker);
+            var result = await _userManager.ResetPasswordAsync(gebruiker, token, dto.NewPassword);
+
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            return Ok("Wachtwoord succesvol gewijzigd");
         }
 
         // ------------------------------------------------------------

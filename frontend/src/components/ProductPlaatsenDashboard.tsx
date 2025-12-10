@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 
 function SellerDashboard() {
     const navigate = useNavigate();
-
-    // States voor elk veld
     const [naam, setNaam] = useState("");
     const [beschrijving, setBeschrijving] = useState("");
     const [fotoFile, setFotoFile] = useState<File | null>(null);
@@ -20,14 +18,12 @@ function SellerDashboard() {
     const [veilingen, setVeilingen] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // Maakt een locaal atribuut aan voor de datum van vandaag
     const localToday = (() => {
         const d = new Date();
         const tzOffset = d.getTimezoneOffset();
         return new Date(d.getTime() - tzOffset * 60000).toISOString().split("T")[0];
     })();
 
-    // Fetch veilingen wanneer component laadt
     useEffect(() => {
         const fetchVeilingen = async () => {
             try {
@@ -46,9 +42,7 @@ function SellerDashboard() {
         fetchVeilingen();
     }, []);
 
-    // Handle aanmaken product
     const handleCreateProduct = async () => {
-        // Validatie
         if (!naam) {
             alert("Productnaam is verplicht");
             return;
@@ -62,13 +56,11 @@ function SellerDashboard() {
         setLoading(true);
 
         try {
-            // Stap 1: Zet foto om naar base64 (optioneel)
             let fotoBase64 = null;
             if (fotoFile) {
                 fotoBase64 = await new Promise((resolve) => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        // Extract only the base64 part (remove the data:image/...;base64, prefix)
                         const result = e.target?.result as string;
                         const base64 = result.split(',')[1];
                         resolve(base64);
@@ -77,7 +69,6 @@ function SellerDashboard() {
                 });
             }
 
-            // Stap 2: Maak product aan
             const payload = {
                 naam,
                 beschrijving,
@@ -88,15 +79,16 @@ function SellerDashboard() {
                 steellengte: steellengte ? Number(steellengte) : null,
                 hoeveelheid: hoeveelheid ? Number(hoeveelheid) : 0,
                 minimalePrijs: minimalePrijs ? Number(minimalePrijs) : 0,
-                veilingId: veilingId || null // NIEUW: Veiling meegeven
+                veilingId: veilingId || null
             };
 
-            const resp = await fetch("https://localhost:7020/api/Product", {  // Hoofdletter P
+            const token = localStorage.getItem("token");
+            const resp = await fetch("https://localhost:7020/api/Product", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 },
-                credentials: "include", // NIEUW: Credentials voor authenticatie
                 body: JSON.stringify(payload)
             });
 
@@ -112,7 +104,6 @@ function SellerDashboard() {
             console.log("Product aangemaakt:", data);
             alert("Uw product is succesvol aangemaakt!");
 
-            // Reset form
             setNaam("");
             setBeschrijving("");
             setFotoFile(null);
@@ -156,7 +147,6 @@ function SellerDashboard() {
         }
     };
 
-    // HTML REACT
     return (
         <main className="pp_dashboard-container">
             <h1 className="pp_title">Product aanmaken</h1>
