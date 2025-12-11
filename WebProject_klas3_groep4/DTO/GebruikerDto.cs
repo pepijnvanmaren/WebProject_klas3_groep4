@@ -22,7 +22,12 @@ namespace WebProject_klas3_groep4.DTO
     {
         public string UserName { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public string PhoneNumber { get; set; } = null!;
+        public string? PhoneNumber { get; set; }
         public string? NewPassword { get; set; }
+    }
+    public class UpdatePasswordDto
+    {
+        public string CurrentPassword { get; set; } = null!;
+        public string NewPassword { get; set; } = null!;
     }
 }

@@ -6,31 +6,29 @@ import "../styles/AccountInfo.css";
 function AccountInfo() {
     const navigate = useNavigate();
 
-    // State voor account gegevens
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
+    const [userId, setUserId] = useState<number | null>(null);
 
-    // State voor originele waarden (om te vergelijken)
     const [originalUsername, setOriginalUsername] = useState("");
     const [originalEmail, setOriginalEmail] = useState("");
 
-    // State voor wachtwoord zichtbaarheid
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
 
     const [loading, setLoading] = useState(false);
 
-    // Haal account info op bij laden
     useEffect(() => {
         fetchAccountInfo();
     }, []);
 
     const fetchAccountInfo = async () => {
         const loggedIn = localStorage.getItem("loggedIn") === "true";
+        const token = localStorage.getItem("token");
 
-        if (!loggedIn) {
+        if (!loggedIn || !token) {
             alert("Je bent niet ingelogd");
             navigate("/inloggen");
             return;
@@ -39,9 +37,9 @@ function AccountInfo() {
         try {
             const response = await fetch("https://localhost:7020/api/auth/me", {
                 method: "GET",
-                credentials: "include",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 }
             });
 
@@ -50,6 +48,7 @@ function AccountInfo() {
             }
 
             const data = await response.json();
+            setUserId(data.id);
             setUsername(data.userName);
             setEmail(data.email);
             setOriginalUsername(data.userName);
@@ -62,75 +61,69 @@ function AccountInfo() {
 
     const handleSave = async () => {
         const loggedIn = localStorage.getItem("loggedIn") === "true";
+        const token = localStorage.getItem("token");
 
-        if (!loggedIn) {
+        if (!loggedIn || !token) {
             alert("Je bent niet ingelogd");
             navigate("/inloggen");
+            return;
+        }
+
+        if (!userId) {
+            alert("Gebruikers-ID niet gevonden");
             return;
         }
 
         setLoading(true);
 
         try {
-            // Update username als deze is veranderd
-            if (username !== originalUsername) {
-                const usernameResponse = await fetch("https://localhost:7020/api/auth/update-username", {
-                    method: "PUT",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ NewUsername: username })
-                });
+            // 1. Update username/email
+            const updateResponse = await fetch(`https://localhost:7020/api/gebruikers/${userId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    userName: username,
+                    email: email,
+                    phoneNumber: null,
+                    newPassword: null
+                })
+            });
 
-                if (!usernameResponse.ok) {
-                    throw new Error("Kon gebruikersnaam niet wijzigen");
-                }
+            if (!updateResponse.ok) {
+                const error = await updateResponse.text();
+                throw new Error(error || "Kon account niet bijwerken");
             }
 
-            // Update email als deze is veranderd
-            if (email !== originalEmail) {
-                const emailResponse = await fetch("https://localhost:7020/api/auth/update-email", {
-                    method: "PUT",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ NewEmail: email })
-                });
-
-                if (!emailResponse.ok) {
-                    throw new Error("Kon e-mail niet wijzigen");
-                }
-            }
-
-            // Update wachtwoord als beide velden zijn ingevuld
+            // 2. Update password if both fields are filled
             if (currentPassword && newPassword) {
-                const passwordResponse = await fetch("https://localhost:7020/api/auth/update-password", {
-                    method: "PUT",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        CurrentPassword: currentPassword,
-                        NewPassword: newPassword
-                    })
-                });
+                const passwordResponse = await fetch(
+                    `https://localhost:7020/api/gebruikers/${userId}/update-password`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            CurrentPassword: currentPassword,
+                            NewPassword: newPassword
+                        })
+                    }
+                );
 
                 if (!passwordResponse.ok) {
                     const error = await passwordResponse.text();
                     throw new Error(error || "Kon wachtwoord niet wijzigen");
                 }
 
-                // Reset wachtwoord velden
                 setCurrentPassword("");
                 setNewPassword("");
             }
 
             alert("Account succesvol bijgewerkt!");
-
-            // Herlaad de account info
             fetchAccountInfo();
         } catch (error: any) {
             console.error(error);
@@ -147,18 +140,19 @@ function AccountInfo() {
 
         if (!confirmDelete) return;
 
-        const password = prompt("Voer je wachtwoord in om te bevestigen:");
+        const token = localStorage.getItem("token");
 
-        if (!password) return;
+        if (!userId) {
+            alert("Geen gebruikers-ID gevonden");
+            return;
+        }
 
         try {
-            const response = await fetch("https://localhost:7020/api/auth/delete-account", {
+            const response = await fetch(`https://localhost:7020/api/gebruikers/${userId}`, {
                 method: "DELETE",
-                credentials: "include",
                 headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ Password: password })
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (!response.ok) {
@@ -167,9 +161,8 @@ function AccountInfo() {
             }
 
             alert("Account succesvol verwijderd");
-
-            // Uitloggen en navigeren naar home
             localStorage.removeItem("loggedIn");
+            localStorage.removeItem("token");
             navigate("/");
         } catch (error: any) {
             console.error(error);
@@ -204,7 +197,7 @@ function AccountInfo() {
                 </div>
 
                 <div className="form-group">
-                    <p>Huidig Wachtwoord (alleen invullen bij wijziging)</p>
+                    <p>Huidig Wachtwoord (verplicht bij wijziging)</p>
                     <div className="password-input-container">
                         <input
                             type={showCurrentPassword ? "text" : "password"}
