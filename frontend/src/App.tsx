@@ -73,10 +73,10 @@ function App() {
                 <Route
                     path="/VeilingMeesterDashboard"
                     element={
-                    <ProtectedRoute requiredRoles={["Veilingmeester"]}>
-                        <VeilingMeesterDashboardPage />
-                </ProtectedRoute>
-                    }                
+                        <ProtectedRoute requiredRoles={["Veilingmeester"]}>
+                            <VeilingMeesterDashboardPage />
+                        </ProtectedRoute>
+                    }
                 />
                 <Route
                     path="/VeilingPlaatsen"

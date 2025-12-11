@@ -21,7 +21,7 @@ function Register() {
                 ? "https://localhost:7020/api/kopers"
                 : rol === "aanvoerder"
                     ? "https://localhost:7020/api/aanvoerders"
-                    : "https://localhost:7020/api/veilingmeesters"
+                    : "https://localhost:7020/api/veilingmeester"
 
         let body: any = {
             UserName: naam,
@@ -42,7 +42,7 @@ function Register() {
             body.BedrijfTelefoonnummer = "";
             body.BedrijfEmail = "";
         } else if (rol === "veiligmeester") {
-            body.VeilingVestiging = ""; 
+            body.VeilingVestiging = "";
         }
 
         const response = await fetch(url, {

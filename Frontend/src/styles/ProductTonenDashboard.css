@@ -15,9 +15,78 @@
     margin: 5px auto 0;
     padding: 10px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 14em;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-box {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 1em;
+}
+
+.btn-back,
+.btn-add,
+.btn-add-first {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-back {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+    .btn-back:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+.btn-add,
+.btn-add-first {
+    background: #28a745;
+    color: white;
+}
+
+    .btn-add:hover,
+    .btn-add-first:hover {
+        background: #218838;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    }
+
+.no-products {
+    background: white;
+    border-radius: 16px;
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.no-products-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #999;
+}
+
+.no-products h2 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.no-products p {
+    color: #666;
+    margin-bottom: 2rem;
 }
 
 .BloemFoto {

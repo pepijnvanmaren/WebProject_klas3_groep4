@@ -6,77 +6,82 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate(); //gebruikt voor redirect
 
-    const navigate = useNavigate();
-
+    //runs als je op login klikt
     const handleLogin = async () => {
-        if (!email || !password) {
-            alert("Vul beide velden in!");
+        if (!email || !password) {      //Checkt of de velden ingevuld zijn
+            alert("Fill in both fields");
             return;
         }
 
         setLoading(true);
 
         try {
-            // Login
+            //Stuurt de credentials naar de backend
             const loginResponse = await fetch("https://localhost:7020/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include",
                 body: JSON.stringify({ email, password })
             });
 
+            //Returns de foutmelding uit de backend
             if (!loginResponse.ok) {
-                const msg = await loginResponse.text();
-                alert(msg || "Login mislukt");
+                const message = await loginResponse.text();
+                alert(message || "Login failed");
                 setLoading(false);
                 return;
             }
 
-            // User ophalen
+            //Haalt token en rol op
+            const loginData = await loginResponse.json();
+            const token = loginData.token;
+            const role = loginData.rol;
+
+            if (!token) {
+                alert("No token received");
+                setLoading(false);
+                return;
+            }
+
+            //slaat token en rol op
+            localStorage.setItem("token", token);
+            localStorage.setItem("userRole", role);
+            localStorage.setItem("loggedIn", "true");
+
+            //Fetch voor user
             const meResponse = await fetch("https://localhost:7020/api/auth/me", {
                 method: "GET",
-                credentials: "include"
+                headers: {
+                    Authorization: `Bearer ${token}`,   //checkt de bearer token jwt
+                    "Content-Type": "application/json"
+                }
             });
 
-            if (!meResponse.ok) {
-                alert("Kon gebruiker niet ophalen.");
-                setLoading(false);
-                return;
+            if (meResponse.ok) {
+                const user = await meResponse.json();
+                localStorage.setItem("userName", user.userName);    //Slaat username op
+            } else {
+                console.warn("Failed to fetch user info. Status:", meResponse.status);
             }
-
-            const user = await meResponse.json();
-
-            // Opslaan in localStorage
-            localStorage.setItem("loggedIn", "true");
-            localStorage.setItem("userRole", user.rol);
-
-            // Navigatie op basis van rol
-            switch (user.rol) {
+            
+            //Navigatie naar de juiste pagina op basis van rol
+            switch (role) {
                 case "Koper":
                     navigate("/koperdashboard");
                     break;
-
                 case "Aanvoerder":
                     navigate("/verkoperDashboard");
                     break;
-
                 case "Veilingmeester":
-                    navigate("/veilingmeesterdashboard");
+                    navigate("/VeilingMeesterDashboard");
                     break;
-
-                case "Admin":
-                    navigate("/admindashboard");
-                    break;
-
                 default:
-                    alert("Onbekende rol: " + user.rol);
-                    break;
+                    navigate("/");
             }
-
-        } catch (err) {
-            console.error(err);
-            alert("Er ging iets mis bij het verbinden met de server.");
+        } catch (error) {
+            console.error("Login error:", error);
+            alert("Cannot connect to server.");
         } finally {
             setLoading(false);
         }
@@ -98,11 +103,11 @@ function Login() {
             </div>
 
             <div className="givePassword">
-                <p>Wachtwoord</p>
+                <p>Password</p>
                 <input
                     type="password"
-                    placeholder="Voer je wachtwoord in"
-                    className="input-field-Password"
+                    placeholder="Enter your password"
+                    className="input-field-Email"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
@@ -113,13 +118,13 @@ function Login() {
                 onClick={handleLogin}
                 disabled={loading}
             >
-                {loading ? "Even geduld..." : "Inloggen"}
+                {loading ? "Please wait..." : "Login"}
             </button>
 
             <div className="signup-section">
-                <p>Heb je nog geen account?</p>
+                <p>Don't have an account?</p>
                 <Link to="/registreren" className="signup-link">
-                    Account aanmaken
+                    Create account
                 </Link>
             </div>
         </div>

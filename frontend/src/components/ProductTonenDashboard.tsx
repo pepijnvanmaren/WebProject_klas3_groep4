@@ -48,8 +48,10 @@ function ProductDashboard() {
     useEffect(() => {
         const fetchData = async () => {
             const loggedIn = localStorage.getItem("loggedIn") === "true";
-
-            if (!loggedIn) {
+            const token = localStorage.getItem("token");
+                
+            if (!loggedIn || !token) {
+                alert("Je bent niet ingelogd!")
                 navigate('/inloggen');
                 return;
             }
@@ -57,27 +59,30 @@ function ProductDashboard() {
             try {
                 // Haal gebruikersgegevens op
                 const userResponse = await fetch("https://localhost:7020/api/Auth/me", {
-                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    }
                 });
 
-                if (userResponse.ok) {
-                    const userData = await userResponse.json();
-                    setUser(userData);
+                if (!userResponse.ok) throw new Error("Kon gebruikersgegevens niet ophalen");
+                const userData = await userResponse.json();
+                setUser(userData);
 
-                    // Haal producten op van deze aanvoerder
-                    const productsResponse = await fetch(
-                        `https://localhost:7020/api/Product/aanvoerder/${userData.id}`
-                    );
-
-                    if (productsResponse.ok) {
-                        const productsData = await productsResponse.json();
-                        setProducts(productsData);
-                    } else {
-                        setError("Kon producten niet ophalen");
+                // Haal producten op van deze aanvoerder
+                const productsResponse = await fetch(
+                    `https://localhost:7020/api/Product/aanvoerder/${userData.id}`,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
+                        }
                     }
-                } else {
-                    setError("Kon gebruikersgegevens niet ophalen");
-                }
+                );
+
+                if (!productsResponse.ok) throw new Error("Kon producten niet ophalen");
+                const productsData = await productsResponse.json();
+                setProducts(productsData);
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError("Er is een fout opgetreden");
@@ -90,7 +95,7 @@ function ProductDashboard() {
     }, [navigate]);
 
     const handleBack = () => {
-        navigate('/SellerDashboard');
+        navigate('/VerkoperDashboard');
     };
 
     const handleDeleteProduct = async (productId: number) => {
@@ -99,9 +104,13 @@ function ProductDashboard() {
         }
 
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch(`https://localhost:7020/api/Product/${productId}`, {
                 method: "DELETE",
-                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                }
             });
 
             if (response.ok || response.status === 204) {

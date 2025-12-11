@@ -66,15 +66,14 @@ function Index() {
         });
     };
 
-    // Check via cookies
+
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                const res = await fetch("https://localhost:7020/api/auth/me", {
-                    method: "GET",
-                    credentials: "include"
-                });
-                setIsLoggedIn(res.ok);
+                const userRole = localStorage.getItem("userRole");
+                if (userRole == "Koper") {
+                    setIsLoggedIn(true);
+                }
             } catch {
                 setIsLoggedIn(false);
             }
@@ -207,9 +206,14 @@ function Index() {
 
         setLoading(true);
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/stop", {
                 method: "POST",
-                credentials: "include"
+                
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (!response.ok) throw new Error("Kon veiling niet stoppen");
@@ -235,11 +239,13 @@ function Index() {
 
         setLoading(true);
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/koop", {
                 method: "POST",
-                credentials: "include",
+                
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     ProductId: veilingStatus.huidigProduct.id,
@@ -279,9 +285,14 @@ function Index() {
 
     const handleVolgendProduct = async () => {
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/volgende", {
                 method: "POST",
-                credentials: "include"
+                
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (!response.ok) throw new Error("Kon niet naar volgend product");
@@ -373,20 +384,6 @@ function Index() {
                         <strong>Status:</strong> Actief<br />
                         <strong>In wachtrij:</strong> {veilingStatus.aantalInWachtrij}
                     </div>
-                )}
-            </div>
-
-            <div className="about-us">
-                <h2>Over Onze Bloemenveiling</h2>
-                <p>
-                    Bij Go Roos B.V. bieden we dagelijks verse bloemen van topkwaliteit aan,
-                    rechtstreeks van de kweker. Onze veiling brengt kwekers en
-                    bloemliefhebbers samen in een dynamische, transparante omgeving.
-                </p>
-                {veilingStatus?.isActief && (
-                    <button className="scroll-button" onClick={scrollToCurrentProduct}>
-                        Bekijk de veiling
-                    </button>
                 )}
             </div>
 
