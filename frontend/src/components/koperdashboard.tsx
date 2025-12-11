@@ -206,9 +206,14 @@ function Index() {
 
         setLoading(true);
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/stop", {
                 method: "POST",
-                credentials: "include"
+                
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (!response.ok) throw new Error("Kon veiling niet stoppen");
@@ -234,11 +239,13 @@ function Index() {
 
         setLoading(true);
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/koop", {
                 method: "POST",
-                credentials: "include",
+                
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     ProductId: veilingStatus.huidigProduct.id,
@@ -278,9 +285,14 @@ function Index() {
 
     const handleVolgendProduct = async () => {
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/volgende", {
                 method: "POST",
-                credentials: "include"
+                
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (!response.ok) throw new Error("Kon niet naar volgend product");

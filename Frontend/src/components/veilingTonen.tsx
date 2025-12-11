@@ -47,8 +47,13 @@ function VeilingTonen() {
             }
 
             try {
+                const token = localStorage.getItem("token");
                 const userResponse = await fetch("https://localhost:7020/api/Auth/me", {
-                    credentials: "include",
+                    
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
                 });
 
                 if (userResponse.ok) {
@@ -88,9 +93,14 @@ function VeilingTonen() {
         }
 
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch(`https://localhost:7020/api/veiling/${id}`, {
                 method: "DELETE",
-                credentials: "include",
+                
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (response.ok || response.status === 204) {

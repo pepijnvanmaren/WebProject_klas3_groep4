@@ -31,8 +31,13 @@ function SellerDashboard() {
 
             if (loggedIn) {
                 try {
+                    const token = localStorage.getItem("token");
                     const response = await fetch("https://localhost:7020/api/Auth/me", {
-                        credentials: "include",
+                        
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        }
                     });
                     console.log("Me endpoint response status:", response.status);
                     if (response.ok) {
