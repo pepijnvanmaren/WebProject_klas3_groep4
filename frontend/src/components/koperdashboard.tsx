@@ -66,15 +66,14 @@ function Index() {
         });
     };
 
-    // Check via cookies
+
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                const res = await fetch("https://localhost:7020/api/auth/me", {
-                    method: "GET",
-                    credentials: "include"
-                });
-                setIsLoggedIn(res.ok);
+                const userRole = localStorage.getItem("userRole");
+                if (userRole == "Koper") {
+                    setIsLoggedIn(true);
+                }
             } catch {
                 setIsLoggedIn(false);
             }

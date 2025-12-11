@@ -1,0 +1,139 @@
+/* Floating control panel rechtsboven */
+.floating-controls {
+    position: fixed;
+    top: 20vh;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Start/Stop knoppen */
+.btn {
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.btn-start {
+    background-color: #047B00;
+}
+
+.btn-stop {
+    background-color: #dc3545;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.btn:not(:disabled) {
+    cursor: pointer;
+}
+
+/* Status block bovenin */
+.status-box {
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Geen actieve veiling */
+.no-auction {
+    text-align: center;
+    padding: 50px;
+}
+
+/* Timer tijdens pauze */
+.pause-timer {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #047B00;
+    margin-bottom: 20px;
+}
+
+/* Container layout */
+.container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+/* Box styling */
+.box {
+    background: #fff;
+    padding: 10px;
+}
+
+/* Beschrijving box */
+.box-description {
+    grid-column: span 2;
+}
+
+/* Productnaam */
+.product-name {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Prijs box */
+.box-price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Prijs & koop-knop */
+.price-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.price {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+/* Koop-knop */
+.button {
+    padding: 8px 18px;
+    background: #007bff;
+    border: none;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+    .button:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+/* Progress bar container */
+.progress-bar-container {
+    width: 100%;
+    height: 12px;
+    background-color: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Progress bar */
+.progress-bar {
+    height: 100%;
+    transition: width 1s linear, background-color 1s linear;
+}
+
+/* Integrated bar spacing */
+.integrated-bar {
+    grid-column: span 4;
+}
