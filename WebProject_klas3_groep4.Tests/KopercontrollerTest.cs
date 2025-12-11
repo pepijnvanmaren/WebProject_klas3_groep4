@@ -178,9 +178,6 @@ namespace WebProject_klas3_groep4.Tests
             // Mock UserManager
             _userManagerMock.Setup(x => x.FindByIdAsync("1")).ReturnsAsync(gebruiker);
 
-            _userManagerMock.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
-                            .ReturnsAsync(gebruiker);
-
             _userManagerMock.Setup(x => x.UpdateAsync(It.IsAny<GebruikerDB>()))
                             .ReturnsAsync(IdentityResult.Success);
 
@@ -219,10 +216,11 @@ namespace WebProject_klas3_groep4.Tests
             // Arrange
             var gebruiker = TestSpawner.CreateValidKoper(1, "test@test.nl");
 
-            _userManagerMock.Setup(x => x.FindByIdAsync("1"))
-                .ReturnsAsync(gebruiker);
-            _userManagerMock.Setup(x => x.DeleteAsync(It.IsAny<GebruikerDB>()))
-                .ReturnsAsync(IdentityResult.Success);
+            // Mock UserManager
+            _userManagerMock.Setup(x => x.FindByIdAsync("1")).ReturnsAsync(gebruiker);
+
+            _userManagerMock.Setup(x => x.UpdateAsync(It.IsAny<GebruikerDB>()))
+                            .ReturnsAsync(IdentityResult.Success);
 
             // Act
             var result = await _controller.DeleteKoper(1);
