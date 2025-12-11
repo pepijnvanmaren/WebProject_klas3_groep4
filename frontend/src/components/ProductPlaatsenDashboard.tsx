@@ -27,8 +27,13 @@ function SellerDashboard() {
     useEffect(() => {
         const fetchVeilingen = async () => {
             try {
+                const token = localStorage.getItem("token");
                 const response = await fetch("https://localhost:7020/api/veiling", {
-                    credentials: "include"
+                    
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
                 });
                 if (response.ok) {
                     const data = await response.json();

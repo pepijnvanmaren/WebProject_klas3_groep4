@@ -104,9 +104,13 @@ function ProductDashboard() {
         }
 
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch(`https://localhost:7020/api/Product/${productId}`, {
                 method: "DELETE",
-                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                }
             });
 
             if (response.ok || response.status === 204) {

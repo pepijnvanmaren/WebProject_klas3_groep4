@@ -47,6 +47,7 @@ function Login() {
             //slaat token en rol op
             localStorage.setItem("token", token);
             localStorage.setItem("userRole", role);
+            localStorage.setItem("loggedIn", "true");
 
             //Fetch voor user
             const meResponse = await fetch("https://localhost:7020/api/auth/me", {
@@ -72,8 +73,8 @@ function Login() {
                 case "Aanvoerder":
                     navigate("/verkoperDashboard");
                     break;
-                case "Admin":
-                    navigate("/adminDashboard");
+                case "Veilingmeester":
+                    navigate("/VeilingMeesterDashboard");
                     break;
                 default:
                     navigate("/");
