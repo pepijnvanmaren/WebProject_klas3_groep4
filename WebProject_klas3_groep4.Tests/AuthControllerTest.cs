@@ -6,7 +6,7 @@ using WebProject_klas3_groep4.Controllers;
 using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.models;
 using Xunit;
-
+//tesrt voor de authcontroller
 namespace WebProject_klas3_groep4.Tests
 {
     public class AuthControllerTest
