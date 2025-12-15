@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/SellerDashboard.css';
+import '../styles/VeilingMeesterDashboard.css';
+import { useEffect } from 'react';
 
-const apiBase = 'https://localhost:7020'; // Let op: gebruik dezelfde port als je API
 
+
+const apiBase = 'https://localhost:5174';
 type User = {
     id: number;
     userName: string;
@@ -12,15 +14,15 @@ type User = {
     rol: string;
     veilingVestiging: string | null;
 };
-
-function SellerDashboard() {
+function VeilingMeesterDashboard() {
     const navigate = useNavigate();
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
-
-    // NIEUW: State voor gebruiker en login status
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
+
 
     // NIEUW: Fetch gebruikersgegevens bij laden
     useEffect(() => {
@@ -56,27 +58,16 @@ function SellerDashboard() {
         checkLoginStatus();
     }, []);
 
-    const ProductTonenKnop = () => {
-        navigate('/ProductDashboard');
-    };
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
 
-    const ProductMakenKnop = () => {
-        navigate('/ProductMakenDashboard');
-    };
+    const VeiulingPlaatsenKnop = () => {
+        navigate('/VeilingPlaatsen')
+    }
 
-    async function fetchProducts() {
-        setLoading(true);
-        try {
-            const res = await fetch(`${apiBase}/api/Product`);
-            if (!res.ok) throw new Error("Failed to fetch");
-            const data = await res.json();
-            setProducts(data);
-        } catch (err) {
-            console.error(err);
-            alert("Kon producten niet laden.");
-        } finally {
-            setLoading(false);
-        }
+    const VeilingenTonenKnop = () => {
+        navigate('/VeilingTonen')
     }
 
     return (
@@ -105,13 +96,13 @@ function SellerDashboard() {
             )}
 
             <main className="dashboard-container">
-                <h1 className="VerkoperDashboard-title">Verkoper dashboard</h1>
-                <div className="dashboard-box">
-                    <button className="SD_btn" onClick={ProductMakenKnop}>
-                        Product Plaatsen
+                <h1 className="VerkoperDashboard-title">Veilingmeester dashboard</h1>
+                <div className="VL_dashboard-box">
+                    <button className="VL_pp_btn" onClick={VeiulingPlaatsenKnop}>
+                        Veilingen Plaatsen
                     </button>
-                    <button className="SD_btn" onClick={ProductTonenKnop}>
-                        Product Tonen
+                    <button className="VL_pp_btn" onClick={VeilingenTonenKnop}>
+                        Veilingen Tonen
                     </button>
                 </div>
             </main>
@@ -119,4 +110,5 @@ function SellerDashboard() {
     );
 }
 
-export default SellerDashboard;
+
+export default VeilingMeesterDashboard;
