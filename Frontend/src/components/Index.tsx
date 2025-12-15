@@ -91,10 +91,6 @@ function Index() {
         getProducts();
     }, []);
 
-    function loginPage() {
-        navigate("inloggen")
-    }
-
     //prijs berekeningen voor max/stapgrootte gebaseeerd op de min)
     const minPrice = currentProduct?.minimalePrijs ?? 0;
     const maxPrice = minPrice * 10;
@@ -122,6 +118,19 @@ function Index() {
         return () => clearInterval(intervalRef.current!);
     }, [isRunning, currentProduct, minPrice]);
 
+    //Handle voor koopknop
+    //Als je niet ingelogd bent dan navigeer je naar inloggen
+    const handleBuy = () => {
+        if (!isLoggedIn) {
+            navigate("/inloggen");
+            return;
+        }
+        else {
+            clearInterval(intervalRef.current!);
+            setIsRunning(false);
+            setPurchased(true);
+        }
+    };
 
     //error handling voor producten ophalen
     if (loading) return <p>Laad producten...</p>;
@@ -163,9 +172,10 @@ function Index() {
                         <span className="price">EUR {price.toFixed(2)}</span>
                         <button
                             className="button"
-                            onClick={loginPage}
+                            onClick={handleBuy}
+                            disabled={purchased}
                         >
-                            inloggen
+                            {purchased ? "Gekocht" : "Koop"}
                         </button>
                     </div>
                 </div>
