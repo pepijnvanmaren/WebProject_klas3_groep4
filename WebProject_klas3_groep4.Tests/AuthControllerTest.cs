@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebProject_klas3_groep4.Controllers;
-using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.models;
+using Microsoft.Extensions.Configuration;
 using Xunit;
 
 namespace WebProject_klas3_groep4.Tests
@@ -52,7 +52,13 @@ namespace WebProject_klas3_groep4.Tests
                 .Setup(s => s.PasswordSignInAsync(user,"1234",true,false))
                 .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
 
-            var controller = new AuthController(signInManagerMock.Object, userManagerMock.Object);
+            var configMock = new Mock<IConfiguration>();
+
+            var controller = new AuthController(
+              userManagerMock.Object,
+               configMock.Object
+            );
+
 
             var dto = new LoginDto
             {
@@ -91,7 +97,12 @@ namespace WebProject_klas3_groep4.Tests
                 .Setup(x => x.PasswordSignInAsync(user, "fout", true, false))
                 .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Failed);
 
-            var controller = new AuthController(signInManagerMock.Object, userManagerMock.Object);
+            var configMock = new Mock<IConfiguration>();
+
+            var controller = new AuthController(
+                userManagerMock.Object,
+                   configMock.Object
+            );
 
             var dto = new LoginDto
             {

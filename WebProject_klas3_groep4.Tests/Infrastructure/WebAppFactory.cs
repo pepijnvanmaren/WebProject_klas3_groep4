@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace WebProject_klas3_groep4.Tests.Infrastructure
 {
-    public class WebAppFactory : WebApplicationFactory<Program>
+    public class WebAppFactory : WebApplicationFactory<InvalidProgramException>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

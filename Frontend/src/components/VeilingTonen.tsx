@@ -5,15 +5,24 @@ import '../styles/VeilingTonen.css';
 
 type Veiling = {
     id: number;
-    StarTijd: string;
-    StartDatum: string;
-    AantalProducten: number;
-    KlokLocatie: number;
-    HuidigeSituatieVanVeiling: string;
-    Bechrijving: string;
-    VeilingmeesterId: number;
-    Veilingmeester: string;
-    Producten: Array<any>;
+    starTijd: string;
+    startDatum: string;
+    aantalProducten: number;
+    klokLocatie: string;
+    huidigeSituatieVanVeiling: string;
+    bechrijving: string;
+    veilingmeesterId: number;
+    veilingmeesterNaam: string;
+    producten?: Array<any>;
+};
+
+type User = {
+    id: number;
+    userName: string;
+    email: string;
+    phoneNumber: string;
+    rol: string;
+    veilingVestiging: string | null;
 };
 
 function VeilingTonen() {
@@ -21,6 +30,12 @@ function VeilingTonen() {
     const [veilingen, setVeilingen] = useState<Veiling[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
 
     useEffect(() => {
         const fetchVeilingen = async () => {
@@ -32,14 +47,22 @@ function VeilingTonen() {
             }
 
             try {
+                const token = localStorage.getItem("token");
                 const userResponse = await fetch("https://localhost:7020/api/Auth/me", {
-                    credentials: "include",
+                    
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
                 });
 
                 if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    setUser(userData);
 
                     const productsResponse = await fetch(
-                        `https://localhost:7020/api/veiling`
+                        `https://localhost:7020/api/veiling/veilingmeester/${userData.id}`
+
                     );
                     if (productsResponse.ok) {
                         const veilingData = await productsResponse.json();
@@ -64,19 +87,24 @@ function VeilingTonen() {
         navigate('/VeilingMeesterDashboard');
     };
 
-    const handleDeleteProduct = async (id: number) => {
-        if (!window.confirm("Weet je zeker dat je dit product wilt verwijderen?")) {
+    const handleDeleteVeiling = async (id: number) => {
+        if (!window.confirm("Weet je zeker dat je dit veiling wilt verwijderen?")) {
             return;
         }
 
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch(`https://localhost:7020/api/veiling/${id}`, {
                 method: "DELETE",
-                credentials: "include",
+                
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (response.ok || response.status === 204) {
-                alert("Product succesvol verwijderd!");
+                alert("Veiling succesvol verwijderd!");
                 // Verwijder product uit state
                 setVeilingen(veilingen.filter(p => p.id !== id));
             } else {
@@ -114,6 +142,12 @@ function VeilingTonen() {
 
     return (
         <div className="product-dashboard">
+            <header className="dashboard-Veiling-Tonen-header">
+                <div className="header-content">
+                    <h1>Mijn Veilingen</h1>
+                </div>
+            </header>
+
             <main className="dashboard-main">
                 <div className="dashboard-controls">
                     <button onClick={handleBack} className="btn-back">
@@ -140,30 +174,29 @@ function VeilingTonen() {
                     <div className="products-grid">
                         {veilingen.map((veiling) => (
                             <div key={veiling.id} className="product-card">
-
                                 <div className="product-content">
                                     <p className="product-description">
-                                        {veiling.Bechrijving || "Geen beschrijving"}
+                                        {veiling.bechrijving || "Geen beschrijving"}
                                     </p>
 
                                     <div className="product-details">
                                         <div className="detail-item">
                                             <span className="detail-label">StarTijd:</span>
-                                            <span className="detail-value">{veiling.StarTijd}</span>
+                                            <span className="detail-value">{veiling.starTijd}</span>
                                         </div>
                                         <div className="detail-item">
                                             <span className="detail-label">HuidigeSituatieVanVeiling:</span>
-                                            <span className="detail-value">{veiling.HuidigeSituatieVanVeiling}</span>
+                                            <span className="detail-value">{veiling.huidigeSituatieVanVeiling}</span>
                                         </div>
                                         <div className="detail-item">
                                             <span className="detail-label">KlokLocatie:</span>
-                                            <span className="detail-value">{veiling.KlokLocatie}</span>
+                                            <span className="detail-value">{veiling.klokLocatie}</span>
                                         </div>
-                                        {veiling.StarTijd && (
+                                        {veiling.startDatum && (
                                             <div className="detail-item">
-                                                <span className="detail-label">StarTijd:</span>
+                                                <span className="detail-label">StartDatum:</span>
                                                 <span className="detail-value">
-                                                    {new Date(veiling.StarTijd).toLocaleDateString('nl-NL')}
+                                                    {new Date(veiling.startDatum || "Geen beschrijving" ).toLocaleDateString('nl-NL')}
                                                 </span>
                                             </div>
                                         )}
@@ -171,7 +204,7 @@ function VeilingTonen() {
 
                                     <div className="product-actions">
                                         <button
-                                            onClick={() => handleDeleteProduct(veiling.id)}
+                                            onClick={() => handleDeleteVeiling(veiling.id)}
                                             className="btn-delete"
                                         >
                                             Verwijderen

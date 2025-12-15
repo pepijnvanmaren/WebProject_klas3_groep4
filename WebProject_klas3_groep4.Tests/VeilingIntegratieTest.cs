@@ -10,11 +10,11 @@ using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.Tests.Infrastructure;
 using Xunit;
 
-public class VeilingIntegratieTest : IClassFixture<WebApplicationFactory<Program>>
+public class VeilingIntegratieTest : IClassFixture<WebApplicationFactory<InvalidProgramException>>
 {
     private readonly HttpClient _client;
 
-    public VeilingIntegratieTest(WebApplicationFactory<Program> factory)
+    public VeilingIntegratieTest(WebApplicationFactory<InvalidProgramException> factory)
     {
         _client = factory.CreateClient();
     }
