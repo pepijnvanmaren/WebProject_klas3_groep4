@@ -18,6 +18,7 @@ namespace WebProject_klas3_groep4
         // Andere tabellen
         public DbSet<VeilingDB> Veilingen { get; set; }
         public DbSet<productDB> Producten { get; set; }
+        public DbSet<VerkochteProdcutenDB> VerkochteProducten { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
