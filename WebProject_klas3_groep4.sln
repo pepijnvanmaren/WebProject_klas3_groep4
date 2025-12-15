@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebProject_klas3_groep4", "
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "frontend", "Frontend\frontend.esproj", "{462EE049-9FE1-B47D-1B3E-22BACA5D9185}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebProject_klas3_groep4.Tests", "WebProject_klas3_groep4.Tests\WebProject_klas3_groep4.Tests.csproj", "{60D215A8-8FBE-4007-9BCE-AB2739ED282E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebProject_klas3_groep4.Tests_versie_2", "WebProject_klas3_groep4.Tests_versie_2\WebProject_klas3_groep4.Tests_versie_2.csproj", "{1973893F-A59E-416A-86D0-DE007AFA93F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,10 @@ Global
 		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Release|Any CPU.Build.0 = Release|Any CPU
 		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{60D215A8-8FBE-4007-9BCE-AB2739ED282E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60D215A8-8FBE-4007-9BCE-AB2739ED282E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60D215A8-8FBE-4007-9BCE-AB2739ED282E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60D215A8-8FBE-4007-9BCE-AB2739ED282E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1973893F-A59E-416A-86D0-DE007AFA93F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1973893F-A59E-416A-86D0-DE007AFA93F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1973893F-A59E-416A-86D0-DE007AFA93F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1973893F-A59E-416A-86D0-DE007AFA93F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
