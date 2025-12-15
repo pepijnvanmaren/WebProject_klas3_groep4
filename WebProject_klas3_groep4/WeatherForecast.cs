@@ -1,6 +1,6 @@
 namespace WebProject_klas3_groep4
 {
-    public class cdWeatherForecast
+    public class WeatherForecast
     {
         public DateOnly Date { get; set; }
 

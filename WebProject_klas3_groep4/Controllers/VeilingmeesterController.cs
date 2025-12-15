@@ -7,7 +7,7 @@ using WebProject_klas3_groep4.DTO;
 namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
-    [Route("api/veilingmeesters")]
+    [Route("api/[controller]")]
     public class VeilingmeesterController : ControllerBase
     {
         private readonly DatabaseContext _context;
