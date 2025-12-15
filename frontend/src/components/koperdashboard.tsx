@@ -51,21 +51,7 @@ function Index() {
     const lastProductIdRef = useRef<number | null>(null);
 
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
-
-    const scrollToCurrentProduct = () => {
-        if (!currentProductTitleRef.current) return;
-
-        const headerOffset = window.innerHeight * 0.18;
-        const elementPosition =
-            currentProductTitleRef.current.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - headerOffset;
-
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-        });
-    };
-
+    const [aantal, setAantal] = useState<number>(1);
 
     useEffect(() => {
         const checkLoginStatus = async () => {
@@ -141,7 +127,7 @@ function Index() {
 
         intervalRef.current = setInterval(() => {
             setPrice(prev => {
-                const current = prev > 0 ? prev : (minPrice * 10);
+                const current = prev > 0 ? prev : (minPrice);
 
                 const nextPrice = current * 0.98;
                 if (nextPrice <= minPrice) {
@@ -249,7 +235,8 @@ function Index() {
                 },
                 body: JSON.stringify({
                     ProductId: veilingStatus.huidigProduct.id,
-                    Prijs: price
+                    Prijs: totalPrice,
+                    Aantal: aantal
                 })
             });
 
@@ -288,7 +275,7 @@ function Index() {
             const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/volgende", {
                 method: "POST",
-                
+
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -308,6 +295,7 @@ function Index() {
                 setIsPaused(false);
                 setPurchased(false);
                 setPauseCountdown(30);
+                setAantal(1);
                 await fetchVeilingStatus();
             }
         } catch (err: any) {
@@ -321,6 +309,7 @@ function Index() {
     const maxPrice = minPrice * 10;
     const progress = maxPrice > minPrice ? (price - minPrice) / (maxPrice - minPrice) : 0;
     const barColor = `rgb(${Math.round(255 * (1 - progress))}, ${Math.round(255 * progress)}, 0)`;
+    const totalPrice = progress * aantal;
 
     const ProductImage = ({ product }: { product: Product }) =>
         product?.foto ? (
@@ -426,7 +415,7 @@ function Index() {
 
                         <div className="box box-price">
                             <div className="price-row">
-                                <span className="price">EUR {price.toFixed(2)}</span>
+                                <span className="price">EUR {totalPrice.toFixed(2)}</span>
                                 <button
                                     className="button"
                                     onClick={handleBuy}
@@ -437,6 +426,15 @@ function Index() {
                                             isLoggedIn ? "Koop" : "Inloggen"}
                                 </button>
                             </div>
+                            <input
+                                type="number"
+                                placeholder="Voer het aantal in"
+                                className="input-field"
+                                value={aantal}
+                                min={1}
+                                max={veilingStatus?.huidigProduct?.hoeveelheid ?? 1}
+                                onChange={(e) => setAantal(Number(e.target.value))}
+                            />
                         </div>
 
                         {!isPaused && (
