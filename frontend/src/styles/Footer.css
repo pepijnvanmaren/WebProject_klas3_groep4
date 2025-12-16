@@ -1,108 +1,117 @@
-.footer {
+/* SiteFooter.css */
+
+.site-footer {
     background-color: #77C77A;
     color: #ffffff;
     padding: 3rem 2rem 1rem;
     margin-top: 10rem;
 }
 
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.footer-section {
-    display: flex;
-    flex-direction: column;
-}
-
-.footer-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #1a3328;
-}
-
-.footer-text {
-    line-height: 1.6;
-    color: #f0f4f0;
-    margin: 0;
-}
-
-.footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-    .footer-links li {
-        margin-bottom: 0.5rem;
+    /* CONTAINER */
+    .site-footer .site-footer-container {
+        max-width: 1200px;
+        margin: 0 auto 2rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
     }
 
-    .footer-links a {
+    /* SECTION */
+    .site-footer .site-footer-section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* TITLES */
+    .site-footer .site-footer-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #1a3328;
+    }
+
+    /* TEXT */
+    .site-footer .site-footer-text {
+        line-height: 1.6;
         color: #f0f4f0;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-        .footer-links a:hover {
-            color: #4ecca3;
-        }
-
-.footer-contact {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    color: #f0f4f0;
-}
-
-    .footer-contact li {
-        margin-bottom: 0.5rem;
-    }
-
-.footer-social {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-    .footer-social a {
-        color: #f0f4f0;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-        .footer-social a:hover {
-            color: #4ecca3;
-        }
-
-.footer-bottom {
-    text-align: center;
-    padding-top: 1.5rem;
-    border-top: 1px solid #2d2d44;
-    color: #f0f4f0;
-    font-size: 0.9rem;
-}
-
-    .footer-bottom p {
         margin: 0;
     }
 
-/* Responsive design */
+    /* LINKS */
+    .site-footer .site-footer-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .site-footer .site-footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .site-footer .site-footer-links a {
+            color: #f0f4f0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .site-footer .site-footer-links a:hover {
+                color: #4ecca3;
+            }
+
+    /* CONTACT */
+    .site-footer .site-footer-contact {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        color: #f0f4f0;
+    }
+
+        .site-footer .site-footer-contact li {
+            margin-bottom: 0.5rem;
+        }
+
+    /* SOCIAL */
+    .site-footer .site-footer-social {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+        .site-footer .site-footer-social a {
+            color: #f0f4f0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .site-footer .site-footer-social a:hover {
+                color: #4ecca3;
+            }
+
+    /* BOTTOM */
+    .site-footer .site-footer-bottom {
+        text-align: center;
+        padding-top: 1.5rem;
+        border-top: 1px solid #2d2d44;
+        color: #f0f4f0;
+        font-size: 0.9rem;
+    }
+
+        .site-footer .site-footer-bottom p {
+            margin: 0;
+        }
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-    .footer {
+    .site-footer {
         padding: 2rem 1rem 1rem;
     }
 
-    .footer-container {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
+        .site-footer .site-footer-container {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
 
-    .footer-title {
-        font-size: 1.1rem;
-    }
+        .site-footer .site-footer-title {
+            font-size: 1.1rem;
+        }
 }

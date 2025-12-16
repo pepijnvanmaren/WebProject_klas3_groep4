@@ -1,36 +1,108 @@
+/* Container pagina */
 .vp_dashboard-container {
     max-width: 900px;
-    margin: 8em auto 2em auto;
+    margin: 14rem auto 2rem auto; /* top-margin aangepast */
     padding: 10px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Titel */
+.pp_title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #1f2937;
+}
+
+/* Boxen */
 .vp_dashboard-box {
     border: 1px solid #ccc;
     border-radius: 12px;
-    background-color: white;
+    background-color: #ffffff;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    padding: 1em;
+    padding: 1.5rem;
 }
 
+/* Flex layout voor kolommen */
 .vp_dashboard-flex {
     display: flex;
     gap: 2rem;
     flex-wrap: wrap;
 }
 
-.pp_input-container-beschrijving {
-    min-height: 13rem;
+/* Kolommen */
+.pp_dashboard-column {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
 }
 
+/* Beschrijving textarea */
+.pp_input-container-beschrijving {
+    min-height: 13rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 2px solid #777;
+    border-radius: 6px;
+    resize: vertical;
+    box-sizing: border-box;
+    margin-top: 0.5rem;
+    width: 100%;
+}
+
+/* Input velden */
+.pp_input-container {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 2px solid #777;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0.5rem;
+}
+
+/* Select dropdown */
 .vp_selector {
     font-size: 1rem;
     padding: 0.5rem;
     border: 2px solid #777;
-    border-radius: 4px;
+    border-radius: 6px;
     width: 100%;
     box-sizing: border-box;
+    margin-top: 0.5rem;
 }
 
-.vp_dashboard-container {
-  margin-top: 14rem;
+/* Buttons rij */
+.pp_buttons-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.pp_btn {
+    padding: 10px 20px;
+    background-color: #77c77a;
+    color: white;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+    .pp_btn:hover {
+        background-color: #65b868;
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .vp_dashboard-flex {
+        flex-direction: column;
+    }
 }

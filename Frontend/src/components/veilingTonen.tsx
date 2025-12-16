@@ -141,14 +141,14 @@ function VeilingTonen() {
     }
 
     return (
-        <div className="product-dashboard">
-            <header className="dashboard-Veiling-Tonen-header">
+        <div className="veiling-dashboard">
+            <header className="veiling-dashboard-header">
                 <div className="header-content">
                     <h1>Mijn Veilingen</h1>
                 </div>
             </header>
 
-            <main className="dashboard-main">
+            <main className="veiling-dashboard-main">
                 <div className="dashboard-controls">
                     <button onClick={handleBack} className="btn-back">
                         Terug naar Dashboard
@@ -196,7 +196,7 @@ function VeilingTonen() {
                                             <div className="detail-item">
                                                 <span className="detail-label">StartDatum:</span>
                                                 <span className="detail-value">
-                                                    {new Date(veiling.startDatum || "Geen beschrijving" ).toLocaleDateString('nl-NL')}
+                                                    {new Date(veiling.startDatum).toLocaleDateString('nl-NL')}
                                                 </span>
                                             </div>
                                         )}
@@ -217,6 +217,7 @@ function VeilingTonen() {
                 )}
             </main>
         </div>
+
     );
 }
 

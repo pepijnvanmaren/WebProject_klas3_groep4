@@ -1,5 +1,15 @@
-/* Floating control panel rechtsboven */
-.floating-controls {
+/* BuyerDashboard.css */
+
+.buyer-dashboard-page {
+    margin-top: 8em;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* FLOATING CONTROLS */
+.buyer-dashboard-controls {
     position: fixed;
     top: 20vh;
     right: 20px;
@@ -9,48 +19,50 @@
     gap: 10px;
 }
 
-/* Start/Stop knoppen */
-.btn {
+.buyer-dashboard-btn {
     padding: 10px 20px;
-    color: white;
+    color: #fff;
     border: none;
     border-radius: 5px;
     font-weight: bold;
 }
 
-.btn-start {
+    .buyer-dashboard-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+.buyer-dashboard-btn-start {
     background-color: #047B00;
 }
 
-.btn-stop {
+.buyer-dashboard-btn-stop {
     background-color: #dc3545;
 }
 
-.btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.btn:not(:disabled) {
-    cursor: pointer;
-}
-
-/* Status block bovenin */
-.status-box {
+/* STATUS */
+.buyer-dashboard-status {
     padding: 10px;
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 5px;
     font-size: 14px;
 }
 
-/* Geen actieve veiling */
-.no-auction {
+/* NO AUCTION */
+.buyer-dashboard-no-auction {
     text-align: center;
     padding: 50px;
 }
 
-/* Timer tijdens pauze */
-.pause-timer {
+/* TITLES */
+.buyer-dashboard-title {
+    width: 80%;
+    text-align: left;
+    margin: 1.5em 0 0.5em;
+}
+
+/* PAUSE TIMER */
+.buyer-dashboard-pause-timer {
     text-align: center;
     font-size: 2rem;
     font-weight: bold;
@@ -58,52 +70,56 @@
     margin-bottom: 20px;
 }
 
-/* Container layout */
-.container {
+/* CONTAINER */
+.buyer-dashboard-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
-    margin: 20px 0;
+    width: 80%;
+    margin-bottom: 2em;
 }
 
-/* Box styling */
-.box {
+/* BOX */
+.buyer-dashboard-box {
     background: #fff;
     padding: 10px;
 }
 
-/* Beschrijving box */
-.box-description {
+/* DESCRIPTION */
+.buyer-dashboard-box-description {
     grid-column: span 2;
 }
 
-/* Productnaam */
-.product-name {
-    font-size: 20px;
+/* PRODUCT */
+.buyer-dashboard-product-name {
+    font-size: 1.2rem;
     margin-bottom: 10px;
 }
 
-/* Prijs box */
-.box-price {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.buyer-dashboard-description {
+    color: #555;
 }
 
-/* Prijs & koop-knop */
-.price-row {
+/* PRICE */
+.buyer-dashboard-box-price {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.buyer-dashboard-price-row {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.price {
+.buyer-dashboard-price {
     font-size: 1.4rem;
     font-weight: bold;
 }
 
-/* Koop-knop */
-.button {
+/* BUY BUTTON */
+.buyer-dashboard-buy-btn {
     padding: 8px 18px;
     background: #007bff;
     border: none;
@@ -113,27 +129,28 @@
     font-weight: bold;
 }
 
-    .button:disabled {
+    .buyer-dashboard-buy-btn:disabled {
         cursor: not-allowed;
         opacity: 0.6;
     }
 
-/* Progress bar container */
-.progress-bar-container {
+/* INPUT */
+.buyer-dashboard-input {
+    margin-top: 10px;
+    padding: 6px;
     width: 100%;
+}
+
+/* PROGRESS BAR */
+.buyer-dashboard-progress-container {
+    grid-column: span 4;
     height: 12px;
     background-color: #ddd;
     border-radius: 10px;
     overflow: hidden;
 }
 
-/* Progress bar */
-.progress-bar {
+.buyer-dashboard-progress-bar {
     height: 100%;
     transition: width 1s linear, background-color 1s linear;
-}
-
-/* Integrated bar spacing */
-.integrated-bar {
-    grid-column: span 4;
 }
