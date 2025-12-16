@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
 using WebProject_klas3_groep4.DTO;
-using Microsoft.AspNetCore.Authorization;
+
 
 namespace WebProject_klas3_groep4.Controllers
 {
@@ -98,7 +98,7 @@ namespace WebProject_klas3_groep4.Controllers
         {
             if (dto == null) return BadRequest("Invalid product data");
 
-            // NIEUW: Haal de ingelogde gebruiker op
+            // Haal de ingelogde gebruiker op
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized("Gebruiker niet gevonden");
 
@@ -121,7 +121,7 @@ namespace WebProject_klas3_groep4.Controllers
                 Steellengte = dto.Steellengte,
                 Hoeveelheid = dto.Hoeveelheid,
                 MinimalePrijs = dto.MinimalePrijs,
-                AanvoerderId = user.Id,  // NIEUW: Automatisch gekoppeld aan ingelogde gebruiker
+                AanvoerderId = user.Id,  // Automatisch gekoppeld aan ingelogde gebruiker
                 VeilingId = dto.VeilingId
             };
 

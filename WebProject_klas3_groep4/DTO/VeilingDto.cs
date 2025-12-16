@@ -8,7 +8,7 @@ namespace WebProject_klas3_groep4.DTO
         public string? KlokLocatie { get; set; }
         public string? HuidigeSituatieVanVeiling { get; set; }
         public string? Bechrijving { get; set; }
-        // NIEUW: Veilingmeester koppelen
+        // Veilingmeester koppelen
         public int? VeilingmeesterId { get; set; }
     }
 
@@ -20,7 +20,7 @@ namespace WebProject_klas3_groep4.DTO
         public string? KlokLocatie { get; set; }
         public string? HuidigeSituatieVanVeiling { get; set; }
         public string? Bechrijving { get; set; }
-        // NIEUW: Veilingmeester wijzigen
+        // Veilingmeester wijzigen
         public int? VeilingmeesterId { get; set; }
     }
 
@@ -33,10 +33,10 @@ namespace WebProject_klas3_groep4.DTO
         public string? KlokLocatie { get; set; }
         public string? HuidigeSituatieVanVeiling { get; set; }
         public string? Bechrijving { get; set; }
-        // NIEUW: Veilingmeester info
+        // Veilingmeester info
         public int? VeilingmeesterId { get; set; }
         public string? VeilingmeesterNaam { get; set; }
-        // NIEUW: Producten in deze veiling
+        // Producten in deze veiling
         public List<ProductOutputDto>? Producten { get; set; }
     }
 }

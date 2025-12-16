@@ -41,8 +41,9 @@ function Index() {
     const [veilingStatus, setVeilingStatus] = useState<VeilingStatus | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [priceHistoryExpanded, setPriceHistoryExpanded] = useState(false);
 
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const [price, setPrice] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [purchased, setPurchased] = useState(false);
@@ -329,7 +330,73 @@ function Index() {
             <div className="no-image">No image available</div>
         );
 
+    function setShowPriceHistory(arg0: boolean): void {
+        throw new Error("Function not implemented.");
+    }
+
     return (
+        <>
+         <div className="page">
+                {veilingStatus?.isActief && veilingStatus.huidigProduct && (
+                    <div className="container">
+                        <div className="box">
+                            <ProductImage product={veilingStatus.huidigProduct} />
+                        </div>
+
+                        <div className="box box-description">
+                            <h2 className="product-name">{veilingStatus.huidigProduct.naam}</h2>
+                            <p className="description">{veilingStatus.huidigProduct.beschrijving}</p>
+                        </div>
+
+                        <div className="box">{veilingStatus.huidigProduct.hoeveelheid} stuks</div>
+
+                        <div className="box box-price">
+                            <span className="price">EUR {price.toFixed(2)}</span>
+                            <button
+                                className="button"
+                                onClick={handleBuy}
+                                disabled={loading}
+                            >
+                                Koop
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Vast prijs-geschiedenis paneel */}
+            {isLoggedIn && (
+                <div
+                    className="price-history-widget"
+                    onClick={() => setPriceHistoryExpanded(prev => !prev)}
+                >
+                    <div className="price-history-header">
+                        Prijs geschiedenis
+                    </div>
+
+                    {priceHistoryExpanded && (
+                        <div className="price-history-content">
+                            <h4>Huidige aanvoerder</h4>
+                            <p><strong>Gemiddelde prijs:</strong> € 12,50</p>
+                            <ul>
+                                <li>€ 13,10</li>
+                                <li>€ 12,95</li>
+                                <li>€ 12,80</li>
+                            </ul>
+
+                            <hr />
+
+                            <h4>Alle aanvoerders</h4>
+                            <p><strong>Gemiddelde prijs:</strong> € 11,90</p>
+                            <ul>
+                                <li>€ 12,40</li>
+                                <li>€ 12,20</li>
+                                <li>€ 12,00</li>
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            )}
         <div className="page">
             <div style={{
                 position: 'fixed',
@@ -436,6 +503,14 @@ function Index() {
                                         isPaused ? "Wacht..." :
                                             isLoggedIn ? "Koop" : "Inloggen"}
                                 </button>
+                                <button
+                                    className="button secondary"
+                                    onClick={() => setShowPriceHistory(true)}
+                                    disabled={loading}
+                                    style={{ marginLeft: "10px" }}
+                                >
+                                    Prijs geschiedenis
+                                </button>
                             </div>
                         </div>
 
@@ -471,7 +546,8 @@ function Index() {
                     )}
                 </>
             )}
-        </div>
+            </div>
+        </>
     );
 }
 

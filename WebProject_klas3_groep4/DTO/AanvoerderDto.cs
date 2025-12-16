@@ -40,7 +40,7 @@ namespace WebProject_klas3_groep4.DTO
         public string? Adres { get; set; }
         public string? BedrijfTelefoonnummer { get; set; }
         public string? BedrijfEmail { get; set; }
-        // NIEUW: Producten van deze Aanvoerder
+        // Producten van deze Aanvoerder
         public List<int>? ProductIds { get; set; }
     }
 }

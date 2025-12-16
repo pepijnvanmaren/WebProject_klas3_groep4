@@ -101,7 +101,7 @@ namespace WebProject_klas3_groep4.Controllers
 
             bool isInPauze = false;
             int pauzeRemainingSeconds = 0;
-            const int PauzeTijd = 30; // seconden
+            const int PauzeTijd = 30;
 
             if (actiefProduct != null && actiefProduct.IsGekocht && actiefProduct.VerkochtOp.HasValue)
             {
