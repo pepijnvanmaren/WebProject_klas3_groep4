@@ -2,6 +2,7 @@ import "../styles/index.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+// DTO Types
 type Product = {
     id: number;
     naam: string;
@@ -24,6 +25,7 @@ type VeilingStatus = {
     pauzeRemainingSeconds?: number;
 };
 
+// Helper: Convert base64 string to image
 const getImageSrc = (foto?: string | null) => {
     if (!foto) return "";
     const s = foto.trim().replace(/^"|"$/g, "").replace(/\r?\n/g, "");
@@ -33,6 +35,7 @@ const getImageSrc = (foto?: string | null) => {
     return `data:image/*;base64,${s}`;
 };
 
+// Product Image Component
 const ProductImage = ({ product }: { product: Product }) =>
     product?.foto ? (
         <img src={getImageSrc(product.foto)} alt={product.naam} className="Roses" />
@@ -43,28 +46,31 @@ const ProductImage = ({ product }: { product: Product }) =>
 function Index() {
     const navigate = useNavigate();
 
+    // State
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [veilingStatus, setVeilingStatus] = useState<VeilingStatus | null>(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [isRunning, setIsRunning] = useState(false);
     const [purchased, setPurchased] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [pauseCountdown, setPauseCountdown] = useState(30);
-    const [error, setError] = useState<string | null>(null);
-
+    const [currentPricePerUnit, setCurrentPricePerUnit] = useState(0);
+    const [hoeveelheid, setHoeveelheid] = useState(0);
     const [aantal, setAantal] = useState<number>(1);
-    const [currentTotalPrice, setCurrentTotalPrice] = useState<number>(0);
 
+    // Refs
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const lastProductIdRef = useRef<number | null>(null);
-    const lastProductAmountRef = useRef<number | null>(null);
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
 
+    // Check login status
     useEffect(() => {
         const userRole = localStorage.getItem("userRole");
         setIsLoggedIn(userRole === "Koper");
     }, []);
 
+    // Fetch veiling status
     const fetchVeilingStatus = async () => {
         try {
             const response = await fetch("https://localhost:7020/api/veiling-process/status", {
@@ -76,73 +82,68 @@ function Index() {
             setVeilingStatus(data);
 
             const newProductId = data.huidigProduct?.id ?? null;
-            const newProductAmount = data.huidigProduct?.hoeveelheid ?? null;
-
-            const isNewProduct =
-                lastProductIdRef.current !== newProductId ||
-                lastProductAmountRef.current !== newProductAmount;
+            const isNewProduct = lastProductIdRef.current !== newProductId;
 
             if (data.huidigProduct && data.isActief && !data.isInPauze) {
                 if (isNewProduct) {
                     lastProductIdRef.current = newProductId;
-                    lastProductAmountRef.current = newProductAmount;
-
-                    const startTotalPrice = data.huidigProduct.minimalePrijs * data.huidigProduct.hoeveelheid;
-                    setCurrentTotalPrice(startTotalPrice);
+                    setCurrentPricePerUnit((data.huidigProduct.minimalePrijs ?? 1) * 10);
                     setAantal(1);
                     setPurchased(false);
                 }
-
                 setIsRunning(true);
                 setIsPaused(false);
+            } else if (data.huidigProduct && data.isInPauze) {
+                setIsRunning(false);
+                setIsPaused(true);
+                setPurchased(true);
+                setPauseCountdown(data.pauzeRemainingSeconds ?? 30);
+            } else {
+                setIsRunning(false);
+                setIsPaused(false);
             }
-        } catch (error: any) {
-            console.error(error);
-            setError(error?.message ?? "Unknown error");
+        } catch (err: any) {
+            console.error(err);
+            setError(err?.message ?? "Unknown error");
         }
     };
 
+    // Poll veiling status every 2 seconds
     useEffect(() => {
         fetchVeilingStatus();
         const interval = setInterval(fetchVeilingStatus, 2000);
         return () => clearInterval(interval);
     }, []);
 
+    // Veiling countdown
     useEffect(() => {
         if (!isRunning || !veilingStatus?.huidigProduct || isPaused) {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-            }
+            intervalRef.current && clearInterval(intervalRef.current);
+            intervalRef.current = null;
             return;
         }
 
-        const minTotalPrice = veilingStatus.huidigProduct.minimalePrijs;
-        const maxTotalPrice = minTotalPrice * 10;
+        const minPrice = veilingStatus.huidigProduct.minimalePrijs;
+        const maxPrice = minPrice * 10;
 
-        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current && clearInterval(intervalRef.current);
 
         intervalRef.current = setInterval(() => {
-            setCurrentTotalPrice(prev => {
-                const current = prev > 0 ? prev : maxTotalPrice;
-                const next = +(current * 0.98).toFixed(2);
-
-                if (next <= minTotalPrice) {
+            setCurrentPricePerUnit(prev => {
+                const startPrice = prev > 0 ? prev : maxPrice;
+                const next = +(startPrice * 0.98).toFixed(2);
+                if (next <= minPrice) {
                     clearInterval(intervalRef.current!);
-                    return minTotalPrice;
+                    return minPrice;
                 }
                 return next;
             });
         }, 1000);
 
-        return () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-            }
-        };
-    }, [isRunning, isPaused, veilingStatus?.huidigProduct]);
+        return () => intervalRef.current && clearInterval(intervalRef.current);
+    }, [isRunning, veilingStatus?.huidigProduct, isPaused]);
 
+    // Pauze countdown
     useEffect(() => {
         if (!isPaused) return;
 
@@ -151,7 +152,7 @@ function Index() {
                 if (prev <= 1) {
                     clearInterval(countdown);
                     handleVolgendProduct();
-                    return 0;
+                    return 30;
                 }
                 return prev - 1;
             });
@@ -160,22 +161,20 @@ function Index() {
         return () => clearInterval(countdown);
     }, [isPaused]);
 
+    // Handlers
     const handleStartVeiling = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/start", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
+                credentials: "include"
             });
             if (!response.ok) throw new Error("Kon veiling niet starten");
 
             await fetchVeilingStatus();
-        } catch (error: any) {
-            alert(error.message);
+            alert("Veiling gestart!");
+        } catch (err: any) {
+            alert(err.message);
         } finally {
             setLoading(false);
         }
@@ -212,12 +211,11 @@ function Index() {
         if (!veilingStatus?.huidigProduct) return;
 
         setLoading(true);
-
         try {
             const token = localStorage.getItem("token");
-            const product = veilingStatus.huidigProduct;
-            const priceForInput = +(currentTotalPrice * aantal).toFixed(2);
+            const totalPrice = +(currentPricePerUnit * aantal).toFixed(2);
 
+            // Koop via veiling-process
             const response = await fetch("https://localhost:7020/api/veiling-process/koop", {
                 method: "POST",
                 headers: {
@@ -225,14 +223,15 @@ function Index() {
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    ProductId: product.id,
-                    Prijs: priceForInput,
+                    ProductId: veilingStatus.huidigProduct.id,
+                    Prijs: totalPrice,
                     Aantal: aantal
                 })
             });
 
             if (!response.ok) throw new Error(await response.text() || "Kon product niet kopen");
 
+            // Verkochte producten
             await fetch("https://localhost:7020/api/VerkochteProducten", {
                 method: "POST",
                 headers: {
@@ -240,41 +239,21 @@ function Index() {
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    productId: product.id,
+                    productId: veilingStatus.huidigProduct.id,
                     hoeveelHeid: aantal,
-                    verkochtePrijs: priceForInput
+                    verkochtePrijs: totalPrice
                 })
             });
 
-            const remainingAmount = product.hoeveelheid - aantal;
-
-            if (remainingAmount > 0) {
-                await fetch("https://localhost:7020/api/veiling-process/herstart", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        ProductId: product.id,
-                        NieuweHoeveelheid: remainingAmount
-                    })
-                });
-
-                await fetchVeilingStatus();
-            } else {
-                startPauseCountdown();
-            }
-
             setPurchased(true);
-
+            setIsRunning(false);
+            alert(`Product "${veilingStatus.huidigProduct.naam}" gekocht voor €${totalPrice.toFixed(2)}`);
         } catch (err: any) {
             alert(err.message);
         } finally {
             setLoading(false);
         }
     };
-
 
     const handleVolgendProduct = async () => {
         try {
@@ -295,15 +274,13 @@ function Index() {
                 setIsRunning(false);
                 setIsPaused(false);
                 lastProductIdRef.current = null;
-            } else if (data.product) {
-                const startTotalPrice = data.product.minimalePrijs * 10;
-                setCurrentTotalPrice(startTotalPrice);
-                setAantal(1);
-                setPurchased(false);
+            } else {
                 setIsPaused(false);
+                setPurchased(false);
+                setPauseCountdown(30);
+                setAantal(1);
+                await fetchVeilingStatus();
             }
-
-            await fetchVeilingStatus();
         } catch (err: any) {
             alert(err.message);
             setIsRunning(false);
@@ -311,27 +288,16 @@ function Index() {
         }
     };
 
-    const startPauseCountdown = () => {
-        setPauseCountdown(30);
-        setIsPaused(true);
-    };
-
-    const minPricePerUnit = veilingStatus?.huidigProduct?.minimalePrijs ?? 0;
-    const maxTotalPrice = minPricePerUnit * 10;
-
-    const currentPrice = +(currentTotalPrice / veilingStatus?.huidigProduct?.hoeveelheid! * aantal).toFixed(2);
-
-    const progress =
-        maxTotalPrice > minPricePerUnit
-            ? (currentTotalPrice - minPricePerUnit) / (maxTotalPrice - minPricePerUnit)
-            : 0;
-
-    const barColor = `rgb(${Math.round(255 * (1 - progress))}, ${Math.round(
-        255 * progress
-    )}, 0)`;
+    // Derived values
+    const totalPrice = +(currentPricePerUnit * aantal).toFixed(2);
+    const minPrice = veilingStatus?.huidigProduct?.minimalePrijs ?? 0;
+    const maxPrice = veilingStatus?.huidigProduct ? minPrice * 10 : 0;
+    const progress = maxPrice > minPrice ? (currentPricePerUnit - minPrice) / (maxPrice - minPrice) : 0;
+    const barColor = `rgb(${Math.round(255 * (1 - progress))}, ${Math.round(255 * progress)}, 0)`;
 
     return (
         <div className="page">
+            {/* Sidebar */}
             <div style={{
                 position: 'fixed',
                 top: '20vh',
@@ -356,6 +322,7 @@ function Index() {
                 >
                     {loading ? "Bezig..." : veilingStatus?.isActief ? "Stop Veiling" : "Start Veiling"}
                 </button>
+
                 {veilingStatus?.isActief && (
                     <div style={{
                         padding: '10px',
@@ -368,12 +335,14 @@ function Index() {
                     </div>
                 )}
             </div>
+
             {!veilingStatus?.isActief && (
                 <div style={{ textAlign: 'center', padding: '50px' }}>
                     <h2>Er is momenteel geen actieve veiling</h2>
                     <p>Kom later terug of wacht tot de veiling start!</p>
                 </div>
             )}
+
             {veilingStatus?.isActief && veilingStatus.huidigProduct && (
                 <>
                     <h2 className="page-title" ref={currentProductTitleRef}>
@@ -401,7 +370,7 @@ function Index() {
                         <div className="box">{veilingStatus.huidigProduct.hoeveelheid} stuks</div>
                         <div className="box box-price">
                             <div className="price-row">
-                                <span className="price">EUR {currentPrice}</span>
+                                <span className="price">EUR {totalPrice.toFixed(2)}</span>
                                 <button
                                     className="button"
                                     onClick={handleBuy}

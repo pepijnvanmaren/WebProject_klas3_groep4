@@ -234,6 +234,37 @@ namespace WebProject_klas3_groep4.Controllers
             });
         }
 
+        [Authorize]
+        [HttpPost("herstart")]
+        public async Task<IActionResult> HerstartProduct([FromBody] HerstartProductDto dto)
+        {
+            var product = await _context.Producten
+                .FirstOrDefaultAsync(p => p.ID == dto.ProductId);
+
+            if (product == null)
+                return NotFound("Product niet gevonden");
+
+            // Update de hoeveelheid met de overgebleven hoeveelheid
+            product.Hoeveelheid = dto.NieuweHoeveelheid;
+
+            // Zet het product opnieuw in de wachtrij
+            product.Status = VeilingStatus.InWachtrij;
+
+            // Optioneel: reset flags
+            product.IsGekocht = false;
+            product.VerkochtOp = null;
+            product.KoperID = null;
+            product.VerkochtePrijs = null;
+
+            // Voeg product weer op de juiste volgorde toe
+            int maxVolgorde = await _context.Producten.MaxAsync(p => (int?)p.VeilingVolgorde) ?? 0;
+            product.VeilingVolgorde = maxVolgorde + 1;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Product opnieuw in veiling gezet", product = product.ID });
+        }
+
         // ========================================
         // HELPER METHOD
         // ========================================
@@ -265,4 +296,10 @@ namespace WebProject_klas3_groep4.Controllers
         public int ProductId { get; set; }
         public double Prijs { get; set; }
     }
+    public class HerstartProductDto
+    {
+        public int ProductId { get; set; }
+        public int NieuweHoeveelheid { get; set; }
+    }
+
 }
