@@ -3,11 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
 using WebProject_klas3_groep4.DTO;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class VerkochteProductenController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -17,51 +20,62 @@ namespace WebProject_klas3_groep4.Controllers
         }
         // GET ALL
         [HttpGet]
-        public ActionResult<IEnumerable<VerkochteProductenCreateDto>> GetVerkochteProducten()
+        public ActionResult<IEnumerable<VerkochteProductenOutputDto>> GetVerkochteProducten()
         {
-            var VerkochteProducten = _context.VerkochteProducten
-                .Include(u => u.Product)
-                .Include(u => u.Koper)
-                .Select(u => new VerkochteProductenCreateDto
+            var verkochteProducten = _context.VerkochteProducten
+                .Include(v => v.Product)
+                .Include(v => v.Koper)
+                .Select(v => new VerkochteProductenOutputDto
                 {
-                    HoeveelHeid = u.HoeveelHeid,
-                    VerkochtePrijs = u.VerkochtePrijs,
-                    ProductId = u.ProductId,
-                    KoperId = u.KoperId
+                    ID = v.ID,
+                    HoeveelHeid = v.HoeveelHeid,
+                    VerkochtePrijs = v.VerkochtePrijs,
+                    ProductId = v.ProductId,
+                    KoperId = v.KoperId
                 })
                 .ToList();
-            return Ok(VerkochteProducten);
+
+            return Ok(verkochteProducten);
         }
+
 
         // CREATE
         [HttpPost]
-        public async Task<ActionResult<VerkochteProductenOutputDto>> PostVeiling([FromBody] VerkochteProductenCreateDto dto)
+        public async Task<ActionResult<VerkochteProductenOutputDto>> PostVeiling(
+        [FromBody] VerkochteProductenCreateDto dto)
         {
             if (dto == null)
-                return BadRequest("Invalid veiling data");
+                return BadRequest("Invalid data");
 
-            var VerkochteProducten = new VerkochteProdcutenDB
+            var koperIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(koperIdClaim, out int koperId))
+                return Unauthorized("Ongeldige gebruiker");
+
+            var entity = new VerkochteProdcutenDB
             {
                 HoeveelHeid = dto.HoeveelHeid,
                 VerkochtePrijs = dto.VerkochtePrijs,
                 ProductId = dto.ProductId,
-                KoperId = dto.KoperId
+                KoperId = koperId
             };
 
-            _context.VerkochteProducten.Add(VerkochteProducten);
+            _context.VerkochteProducten.Add(entity);
             await _context.SaveChangesAsync();
 
             var outDto = new VerkochteProductenOutputDto
             {
-                ID = VerkochteProducten.ID,
-                HoeveelHeid = VerkochteProducten.HoeveelHeid,
-                VerkochtePrijs = VerkochteProducten.VerkochtePrijs,
-                ProductId = VerkochteProducten.ProductId,
-                KoperId = VerkochteProducten.KoperId
+                ID = entity.ID,
+                HoeveelHeid = entity.HoeveelHeid,
+                VerkochtePrijs = entity.VerkochtePrijs,
+                ProductId = entity.ProductId,
+                KoperId = entity.KoperId
             };
 
-            return CreatedAtAction(nameof(GetVerkochteProducten), new { id = VerkochteProducten.ID }, outDto);
+            return CreatedAtAction(nameof(GetVerkochteProducten),
+                new { id = entity.ID }, outDto);
         }
+
         [HttpDelete("{ID:int}")]
         public async Task<ActionResult> DeleteVerkochteProducten(int ID)
         {

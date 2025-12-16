@@ -6,7 +6,6 @@ namespace WebProject_klas3_groep4.DTO
         public int HoeveelHeid { get; set; }
         public double VerkochtePrijs { get; set; }
         public int ProductId { get; set; }
-        public int KoperId { get; set; }
     }
 
     public class VerkochteProductenOutputDto
