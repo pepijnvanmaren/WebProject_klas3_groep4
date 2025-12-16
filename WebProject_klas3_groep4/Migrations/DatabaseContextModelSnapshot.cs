@@ -201,6 +201,35 @@ namespace WebProject_klas3_groep4.Migrations
                     b.ToTable("Veilingen");
                 });
 
+            modelBuilder.Entity("WebProject_klas3_groep4.VerkochteProdcutenDB", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("HoeveelHeid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("KoperId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("VerkochtePrijs")
+                        .HasColumnType("float");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("KoperId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("VerkochteProducten");
+                });
+
             modelBuilder.Entity("WebProject_klas3_groep4.models.GebruikerDB", b =>
                 {
                     b.Property<int>("Id")
@@ -438,6 +467,25 @@ namespace WebProject_klas3_groep4.Migrations
                         .HasForeignKey("VeilingmeesterId");
 
                     b.Navigation("Veilingmeester");
+                });
+
+            modelBuilder.Entity("WebProject_klas3_groep4.VerkochteProdcutenDB", b =>
+                {
+                    b.HasOne("WebProject_klas3_groep4.models.GebruikerDB", "Koper")
+                        .WithMany()
+                        .HasForeignKey("KoperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebProject_klas3_groep4.models.productDB", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Koper");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("WebProject_klas3_groep4.models.productDB", b =>

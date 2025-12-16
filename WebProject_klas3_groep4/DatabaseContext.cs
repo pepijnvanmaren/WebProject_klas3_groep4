@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4
@@ -42,6 +43,18 @@ namespace WebProject_klas3_groep4
                 .HasMany(g => g.Veilingen)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<VerkochteProdcutenDB>()
+                .HasOne(v => v.Product)
+                .WithMany()
+                .HasForeignKey(v => v.ProductId)
+            .OnDelete(DeleteBehavior.Restrict); 
+
+            builder.Entity<VerkochteProdcutenDB>()
+                .HasOne(v => v.Koper)
+                .WithMany()
+                .HasForeignKey(v => v.KoperId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
