@@ -151,24 +151,25 @@ function ProductDashboard() {
     }
 
     return (
-        <div className="product-dashboard">
-            <header className="dashboard-header">
-                <div className="header-content">
-                    <h1>Mijn Producten</h1>
-                    {user && (
-                        <p className="welcome-text">
-                            Ingelogd als: <strong>{user.userName}</strong>
-                        </p>
-                    )}
+        <div className="product-list-page">
+            {user && (
+                <div className="user-welcome">
+                    <p>
+                        Ingelogd als: <strong>{user.userName}</strong>
+                    </p>
                 </div>
-            </header>
+            )}
 
-            <main className="dashboard-main">
+            <main className="product-list-container">
                 <div className="dashboard-controls">
                     <button onClick={handleBack} className="btn-back">
                         Terug naar Dashboard
                     </button>
-                    <button onClick={() => navigate('/ProductMakenDashboard')} className="btn-add">
+
+                    <button
+                        onClick={() => navigate('/ProductMakenDashboard')}
+                        className="btn-add"
+                    >
                         + Nieuw Product
                     </button>
                 </div>
@@ -178,6 +179,7 @@ function ProductDashboard() {
                         <div className="no-products-icon">[Geen producten]</div>
                         <h2>Geen producten gevonden</h2>
                         <p>Je hebt nog geen producten toegevoegd.</p>
+
                         <button
                             onClick={() => navigate('/ProductMakenDashboard')}
                             className="btn-add-first"
@@ -205,6 +207,7 @@ function ProductDashboard() {
 
                                 <div className="product-content">
                                     <h3 className="product-name">{product.naam}</h3>
+
                                     <p className="product-description">
                                         {product.beschrijving || "Geen beschrijving"}
                                     </p>
@@ -214,31 +217,48 @@ function ProductDashboard() {
                                             <span className="detail-label">Hoeveelheid:</span>
                                             <span className="detail-value">{product.hoeveelheid}</span>
                                         </div>
+
                                         <div className="detail-item">
                                             <span className="detail-label">Prijs:</span>
-                                            <span className="detail-value">{product.minimalePrijs} EUR</span>
+                                            <span className="detail-value">
+                                                {product.minimalePrijs} EUR
+                                            </span>
                                         </div>
+
                                         {product.potmaat && (
                                             <div className="detail-item">
                                                 <span className="detail-label">Potmaat:</span>
                                                 <span className="detail-value">{product.potmaat}</span>
                                             </div>
                                         )}
+
                                         <div className="detail-item">
                                             <span className="detail-label">Gewicht:</span>
-                                            <span className="detail-value">{product.gewicht}kg</span>
+                                            <span className="detail-value">
+                                                {product.gewicht}kg
+                                            </span>
                                         </div>
+
                                         {product.steellengte > 0 && (
                                             <div className="detail-item">
-                                                <span className="detail-label">Steellengte:</span>
-                                                <span className="detail-value">{product.steellengte}cm</span>
+                                                <span className="detail-label">
+                                                    Steellengte:
+                                                </span>
+                                                <span className="detail-value">
+                                                    {product.steellengte}cm
+                                                </span>
                                             </div>
                                         )}
+
                                         {product.oogstdatum && (
                                             <div className="detail-item">
-                                                <span className="detail-label">Oogstdatum:</span>
+                                                <span className="detail-label">
+                                                    Oogstdatum:
+                                                </span>
                                                 <span className="detail-value">
-                                                    {new Date(product.oogstdatum).toLocaleDateString('nl-NL')}
+                                                    {new Date(
+                                                        product.oogstdatum
+                                                    ).toLocaleDateString("nl-NL")}
                                                 </span>
                                             </div>
                                         )}
@@ -246,7 +266,9 @@ function ProductDashboard() {
 
                                     <div className="product-actions">
                                         <button
-                                            onClick={() => handleDeleteProduct(product.id)}
+                                            onClick={() =>
+                                                handleDeleteProduct(product.id)
+                                            }
                                             className="btn-delete"
                                         >
                                             Verwijderen
@@ -259,11 +281,15 @@ function ProductDashboard() {
                 )}
 
                 <div className="products-summary">
-                    <p>Totaal aantal producten: <strong>{products.length}</strong></p>
+                    <p>
+                        Totaal aantal producten:{" "}
+                        <strong>{products.length}</strong>
+                    </p>
                 </div>
             </main>
         </div>
     );
+
 }
 
 export default ProductDashboard;

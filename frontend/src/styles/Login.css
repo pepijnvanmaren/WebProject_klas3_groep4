@@ -1,111 +1,107 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* Login.css */
 
-html, body, #root {
-    margin-top: 3em;
+/* PAGE WRAPPER */
+.login-page {
     width: 100%;
-    min-height: 100%;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    margin-top: 8rem;
+    font-family: Arial, sans-serif;
     background-color: #ffffff;
     color: #1e2a38;
-    overflow-x: hidden;
 }
 
-.app-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding-top: 30vh;
-    max-width: 20rem;
-    margin: 0 auto;
-}
-
-.giveEmail,
-.givePassword {
-    width: 100%;
-}
-
-    .giveEmail h1 {
-        font-size: 2.5rem;
-        margin-bottom: 2rem;
-        color: #000;
-        text-align: center;
+    /* CONTAINER */
+    .login-page .app-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 20rem;
     }
 
-    .giveEmail p,
-    .givePassword p {
-        font-size: 1.2rem;
-        color: #000;
-        margin-bottom: 0.5rem;
-        text-align: left;
+    /* SECTIONS */
+    .login-page .giveEmail,
+    .login-page .givePassword {
+        width: 100%;
     }
 
-.input-field-Email,
-.input-field-Password {
-    font-size: 1rem;
-    padding: 0.5rem;
-    border: 2px solid #777;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    transition: border-color 0.3s ease;
-}
+        .login-page .giveEmail h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #000;
+            text-align: center;
+        }
 
-    .input-field-Email::placeholder,
-    .input-field-Password::placeholder {
-        color: #555;
+        .login-page .giveEmail p,
+        .login-page .givePassword p {
+            font-size: 1.2rem;
+            color: #000;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+    /* INPUTS */
+    .login-page .input-field {
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.5rem;
+        border: 2px solid #777;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        transition: border-color 0.3s ease;
     }
 
-.login-button {
-    margin-top: 1.5rem;
-    padding: 0.7rem 2rem;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #047B00;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.3s ease;
-}
+        .login-page .input-field::placeholder {
+            color: #555;
+        }
 
-    .login-button:hover {
-        background-color: #218838;
+    /* BUTTON */
+    .login-page .login-button {
+        margin-top: 1.5rem;
+        padding: 0.7rem 2rem;
+        font-size: 1rem;
+        color: #fff;
+        background-color: #047B00;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s ease;
     }
 
-    .login-button:active {
-        background-color: #32cd32;
+        .login-page .login-button:hover {
+            background-color: #218838;
+        }
+
+        .login-page .login-button:active {
+            background-color: #32cd32;
+        }
+
+    /* SIGNUP */
+    .login-page .signup-section {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
     }
 
-.signup-section {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-}
+        .login-page .signup-section p {
+            font-size: 0.9rem;
+            color: #000;
+            margin-bottom: 0.3rem;
+        }
 
-    .signup-section p {
+    .login-page .signup-link {
         font-size: 0.9rem;
-        color: #000;
-        margin-bottom: 0.3rem;
+        color: #007bff;
+        text-decoration: none;
+        cursor: pointer;
     }
 
-.signup-link {
-    font-size: 0.9rem;
-    color: #007bff;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-    .signup-link:hover {
-        color: #0056b3;
-        text-decoration: underline;
-    }
+        .login-page .signup-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }

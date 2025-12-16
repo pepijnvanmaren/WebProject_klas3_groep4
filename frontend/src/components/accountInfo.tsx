@@ -171,44 +171,45 @@ function AccountInfo() {
     };
 
     return (
-        <div className="AccountInfo-page">
-            <h1 className="AccountInfo-title">Account Informatie</h1>
-            <div className="info-box">
-                <div className="form-group">
+        <div className="account-info-page">
+            <h1 className="account-info-title">Account Informatie</h1>
+
+            <div className="account-info-box">
+                <div className="account-info-form-group">
                     <p>Gebruikersnaam</p>
                     <input
                         type="text"
                         placeholder="Je gebruikersnaam"
-                        className="change-accountinfo"
+                        className="account-info-input"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
                 </div>
 
-                <div className="form-group">
+                <div className="account-info-form-group">
                     <p>E-mailadres</p>
                     <input
                         type="email"
                         placeholder="Je E-mail"
-                        className="change-accountinfo"
+                        className="account-info-input"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
 
-                <div className="form-group">
+                <div className="account-info-form-group">
                     <p>Huidig Wachtwoord (verplicht bij wijziging)</p>
-                    <div className="password-input-container">
+                    <div className="account-info-password-container">
                         <input
                             type={showCurrentPassword ? "text" : "password"}
                             placeholder="Huidig wachtwoord"
-                            className="change-accountinfo"
+                            className="account-info-input"
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
                         />
                         <button
                             type="button"
-                            className="password-toggle"
+                            className="account-info-password-toggle"
                             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                         >
                             {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -216,19 +217,19 @@ function AccountInfo() {
                     </div>
                 </div>
 
-                <div className="form-group">
+                <div className="account-info-form-group">
                     <p>Nieuw Wachtwoord</p>
-                    <div className="password-input-container">
+                    <div className="account-info-password-container">
                         <input
                             type={showNewPassword ? "text" : "password"}
                             placeholder="Nieuw wachtwoord"
-                            className="change-accountinfo"
+                            className="account-info-input"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                         />
                         <button
                             type="button"
-                            className="password-toggle"
+                            className="account-info-password-toggle"
                             onClick={() => setShowNewPassword(!showNewPassword)}
                         >
                             {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -237,16 +238,17 @@ function AccountInfo() {
                 </div>
             </div>
 
-            <div className="AccountSaveDeleteButtons">
+            <div className="account-info-actions">
                 <button
-                    className="saveAccountInfo"
+                    className="account-info-save"
                     onClick={handleSave}
                     disabled={loading}
                 >
                     {loading ? "Bezig met opslaan..." : "Opslaan"}
                 </button>
+
                 <button
-                    className="deleteAccount"
+                    className="account-info-delete"
                     onClick={handleDeleteAccount}
                 >
                     Account verwijderen
@@ -254,6 +256,7 @@ function AccountInfo() {
             </div>
         </div>
     );
+
 }
 
 export default AccountInfo;

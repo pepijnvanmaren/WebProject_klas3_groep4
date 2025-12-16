@@ -90,113 +90,116 @@ function Register() {
     };
 
     return (
-        <div className="register-container">
-            <h1 className="register-title">Account aanmaken</h1>
+        <div className="register-page">
+            <div className="register-container">
+                <h1 className="register-title">Account aanmaken</h1>
 
-            <div className="register-form">
-                <div className="register-column-left">
-                    <div className="form-group">
-                        <p>Naam</p>
-                        <input
-                            type="text"
-                            placeholder="Voer je naam in"
-                            className="input-field-Email"
-                            value={naam}
-                            onChange={(e) => setNaam(e.target.value)}
-                        />
-                    </div>
+                <div className="register-form">
+                    <div className="register-column-left">
+                        <div className="form-group">
+                            <p>Naam</p>
+                            <input
+                                type="text"
+                                placeholder="Voer je naam in"
+                                className="input-field"
+                                value={naam}
+                                onChange={(e) => setNaam(e.target.value)}
+                            />
+                        </div>
 
-                    <div className="form-group">
-                        <p>Telefoonnummer</p>
-                        <input
-                            type="tel"
-                            placeholder="Voer je telefoonnummer in"
-                            className="input-field-Email"
-                            value={telefoonnummer}
-                            onChange={(e) => setTelefoonnummer(e.target.value)}
-                        />
-                    </div>
+                        <div className="form-group">
+                            <p>Telefoonnummer</p>
+                            <input
+                                type="tel"
+                                placeholder="Voer je telefoonnummer in"
+                                className="input-field"
+                                value={telefoonnummer}
+                                onChange={(e) => setTelefoonnummer(e.target.value)}
+                            />
+                        </div>
 
-                    <div className="form-group">
-                        <p>Email</p>
-                        <input
-                            type="email"
-                            placeholder="Voer je email in"
-                            className="input-field-Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
+                        <div className="form-group">
+                            <p>Email</p>
+                            <input
+                                type="email"
+                                placeholder="Voer je email in"
+                                className="input-field"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
 
-                    <div className="form-group">
-                        <p>Rol</p>
-                        <div className="account-type-buttons">
-                            <button
-                                type="button"
-                                className={`account-type-btn ${rol === "koper" ? "active" : ""}`}
-                                onClick={() => setRol("koper")}
-                            >
-                                Koper
-                            </button>
-                            <button
-                                type="button"
-                                className={`account-type-btn ${rol === "aanvoerder" ? "active" : ""}`}
-                                onClick={() => setRol("aanvoerder")}
-                            >
-                                Aanvoerder
-                            </button>
-                            <button
-                                type="button"
-                                className={`account-type-btn ${rol === "veilingmeester" ? "active" : ""}`}
-                                onClick={() => setRol("veilingmeester")}
-                            >
-                                veilingmeester
-                            </button>
+                        <div className="form-group">
+                            <p>Rol</p>
+                            <div className="account-type-buttons">
+                                <button
+                                    type="button"
+                                    className={`account-type-btn ${rol === "koper" ? "active" : ""}`}
+                                    onClick={() => setRol("koper")}
+                                >
+                                    Koper
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`account-type-btn ${rol === "aanvoerder" ? "active" : ""}`}
+                                    onClick={() => setRol("aanvoerder")}
+                                >
+                                    Aanvoerder
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`account-type-btn ${rol === "veilingmeester" ? "active" : ""}`}
+                                    onClick={() => setRol("veilingmeester")}
+                                >
+                                    Veilingmeester
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="register-column-right">
-                    <div className="form-group">
-                        <p>Wachtwoord</p>
-                        <input
-                            type="password"
-                            placeholder="Voer je wachtwoord in"
-                            className="input-field-Password"
-                            value={paswoord}
-                            onChange={(e) => setPaswoord(e.target.value)}
-                        />
-                    </div>
+                    <div className="register-column-right">
+                        <div className="form-group">
+                            <p>Wachtwoord</p>
+                            <input
+                                type="password"
+                                placeholder="Voer je wachtwoord in"
+                                className="input-field"
+                                value={paswoord}
+                                onChange={(e) => setPaswoord(e.target.value)}
+                            />
+                        </div>
 
-                    <div className="form-group">
-                        <p>Bevestig wachtwoord</p>
-                        <input
-                            type="password"
-                            placeholder="Herhaal je wachtwoord"
-                            className="input-field-Password"
-                            value={confirmPaswoord}
-                            onChange={(e) => setConfirmPaswoord(e.target.value)}
-                        />
-                    </div>
+                        <div className="form-group">
+                            <p>Bevestig wachtwoord</p>
+                            <input
+                                type="password"
+                                placeholder="Herhaal je wachtwoord"
+                                className="input-field"
+                                value={confirmPaswoord}
+                                onChange={(e) => setConfirmPaswoord(e.target.value)}
+                            />
+                        </div>
 
-                    <button
-                        className="login-button"
-                        onClick={handleRegister}
-                        disabled={loading}
-                    >
-                        {loading ? "Even geduld..." : "Registreren"}
-                    </button>
+                        <button
+                            className="register-button"
+                            onClick={handleRegister}
+                            disabled={loading}
+                        >
+                            {loading ? "Even geduld..." : "Registreren"}
+                        </button>
 
-                    <div className="login-section">
-                        <p>Heb je al een account?</p>
-                        <Link to="/inloggen" className="signup-link">
-                            Inloggen
-                        </Link>
+                        <div className="login-section">
+                            <p>Heb je al een account?</p>
+                            <Link to="/inloggen" className="login-link">
+                                Inloggen
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     );
+
 }
 
 export default Register;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/SellerDashboard.css';
+import '../styles/AanvoerderDashboard.css';
 
 const apiBase = 'https://localhost:7020'; // Let op: gebruik dezelfde port als je API
 
@@ -80,43 +80,37 @@ function SellerDashboard() {
     }
 
     return (
-        <>
-            <div className="dashboard-root">
-                <header className="dashboard-header">
-                    <div className="header-inner">
-                        <img
-                            src="/header-trees.jpg"
-                            alt="header"
-                            className="header-image"
-                        />
-                        <nav className="header-nav">
-                            <a href="/registreren">Registreren</a>
-                            <a href="/login">Inloggen</a>
-                        </nav>
-                    </div>
-                </header>
-            </div>
-
-            {/* NIEUW: Gebruiker welkom bericht */}
+        <div className="product-dashboard-page">
             {isLoggedIn && user && (
                 <div className="user-welcome">
-                    <p>Welkom, <strong>{user.userName}</strong>!</p>
+                    <p>
+                        Welkom, <strong>{user.userName}</strong>!
+                    </p>
                 </div>
             )}
 
             <main className="dashboard-container">
-                <h1 className="VerkoperDashboard-title">Dashboard</h1>
+                <h1 className="dashboard-title">Dashboard</h1>
+
                 <div className="dashboard-box">
-                    <button className="SD_btn" onClick={ProductMakenKnop}>
+                    <button
+                        className="dashboard-btn primary"
+                        onClick={ProductMakenKnop}
+                    >
                         Product Plaatsen
                     </button>
-                    <button className="SD_btn" onClick={ProductTonenKnop}>
+
+                    <button
+                        className="dashboard-btn secondary"
+                        onClick={ProductTonenKnop}
+                    >
                         Product Tonen
                     </button>
                 </div>
             </main>
-        </>
+        </div>
     );
+
 }
 
 export default SellerDashboard;

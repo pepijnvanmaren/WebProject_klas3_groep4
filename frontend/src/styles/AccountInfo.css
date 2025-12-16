@@ -1,139 +1,128 @@
-.AccountInfo-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+/* AccountInfo.css */
+
+.account-info-page {
     min-height: 100vh;
-    width: 100%;
-    padding-top: 22vh;
+    padding-top: 8rem;
     padding-bottom: 4rem;
-    overflow-y: auto;
-}
-
-.AccountInfo-title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    color: #000;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.info-box {
-    width: 100%;
-    max-width: 500px;
     display: flex;
     flex-direction: column;
-}
-
-    .info-box p {
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-        white-space: nowrap;
-        color: #333;
-    }
-
-.form-group {
-    margin-bottom: 1.5rem;
-    width: 100%;
-}
-
-.change-accountinfo {
-    font-size: 1rem;
-    width: 100%;
-    padding: 0.75rem 0.75rem;
-    border: 2px solid #777;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-    box-sizing: border-box;
-}
-
-    .change-accountinfo:focus {
-        outline: none;
-        border-color: #047B00;
-    }
-
-.password-input-container {
-    position: relative;
-    display: flex;
     align-items: center;
-    width: 100%;
 }
 
-    .password-input-container input {
+    /* TITLE */
+    .account-info-page .account-info-title {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: #000;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* INFO BOX */
+    .account-info-page .account-info-box {
         width: 100%;
-        padding: 0.75rem 3rem 0.75rem 0.75rem;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* FORM GROUP */
+    .account-info-page .account-info-form-group {
+        margin-bottom: 1.5rem;
+        width: 100%;
+    }
+
+        .account-info-page .account-info-form-group p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+            white-space: nowrap;
+        }
+
+    /* INPUT */
+    .account-info-page .account-info-input {
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.75rem;
+        border: 2px solid #777;
+        border-radius: 4px;
+        transition: border-color 0.3s ease;
         box-sizing: border-box;
     }
 
-.password-toggle {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #666;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.3s ease;
-    height: 30px;
-    width: 30px;
-}
+        .account-info-page .account-info-input:focus {
+            outline: none;
+            border-color: #047B00;
+        }
 
-    .password-toggle:hover {
-        color: #333;
+    /* PASSWORD */
+    .account-info-page .account-info-password-container {
+        position: relative;
+        display: flex;
+        align-items: center;
     }
 
-    .password-toggle svg {
-        width: 20px;
-        height: 20px;
+        .account-info-page .account-info-password-container input {
+            padding-right: 3rem;
+        }
+
+    .account-info-page .account-info-password-toggle {
+        position: absolute;
+        right: 10px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.3s ease;
     }
 
-.AccountSaveDeleteButtons {
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-    max-width: 500px;
-    justify-content: center;
-    margin-top: 1rem;
-}
+        .account-info-page .account-info-password-toggle:hover {
+            color: #333;
+        }
 
-.saveAccountInfo {
-    padding: 0.75rem 2rem;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #047B00;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-}
-
-    .saveAccountInfo:hover {
-        background-color: #036300;
+    /* ACTION BUTTONS */
+    .account-info-page .account-info-actions {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        width: 100%;
+        max-width: 500px;
+        justify-content: center;
     }
 
-    .saveAccountInfo:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
+    /* SAVE */
+    .account-info-page .account-info-save {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        color: #fff;
+        background-color: #047B00;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
     }
 
-.deleteAccount {
-    background-color: #dc3545;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-}
+        .account-info-page .account-info-save:hover {
+            background-color: #036300;
+        }
 
-    .deleteAccount:hover {
-        background-color: #c82333;
+        .account-info-page .account-info-save:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+    /* DELETE */
+    .account-info-page .account-info-delete {
+        background-color: #dc3545;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
     }
+
+        .account-info-page .account-info-delete:hover {
+            background-color: #c82333;
+        }

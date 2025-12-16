@@ -90,14 +90,18 @@ function Navbar() {
     };
 
     return (
-        <header className="header-container">
+        <header className="navbar-component">
             <img src={Trees} alt="tree picture" className="tree-picture" />
 
             <nav className="navbar">
                 <div className="nav-content">
                     <li>
                         <Link to={homePath}>
-                            <img src={Logo} alt="Royale Flora" className="nav-logo" />
+                            <img
+                                src={Logo}
+                                alt="Royale Flora"
+                                className="nav-logo"
+                            />
                         </Link>
                     </li>
 
@@ -128,6 +132,7 @@ function Navbar() {
             </nav>
         </header>
     );
+
 }
 
 export default Navbar;

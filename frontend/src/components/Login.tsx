@@ -88,47 +88,50 @@ function Login() {
     };
 
     return (
-        <div className="app-container">
-            <div className="giveEmail">
-                <h1>Inloggen</h1>
+        <div className="login-page">
+            <div className="app-container">
+                <div className="giveEmail">
+                    <h1>Inloggen</h1>
 
-                <p>E-mail</p>
-                <input
-                    type="email"
-                    placeholder="Voer je E-mail in"
-                    className="input-field-Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-            </div>
+                    <p>E-mail</p>
+                    <input
+                        type="email"
+                        placeholder="Voer je E-mail in"
+                        className="input-field"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                </div>
 
-            <div className="givePassword">
-                <p>Password</p>
-                <input
-                    type="password"
-                    placeholder="Enter your password"
-                    className="input-field-Email"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-            </div>
+                <div className="givePassword">
+                    <p>Password</p>
+                    <input
+                        type="password"
+                        placeholder="Enter your password"
+                        className="input-field"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
 
-            <button
-                className="login-button"
-                onClick={handleLogin}
-                disabled={loading}
-            >
-                {loading ? "Please wait..." : "Login"}
-            </button>
+                <button
+                    className="login-button"
+                    onClick={handleLogin}
+                    disabled={loading}
+                >
+                    {loading ? "Please wait..." : "Login"}
+                </button>
 
-            <div className="signup-section">
-                <p>Don't have an account?</p>
-                <Link to="/registreren" className="signup-link">
-                    Create account
-                </Link>
+                <div className="signup-section">
+                    <p>Nog geen account?</p>
+                    <Link to="/registreren" className="signup-link">
+                        Account aanmaken
+                    </Link>
+                </div>
             </div>
         </div>
     );
+
 }
 
 export default Login;

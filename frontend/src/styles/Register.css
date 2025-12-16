@@ -1,150 +1,148 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* Register.css */
 
-html, body, #root {
-    margin-top: 0rem;
+/* PAGE WRAPPER */
+.register-page {
     width: 100%;
-    min-height: 100%;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding-top: 8rem;
+    font-family: Arial, sans-serif;
     background-color: #ffffff;
     color: #1e2a38;
-    overflow-x: hidden;
 }
 
-.register-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    padding-top: 25vh;
-}
-
-.register-title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    color: #000;
-    text-align: center;
-}
-
-.register-form {
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    max-width: 800px;
-    width: 90%;
-}
-
-.register-column-left,
-.register-column-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-    .form-group p {
-        font-size: 1.2rem;
-        color: #000;
-        margin-bottom: 0.5rem;
-        text-align: left;
+    /* CONTAINER */
+    .register-page .register-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
     }
 
-.input-field-Email,
-.input-field-Password {
-    font-size: 1rem;
-    padding: 0.5rem;
-    width: 100%;
-    border: 2px solid #777;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    transition: border-color 0.3s ease;
-}
+    /* TITLE */
+    .register-page .register-title {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: #000;
+        text-align: center;
+    }
 
-    .input-field-Email::placeholder,
-    .input-field-Password::placeholder {
+    /* FORM LAYOUT */
+    .register-page .register-form {
+        display: flex;
+        gap: 2rem;
+        max-width: 800px;
+        width: 90%;
+    }
+
+    .register-page .register-column-left,
+    .register-page .register-column-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* FORM GROUP */
+    .register-page .form-group {
+        margin-bottom: 1rem;
+    }
+
+        .register-page .form-group p {
+            font-size: 1.2rem;
+            color: #000;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+    /* INPUTS */
+    .register-page .input-field {
+        font-size: 1rem;
+        padding: 0.5rem;
+        width: 100%;
+        border: 2px solid #777;
+        border-radius: 4px;
+        margin-bottom: 0rem;
+        transition: border-color 0.3s ease;
+    }
+
+        .register-page .input-field::placeholder {
+            color: #555;
+        }
+
+    /* ACCOUNT TYPE BUTTONS */
+    .register-page .account-type-buttons {
+        display: flex;
+        gap: 0.3rem;
+    }
+
+    .register-page .account-type-btn {
+        flex: 1;
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+        background-color: #f0f0f0;
         color: #555;
+        border: 3px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
 
-.account-type-buttons {
-    display: flex;
-    gap: 0.3rem;
-}
+        .register-page .account-type-btn:hover {
+            background-color: #e0e0e0;
+            border-color: #999;
+        }
 
-.account-type-btn {
-    flex: 1;
-    padding: 0.7rem 1rem;
-    font-size: 1rem;
-    background-color: #f0f0f0;
-    color: #555;
-    border: 3px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
+        .register-page .account-type-btn.active {
+            background-color: #047B00;
+            border-color: #047B00;
+            color: #fff;
+        }
 
-    .account-type-btn:hover {
-        background-color: #e0e0e0;
-        border-color: #999;
-    }
-
-    .account-type-btn.active {
-        background-color: #047B00;
-        border-color: #047B00;
+    /* REGISTER BUTTON */
+    .register-page .register-button {
+        margin-top: 3rem;
+        padding: 0.7rem 2rem;
+        font-size: 1rem;
         color: #fff;
+        background-color: #047B00;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s ease;
     }
 
-.login-button {
-    margin-top: 1.5rem;
-    padding: 0.7rem 2rem;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #047B00;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.3s ease;
-}
+        .register-page .register-button:hover {
+            background-color: #218838;
+        }
 
-    .login-button:hover {
-        background-color: #218838;
+        .register-page .register-button:active {
+            background-color: #32cd32;
+        }
+
+    /* LOGIN LINK */
+    .register-page .login-section {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
-    .login-button:active {
-        background-color: #32cd32;
+        .register-page .login-section p {
+            font-size: 1rem;
+            color: #000;
+            margin-bottom: 0.3rem;
+        }
+
+    .register-page .login-link {
+        font-size: 1rem;
+        color: #006dff;
+        text-decoration: none;
+        cursor: pointer;
     }
 
-.login-section {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-}
-
-    .login-section p {
-        font-size: 1.0rem;
-        color: #000;
-        margin-bottom: 0.3rem;
-    }
-
-.signup-link {
-    font-size: 1.0rem;
-    color: #006dff;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-    .signup-link:hover {
-        color: #0056b3;
-        text-decoration: underline;
-    }
+        .register-page .login-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }

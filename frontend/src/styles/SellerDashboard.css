@@ -1,10 +1,10 @@
 Dashboard.css
 
-* {
+/** {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
+}*/
 
 .dashboard-root {
     font-family: "Segoe UI", sans-serif;
