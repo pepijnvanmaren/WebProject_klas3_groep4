@@ -28,6 +28,8 @@ const getImageSrc = (foto?: string | null) => {
 
 function Index() {
     const navigate = useNavigate();
+    const euroFormatter = new Intl.NumberFormat("nl-NL", {
+        style: "currency",currency: "EUR",});
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
@@ -160,7 +162,7 @@ function Index() {
 
                 <div className="box box-price">
                     <div className="price-row">
-                        <span className="price">EUR {price.toFixed(2)}</span>
+                        <span className="price">EUR {euroFormatter.format(2)}</span>
                         <button
                             className="button"
                             onClick={loginPage}

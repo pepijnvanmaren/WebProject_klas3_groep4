@@ -24,7 +24,7 @@ function VeilingMeesterDashboard() {
     }, [])
 
 
-    // NIEUW: Fetch gebruikersgegevens bij laden
+    // Fetch gebruikersgegevens bij laden
     useEffect(() => {
         const checkLoginStatus = async () => {
             const loggedIn = localStorage.getItem("loggedIn") === "true";
@@ -88,7 +88,6 @@ function VeilingMeesterDashboard() {
                 </header>
             </div>
 
-            {/* NIEUW: Gebruiker welkom bericht */}
             {isLoggedIn && user && (
                 <div className="user-welcome">
                     <p>Welkom, <strong>{user.userName}</strong>!</p>

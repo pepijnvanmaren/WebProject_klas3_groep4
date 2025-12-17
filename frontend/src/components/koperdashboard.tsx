@@ -1,4 +1,4 @@
-import "../styles/index.css";
+ï»¿import "../styles/index.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -37,6 +37,8 @@ const getImageSrc = (foto?: string | null) => {
 
 function Index() {
     const navigate = useNavigate();
+    const euroFormatter = new Intl.NumberFormat("nl-NL", {
+        style: "currency",currency: "EUR",});
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [veilingStatus, setVeilingStatus] = useState<VeilingStatus | null>(null);
     const [loading, setLoading] = useState(false);
@@ -50,6 +52,31 @@ function Index() {
     const [isPaused, setIsPaused] = useState(false);
     const [pauseCountdown, setPauseCountdown] = useState(30);
     const lastProductIdRef = useRef<number | null>(null);
+    const mockCurrentSupplierHistory = [
+        { date: "2024-05-12", price: 12.95 },
+        { date: "2024-05-11", price: 13.10 },
+        { date: "2024-05-10", price: 12.80 },
+        { date: "2024-05-09", price: 12.60 },
+        { date: "2024-05-08", price: 12.75 },
+        { date: "2024-05-07", price: 12.90 },
+        { date: "2024-05-06", price: 12.85 },
+        { date: "2024-05-05", price: 12.70 },
+        { date: "2024-05-04", price: 12.65 },
+        { date: "2024-05-03", price: 12.50 },
+    ];
+
+    const mockAllSuppliersHistory = [
+        { date: "2024-05-12", price: 11.90 },
+        { date: "2024-05-11", price: 12.10 },
+        { date: "2024-05-10", price: 12.00 },
+        { date: "2024-05-09", price: 11.85 },
+        { date: "2024-05-08", price: 11.95 },
+        { date: "2024-05-07", price: 11.80 },
+        { date: "2024-05-06", price: 11.75 },
+        { date: "2024-05-05", price: 11.70 },
+        { date: "2024-05-04", price: 11.65 },
+        { date: "2024-05-03", price: 11.60 },
+    ];
 
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
 
@@ -269,7 +296,7 @@ function Index() {
             setIsRunning(false);
             setPurchased(true);
 
-            alert(`Product "${veilingStatus.huidigProduct.naam}" gekocht voor EUR ${price.toFixed(2)}!`);
+            alert(`Product "${veilingStatus.huidigProduct.naam}" gekocht voor EUR ${euroFormatter.format(2)}!`);
 
             const pauze = data.pauzeDurationSeconds ?? 30;
             setIsPaused(true);
@@ -330,9 +357,6 @@ function Index() {
             <div className="no-image">No image available</div>
         );
 
-    function setShowPriceHistory(arg0: boolean): void {
-        throw new Error("Function not implemented.");
-    }
 
     return (
         <>
@@ -351,7 +375,7 @@ function Index() {
                         <div className="box">{veilingStatus.huidigProduct.hoeveelheid} stuks</div>
 
                         <div className="box box-price">
-                            <span className="price">EUR {price.toFixed(2)}</span>
+                            <span className="price">EUR {euroFormatter.format(2)}</span>
                             <button
                                 className="button"
                                 onClick={handleBuy}
@@ -366,37 +390,74 @@ function Index() {
 
             {/* Vast prijs-geschiedenis paneel */}
             {isLoggedIn && (
-                <div
-                    className="price-history-widget"
-                    onClick={() => setPriceHistoryExpanded(prev => !prev)}
-                >
-                    <div className="price-history-header">
-                        Prijs geschiedenis
-                    </div>
+                <div>
+                    <button
+                        style={{
+                            padding: '10px 20px',
+                            backgroundColor: '#047B00',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: loading ? 'not-allowed' : 'pointer',
+                            fontWeight: 'bold'
+                        }}
+                        onClick={() => setPriceHistoryExpanded(prev => !prev)}
+                        disabled={loading}
+                    >
+                        Prijs Geschiedenis {priceHistoryExpanded ? "â–²" : "â–¼"}
+                    </button>
 
                     {priceHistoryExpanded && (
-                        <div className="price-history-content">
-                            <h4>Huidige aanvoerder</h4>
-                            <p><strong>Gemiddelde prijs:</strong> € 12,50</p>
-                            <ul>
-                                <li>€ 13,10</li>
-                                <li>€ 12,95</li>
-                                <li>€ 12,80</li>
-                            </ul>
+                        <>
+                            <div className="price-history-section">
+                                <h4>Huidige aanvoerder</h4>
+                                <p><strong>Gemiddelde prijs:</strong> 12,78</p>
+
+                                <table className="price-history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Datum</th>
+                                            <th>Prijs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {mockCurrentSupplierHistory.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{item.date}</td>
+                                                <td>{item.price.toFixed(2)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <hr />
 
-                            <h4>Alle aanvoerders</h4>
-                            <p><strong>Gemiddelde prijs:</strong> € 11,90</p>
-                            <ul>
-                                <li>€ 12,40</li>
-                                <li>€ 12,20</li>
-                                <li>€ 12,00</li>
-                            </ul>
-                        </div>
+                            <div className="price-history-section">
+                                <h4>Alle aanvoerders</h4>
+                                <p><strong>Gemiddelde prijs:</strong> 11,85</p>
+
+                                <table className="price-history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Datum</th>
+                                            <th>Prijs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {mockAllSuppliersHistory.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{item.date}</td>
+                                                <td>{item.price.toFixed(2)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
                     )}
-                </div>
-            )}
+    </div>
+)}
         <div className="page">
             <div style={{
                 position: 'fixed',
@@ -493,7 +554,7 @@ function Index() {
 
                         <div className="box box-price">
                             <div className="price-row">
-                                <span className="price">EUR {price.toFixed(2)}</span>
+                                <span className="price">EUR {euroFormatter.format(2)}</span>
                                 <button
                                     className="button"
                                     onClick={handleBuy}
@@ -504,10 +565,9 @@ function Index() {
                                             isLoggedIn ? "Koop" : "Inloggen"}
                                 </button>
                                 <button
-                                    className="button secondary"
-                                    onClick={() => setShowPriceHistory(true)}
+                                    className="price-history-btn"
+                                    onClick={() => setPriceHistoryExpanded(prev => !prev)}
                                     disabled={loading}
-                                    style={{ marginLeft: "10px" }}
                                 >
                                     Prijs geschiedenis
                                 </button>
