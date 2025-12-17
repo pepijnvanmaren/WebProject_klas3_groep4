@@ -146,32 +146,33 @@ function Index() {
         );
 
     return (
-        <div className="page">
-            {/* Over ons */}
-
+        <div className="home-page">
             {/* Current Product */}
-            <h2 className="page-title" ref={currentProductTitleRef}>
+            <h2 className="home-title" ref={currentProductTitleRef}>
                 Current product
             </h2>
 
-            <div className="container">
-                <div className="box">
+            <div className="home-container home-container-current">
+                <div className="home-box">
                     <ProductImage product={currentProduct} />
                 </div>
 
-                <div className="box box-description">
-                    <h2 className="product-name">{currentProduct.naam}</h2>
-                    <p className="description">{currentProduct.beschrijving}</p>
+                <div className="home-box home-box-description">
+                    <h2 className="home-product-name">{currentProduct.naam}</h2>
+                    <p className="home-description">{currentProduct.beschrijving}</p>
                 </div>
 
-                
-                <div className="box">{currentProduct.hoeveelheid} stuks</div>
+                <div className="home-box">
+                    {currentProduct.hoeveelheid} stuks
+                </div>
 
-                <div className="box box-price">
-                    <div className="price-row">
-                        <span className="price">EUR {price.toFixed(2)}</span>
+                <div className="home-box home-box-price">
+                    <div className="home-price-row">
+                        <span className="home-price">
+                            EUR {price.toFixed(2)}
+                        </span>
                         <button
-                            className="button"
+                            className="home-button"
                             onClick={handleBuy}
                             disabled={purchased}
                         >
@@ -180,9 +181,9 @@ function Index() {
                     </div>
                 </div>
 
-                <div className="progress-bar-container integrated-bar">
+                <div className="home-progress-container">
                     <div
-                        className="progress-bar"
+                        className="home-progress-bar"
                         style={{
                             width: `${progress * 100}%`,
                             backgroundColor: barColor,
@@ -193,20 +194,27 @@ function Index() {
             </div>
 
             {/* Next Product */}
-            <h2 className="page-title">volgend product</h2>
-            <div className="container">
-                <div className="box">
+            <h2 className="home-title">Volgend product</h2>
+
+            <div className="home-container">
+                <div className="home-box">
                     {nextProduct ? <ProductImage product={nextProduct} /> : "No next product"}
                 </div>
-                <div className="box box-description">
-                    <h2 className="product-name">{nextProduct?.naam}</h2>
-                    <p className="description">{nextProduct?.beschrijving}</p>
+
+                <div className="home-box home-box-description">
+                    <h2 className="home-product-name">{nextProduct?.naam}</h2>
+                    <p className="home-description">{nextProduct?.beschrijving}</p>
                 </div>
-                <div className="box">{nextProduct?.hoeveelheid ?? "onebekend aantal"} stuks</div>
-                <div className="box"></div>
+
+                <div className="home-box">
+                    {nextProduct?.hoeveelheid ?? "Onbekend aantal"} stuks
+                </div>
+
+                <div className="home-box"></div>
             </div>
         </div>
     );
+
 }
 
 export default Index;
