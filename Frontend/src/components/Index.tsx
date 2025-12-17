@@ -46,20 +46,6 @@ function Index() {
     //Referentie voor het automatisch scrollen naar beneden
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
 
-    //Scroll functie
-    const scrollToCurrentProduct = () => {
-        if (!currentProductTitleRef.current) return;
-
-        const headerOffset = window.innerHeight * 0.18; // account for 18vh header
-        const elementPosition =
-            currentProductTitleRef.current.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - headerOffset;
-
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-        });
-    };
 
     //Update de login status
     useEffect(() => {
@@ -91,6 +77,10 @@ function Index() {
         getProducts();
     }, []);
 
+    function loginPage() {
+        navigate("inloggen")
+    }
+
     //prijs berekeningen voor max/stapgrootte gebaseeerd op de min)
     const minPrice = currentProduct?.minimalePrijs ?? 0;
     const maxPrice = minPrice * 10;
@@ -118,19 +108,6 @@ function Index() {
         return () => clearInterval(intervalRef.current!);
     }, [isRunning, currentProduct, minPrice]);
 
-    //Handle voor koopknop
-    //Als je niet ingelogd bent dan navigeer je naar inloggen
-    const handleBuy = () => {
-        if (!isLoggedIn) {
-            navigate("/inloggen");
-            return;
-        }
-        else {
-            clearInterval(intervalRef.current!);
-            setIsRunning(false);
-            setPurchased(true);
-        }
-    };
 
     //error handling voor producten ophalen
     if (loading) return <p>Laad producten...</p>;
@@ -173,10 +150,9 @@ function Index() {
                         </span>
                         <button
                             className="home-button"
-                            onClick={handleBuy}
-                            disabled={purchased}
+                            onClick={loginPage}
                         >
-                            {purchased ? "Gekocht" : "Koop"}
+                            inloggen
                         </button>
                     </div>
                 </div>

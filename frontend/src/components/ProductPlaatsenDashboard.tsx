@@ -75,6 +75,7 @@ function SellerDashboard() {
             }
 
             const payload = {
+                id: 0,
                 naam,
                 beschrijving,
                 foto: fotoBase64,

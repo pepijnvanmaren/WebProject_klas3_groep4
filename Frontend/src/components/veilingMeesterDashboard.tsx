@@ -71,42 +71,43 @@ function VeilingMeesterDashboard() {
     }
 
     return (
-        <div className="auctioneer-dashboard-page">
+        <>
+            <div className="dashboard-root">
+                <header className="dashboard-header">
+                    <div className="header-inner">
+                        <img
+                            src="/header-trees.jpg"
+                            alt="header"
+                            className="header-image"
+                        />
+                        <nav className="header-nav">
+                            <a href="/registreren">Registreren</a>
+                            <a href="/login">Inloggen</a>
+                        </nav>
+                    </div>
+                </header>
+            </div>
 
-            {/* WELCOME */}
+            {/* NIEUW: Gebruiker welkom bericht */}
             {isLoggedIn && user && (
-                <div className="auctioneer-dashboard-welcome">
-                    <p>
-                        Welkom, <strong>{user.userName}</strong>!
-                    </p>
+                <div className="user-welcome">
+                    <p>Welkom, <strong>{user.userName}</strong>!</p>
                 </div>
             )}
 
-            {/* MAIN */}
-            <main className="auctioneer-dashboard-container">
-                <h1 className="auctioneer-dashboard-title">
-                    Veilingmeester dashboard
-                </h1>
-
-                <div className="auctioneer-dashboard-box">
-                    <button
-                        className="auctioneer-dashboard-btn"
-                        onClick={VeiulingPlaatsenKnop}
-                    >
-                        Veilingen plaatsen
+            <main className="dashboard-container">
+                <h1 className="VerkoperDashboard-title">Veilingmeester dashboard</h1>
+                <div className="VL_dashboard-box">
+                    <button className="VL_pp_btn" onClick={VeiulingPlaatsenKnop}>
+                        Veilingen Plaatsen
                     </button>
-
-                    <button
-                        className="auctioneer-dashboard-btn"
-                        onClick={VeilingenTonenKnop}
-                    >
-                        Veilingen tonen
+                    <button className="VL_pp_btn" onClick={VeilingenTonenKnop}>
+                        Veilingen Tonen
                     </button>
                 </div>
             </main>
-        </div>
+        </>
     );
-
 }
 
 

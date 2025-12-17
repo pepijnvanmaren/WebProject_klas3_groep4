@@ -13,6 +13,7 @@ namespace WebProject_klas3_groep4.DTO
         public int MinimalePrijs { get; set; }
         // NIEUW: Veiling koppelen
         public int? VeilingId { get; set; }
+        public object ID { get; set; }
     }
 
     public class ProductUpdateDto
