@@ -2,7 +2,7 @@
 
 .product-create-page {
     min-height: 100vh;
-    padding-top: 22vh; 
+    padding-top: 18vh; 
 }
 
     /* CONTAINER */
@@ -49,14 +49,14 @@
     .product-create-page .pp_input-container-beschrijving {
         resize: none;
         height: 100px;
-        min-height: 14.5rem;
+        min-height: 15.4rem;
     }
 
     /* TITLE */
     .product-create-page .pp_title {
         font-weight: 600;
         text-align: center;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
     }
 
     /* ERROR */

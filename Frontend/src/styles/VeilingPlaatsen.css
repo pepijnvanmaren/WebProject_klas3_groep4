@@ -1,7 +1,7 @@
 /* Container pagina */
 .vp_dashboard-container {
     max-width: 900px;
-    margin: 14rem auto 2rem auto; /* top-margin aangepast */
+    margin: 6rem auto 2rem auto; 
     padding: 10px;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -60,7 +60,7 @@
     border-radius: 6px;
     width: 100%;
     box-sizing: border-box;
-    margin-top: 0.5rem;
+    margin-top: 1px;
 }
 
 /* Select dropdown */
