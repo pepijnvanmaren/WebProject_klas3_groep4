@@ -5,12 +5,14 @@ const Privacy: React.FC = () => {
     const lastUpdated = "13 november 2025";
 
     return (
-        <div className="privacy-container">
-            <div className="privacy-content">
-                <h1 className="privacy-heading">Privacyverklaring</h1>
-                <p className="privacy-updated">Laatst bijgewerkt: {lastUpdated}</p>
+        <div className="privacy-page">
+            <div className="privacy-page-content">
+                <h1 className="privacy-page-heading">Privacyverklaring</h1>
+                <p className="privacy-page-updated">
+                    Laatst bijgewerkt: {lastUpdated}
+                </p>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>1. Inleiding</h2>
                     <p>
                         Welkom bij onze privacyverklaring. Wij respecteren uw privacy en doen er alles aan om
@@ -19,7 +21,9 @@ const Privacy: React.FC = () => {
                     </p>
                 </section>
 
-                <section className="privacy-section">
+
+
+                <section className="privacy-page-section">
                     <h2>2. Welke gegevens verzamelen wij?</h2>
                     <p>Wij kunnen de volgende gegevens van u verzamelen:</p>
                     <ul>
@@ -31,7 +35,7 @@ const Privacy: React.FC = () => {
                     </ul>
                 </section>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>3. Waarvoor gebruiken wij uw gegevens?</h2>
                     <p>Wij gebruiken uw persoonlijke gegevens voor de volgende doeleinden:</p>
                     <ul>
@@ -43,7 +47,7 @@ const Privacy: React.FC = () => {
                     </ul>
                 </section>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>4. Hoe lang bewaren wij uw gegevens?</h2>
                     <p>
                         Wij bewaren uw persoonlijke gegevens niet langer dan noodzakelijk voor de doeleinden
@@ -52,7 +56,7 @@ const Privacy: React.FC = () => {
                     </p>
                 </section>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>5. Delen van gegevens met derden</h2>
                     <p>
                         Wij verkopen uw gegevens niet aan derden. Wij kunnen uw gegevens delen met:
@@ -64,7 +68,7 @@ const Privacy: React.FC = () => {
                     </ul>
                 </section>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>6. Cookies</h2>
                     <p>
                         Onze website maakt gebruik van cookies om uw gebruikservaringen te verbeteren en
@@ -73,7 +77,7 @@ const Privacy: React.FC = () => {
                     </p>
                 </section>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>7. Uw rechten</h2>
                     <p>Volgens de AVG (Algemene Verordening Gegevensbescherming) heeft u de volgende rechten:</p>
                     <ul>
@@ -90,7 +94,7 @@ const Privacy: React.FC = () => {
                     </p>
                 </section>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>8. Beveiliging</h2>
                     <p>
                         Wij nemen passende technische en organisatorische maatregelen om uw persoonlijke
@@ -99,7 +103,7 @@ const Privacy: React.FC = () => {
                     </p>
                 </section>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>9. Wijzigingen in deze privacyverklaring</h2>
                     <p>
                         Wij kunnen deze privacyverklaring van tijd tot tijd aanpassen. De meest recente versie
@@ -108,20 +112,20 @@ const Privacy: React.FC = () => {
                     </p>
                 </section>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>10. Contact</h2>
                     <p>
                         Heeft u vragen over deze privacyverklaring of over hoe wij omgaan met uw persoonlijke
                         gegevens? Neem dan contact met ons op:
                     </p>
-                    <div className="privacy-contact">
+                    <div className="privacy-page-contact">
                         <p><strong>E-mail:</strong> privacy@example.nl</p>
                         <p><strong>Telefoon:</strong> +31 6 12345678</p>
                         <p><strong>Adres:</strong> Straatnaam 123, 2500 AA Den Haag</p>
                     </div>
                 </section>
 
-                <section className="privacy-section">
+                <section className="privacy-page-section">
                     <h2>11. Klachten</h2>
                     <p>
                         Als u een klacht heeft over de manier waarop wij uw persoonlijke gegevens verwerken,
@@ -132,6 +136,7 @@ const Privacy: React.FC = () => {
             </div>
         </div>
     );
+
 };
 
 export default Privacy;

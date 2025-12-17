@@ -154,150 +154,165 @@ function SellerDashboard() {
     };
 
     return (
-        <main className="pp_dashboard-container">
-            <h1 className="pp_title">Product aanmaken</h1>
+        <div className="product-create-page">
+            <main className="pp_dashboard-container">
+                <h1 className="pp_title">Product aanmaken</h1>
 
-            <div className="pp_dashboard-box pp_dashboard-flex">
+                <div className="pp_dashboard-box pp_dashboard-flex">
+                    {/* Linker kolom */}
+                    <div className="pp_dashboard-column">
+                        <label>
+                            <h2>Naam *</h2>
+                            <input
+                                className="pp_input-container"
+                                placeholder="Voer je Naam in"
+                                value={naam}
+                                onChange={(e) => setNaam(e.target.value)}
+                            />
+                        </label>
 
-                {/*Linker colom*/}
-                <div className="pp_dashboard-column">
-                    <label>
-                        <h2>Naam *</h2>
-                        <input
-                            className="pp_input-container"
-                            placeholder="Voer je Naam in"
-                            value={naam}
-                            onChange={e => setNaam(e.target.value)}
-                        />
-                    </label>
+                        <label>
+                            <h2>Beschrijving</h2>
+                            <textarea
+                                className="pp_input-container-beschrijving"
+                                placeholder="Voer je Beschrijving in"
+                                value={beschrijving}
+                                onChange={(e) => setBeschrijving(e.target.value)}
+                            />
+                        </label>
 
-                    <label>
-                        <h2>Beschrijving</h2>
-                        <textarea
-                            className="pp_input-container-beschrijving"
-                            placeholder="Voer je Beschrijving in"
-                            value={beschrijving}
-                            onChange={e => setBeschrijving(e.target.value)}
-                        />
-                    </label>
+                        <label>
+                            <h2>Foto</h2>
+                            <input
+                                className="pp_input-container"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) =>
+                                    setFotoFile(
+                                        e.target.files && e.target.files[0]
+                                            ? e.target.files[0]
+                                            : null
+                                    )
+                                }
+                            />
+                        </label>
 
-                    <label>
-                        <h2>Foto</h2>
-                        <input
-                            className="pp_input-container"
-                            type="file"
-                            accept="image/*"
-                            onChange={e => setFotoFile(e.target.files && e.target.files[0] ? e.target.files[0] : null)}
-                        />
-                    </label>
+                        <label>
+                            <h2>Oogstdatum</h2>
+                            <input
+                                className="pp_input-container"
+                                type="date"
+                                value={oogstdatum}
+                                max={localToday}
+                                onChange={handleOogstdatumChange}
+                            />
+                            {oogstError && (
+                                <div className="pp_error">{oogstError}</div>
+                            )}
+                        </label>
+                    </div>
 
-                    <label>
-                        <h2>Oogstdatum</h2>
-                        <input
-                            className="pp_input-container"
-                            type="date"
-                            value={oogstdatum}
-                            max={localToday}
-                            onChange={handleOogstdatumChange}
-                        />
-                        {oogstError && <div style={{ color: 'red', marginTop: 6 }}>{oogstError}</div>}
-                    </label>
+                    {/* Rechter kolom */}
+                    <div className="pp_dashboard-column">
+                        <label>
+                            <h2>Potmaat (cm)</h2>
+                            <input
+                                className="pp_input-container"
+                                type="number"
+                                value={potmaat}
+                                onChange={(e) => setPotmaat(e.target.value)}
+                            />
+                        </label>
+
+                        <label>
+                            <h2>Gewicht (kg)</h2>
+                            <input
+                                className="pp_input-container"
+                                type="number"
+                                value={gewicht}
+                                onChange={(e) => setGewicht(e.target.value)}
+                            />
+                        </label>
+
+                        <label>
+                            <h2>Steellengte (cm)</h2>
+                            <input
+                                className="pp_input-container"
+                                type="number"
+                                value={steellengte}
+                                onChange={(e) => setSteellengte(e.target.value)}
+                            />
+                        </label>
+
+                        <label>
+                            <h2>Hoeveelheid</h2>
+                            <input
+                                className="pp_input-container"
+                                type="number"
+                                value={hoeveelheid}
+                                onChange={(e) => setHoeveelheid(e.target.value)}
+                            />
+                        </label>
+
+                        <label>
+                            <h2>Minimale prijs *</h2>
+                            <input
+                                className="pp_input-container"
+                                type="number"
+                                value={minimalePrijs}
+                                onChange={(e) => setMinimalePrijs(e.target.value)}
+                            />
+                        </label>
+
+                        <label>
+                            <h2>Veiling (optioneel)</h2>
+                            <select
+                                className="pp_input-container"
+                                value={veilingId || ""}
+                                onChange={(e) =>
+                                    setVeilingId(
+                                        e.target.value
+                                            ? Number(e.target.value)
+                                            : null
+                                    )
+                                }
+                            >
+                                <option value="">-- Geen veiling --</option>
+                                {veilingen.map((veiling) => (
+                                    <option
+                                        key={veiling.id}
+                                        value={veiling.id}
+                                    >
+                                        {veiling.starTijd} -{" "}
+                                        {veiling.klokLocatie}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
                 </div>
 
-                {/*Rechter colom*/}
-                <div className="pp_dashboard-column">
-                    <label>
-                        <h2>Potmaat (cm)</h2>
-                        <input
-                            className="pp_input-container"
-                            type="number"
-                            placeholder="Voer de potmaat in"
-                            value={potmaat}
-                            onChange={e => setPotmaat(e.target.value)}
-                        />
-                    </label>
+                <div className="pp_buttons-row">
+                    <button
+                        className="pp_btn"
+                        onClick={handleCreateProduct}
+                        disabled={loading}
+                    >
+                        {loading ? "Bezig met uploaden..." : "Product maken"}
+                    </button>
 
-                    <label>
-                        <h2>Gewicht (kg)</h2>
-                        <input
-                            className="pp_input-container"
-                            type="number"
-                            placeholder="Voer het gewicht in"
-                            value={gewicht}
-                            onChange={e => setGewicht(e.target.value)}
-                        />
-                    </label>
-
-                    <label>
-                        <h2>Steellengte (cm)</h2>
-                        <input
-                            className="pp_input-container"
-                            type="number"
-                            placeholder="Voer de steellengte in"
-                            value={steellengte}
-                            onChange={e => setSteellengte(e.target.value)}
-                        />
-                    </label>
-
-                    <label>
-                        <h2>Hoeveelheid</h2>
-                        <input
-                            className="pp_input-container"
-                            type="number"
-                            placeholder="Voer de hoeveelheid in"
-                            value={hoeveelheid}
-                            onChange={e => setHoeveelheid(e.target.value)}
-                        />
-                    </label>
-
-                    <label>
-                        <h2>Minimale prijs (€) *</h2>
-                        <input
-                            className="pp_input-container"
-                            type="number"
-                            placeholder="Voer de minimale prijs in"
-                            value={minimalePrijs}
-                            onChange={e => setMinimalePrijs(e.target.value)}
-                        />
-                    </label>
-
-                    <label>
-                        <h2>Veiling (optioneel)</h2>
-                        <select
-                            className="pp_input-container"
-                            value={veilingId || ""}
-                            onChange={e => setVeilingId(e.target.value ? Number(e.target.value) : null)}
-                        >
-                            <option value="">-- Geen veiling --</option>
-                            {veilingen.map((veiling) => (
-                                <option key={veiling.id} value={veiling.id}>
-                                    {veiling.starTijd} - {veiling.klokLocatie}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                    <button
+                        className="pp_btn"
+                        onClick={handleGoBack}
+                        disabled={loading}
+                    >
+                        Terug
+                    </button>
                 </div>
-            </div>
-
-            {/*Buttons*/}
-            <div className="pp_buttons-row">
-                <button
-                    className="pp_btn"
-                    onClick={handleCreateProduct}
-                    disabled={loading}
-                >
-                    {loading ? "Bezig met uploaden..." : "Product Maken"}
-                </button>
-                <button
-                    className="pp_btn"
-                    onClick={handleGoBack}
-                    disabled={loading}
-                >
-                    Terug
-                </button>
-            </div>
-        </main>
+            </main>
+        </div>
     );
+
 }
 
 export default SellerDashboard;

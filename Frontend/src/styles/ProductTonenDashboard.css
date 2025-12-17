@@ -1,152 +1,141 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* ProductList.css */
+
+/* PAGE WRAPPER */
+.product-list-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 22vh; /* ruimte voor vaste navbar */
 }
 
-.dashboard-root {
-    font-family: "Segoe UI", sans-serif;
-    background: #fff;
-    min-height: 30vh;
-}
+    /* WELCOME */
+    .product-list-page .user-welcome {
+        max-width: 1200px;
+        margin: 0 auto 1rem;
+        padding: 0 2rem;
+        color: #ffffff;
+    }
 
-.dashboard-container {
-    max-width: 420px;
-    margin: 5px auto 0;
-    padding: 10px;
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
+    /* CONTAINER */
+    .product-list-page .product-list-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
 
-.dashboard-box {
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    background-color: white;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    padding: 1em;
-}
+    /* CONTROLS */
+    .product-list-page .dashboard-controls {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
 
-.btn-back,
-.btn-add,
-.btn-add-first {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-}
+    /* BUTTONS (shared binnen deze page) */
+    .product-list-page .btn-back,
+    .product-list-page .btn-add,
+    .product-list-page .btn-add-first {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
 
-.btn-back {
-    background: white;
-    color: #667eea;
-    border: 2px solid #667eea;
-}
+    .product-list-page .btn-back {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
 
-    .btn-back:hover {
-        background: #667eea;
+        .product-list-page .btn-back:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .product-list-page .btn-add,
+    .product-list-page .btn-add-first {
+        background: #28a745;
         color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
 
-.btn-add,
-.btn-add-first {
-    background: #28a745;
-    color: white;
-}
+        .product-list-page .btn-add:hover,
+        .product-list-page .btn-add-first:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
 
-    .btn-add:hover,
-    .btn-add-first:hover {
-        background: #218838;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    /* EMPTY STATE */
+    .product-list-page .no-products {
+        background: white;
+        border-radius: 16px;
+        padding: 4rem 2rem;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
-.no-products {
-    background: white;
-    border-radius: 16px;
-    padding: 4rem 2rem;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.no-products-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #999;
-}
-
-.no-products h2 {
-    color: #333;
-    margin-bottom: 0.5rem;
-}
-
-.no-products p {
-    color: #666;
-    margin-bottom: 2rem;
-}
-
-.BloemFoto {
-    width: 14rem;
-    height: 14rem;
-}
-
-.pt_dashboard-box {
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    background-color: white;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    padding: 1em;
-    display: flex;
-    gap: 2rem;
-    justify-content: center;
-    align-items: flex-start;
-    width: fit-content;
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-}
-
-
-
-h1 {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.PT-box {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    flex: 1;
-    min-width: 300px;
-}
-
-.login-button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    background: #77C77A;
-    color: #fff;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-}
-
-    .login-button:hover {
-        background: #45a049;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* GRID */
+    .product-list-page .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
     }
 
-    .login-button:active {
-        transform: translateY(0);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        background: #3e8e41;
+    /* CARD */
+    .product-list-page .product-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
+
+    /* IMAGE */
+    .product-list-page .product-image-container {
+        height: 200px;
+        background: #f8f9fa;
+    }
+
+    .product-list-page .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-list-page .product-no-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #999;
+    }
+
+    /* CONTENT */
+    .product-list-page .product-content {
+        padding: 1.5rem;
+    }
+
+    .product-list-page .product-name {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-list-page .product-description {
+        color: #666;
+        margin-bottom: 1rem;
+    }
+
+    /* DETAILS */
+    .product-list-page .product-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* DELETE */
+    .product-list-page .btn-delete {
+        width: 100%;
+        padding: 0.75rem;

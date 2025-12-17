@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/VeilingMeesterDashboard.css';
-import { useEffect } from 'react';
+import '../styles/AanvoerderDashboard.css';
 
+const apiBase = 'https://localhost:7020'; // Let op: gebruik dezelfde port als je API
 
-
-const apiBase = 'https://localhost:5174';
 type User = {
     id: number;
     userName: string;
@@ -14,15 +12,15 @@ type User = {
     rol: string;
     veilingVestiging: string | null;
 };
-function VeilingMeesterDashboard() {
+
+function SellerDashboard() {
     const navigate = useNavigate();
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    // NIEUW: State voor gebruiker en login status
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null);
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [])
-
 
     // NIEUW: Fetch gebruikersgegevens bij laden
     useEffect(() => {
@@ -58,57 +56,61 @@ function VeilingMeesterDashboard() {
         checkLoginStatus();
     }, []);
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [])
+    const ProductTonenKnop = () => {
+        navigate('/ProductDashboard');
+    };
 
-    const VeiulingPlaatsenKnop = () => {
-        navigate('/VeilingPlaatsen')
-    }
+    const ProductMakenKnop = () => {
+        navigate('/ProductMakenDashboard');
+    };
 
-    const VeilingenTonenKnop = () => {
-        navigate('/VeilingTonen')
+    async function fetchProducts() {
+        setLoading(true);
+        try {
+            const res = await fetch(`${apiBase}/api/Product`);
+            if (!res.ok) throw new Error("Failed to fetch");
+            const data = await res.json();
+            setProducts(data);
+        } catch (err) {
+            console.error(err);
+            alert("Kon producten niet laden.");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
-        <>
-            <div className="dashboard-root">
-                <header className="dashboard-header">
-                    <div className="header-inner">
-                        <img
-                            src="/header-trees.jpg"
-                            alt="header"
-                            className="header-image"
-                        />
-                        <nav className="header-nav">
-                            <a href="/registreren">Registreren</a>
-                            <a href="/login">Inloggen</a>
-                        </nav>
-                    </div>
-                </header>
-            </div>
-
-            {/* NIEUW: Gebruiker welkom bericht */}
+        <div className="product-dashboard-page">
             {isLoggedIn && user && (
                 <div className="user-welcome">
-                    <p>Welkom, <strong>{user.userName}</strong>!</p>
+                    <p>
+                        Welkom, <strong>{user.userName}</strong>!
+                    </p>
                 </div>
             )}
 
             <main className="dashboard-container">
-                <h1 className="VerkoperDashboard-title">Veilingmeester dashboard</h1>
-                <div className="VL_dashboard-box">
-                    <button className="VL_pp_btn" onClick={VeiulingPlaatsenKnop}>
-                        Veilingen Plaatsen
+                <h1 className="dashboard-title">Dashboard</h1>
+
+                <div className="dashboard-box">
+                    <button
+                        className="dashboard-btn primary"
+                        onClick={ProductMakenKnop}
+                    >
+                        Product Plaatsen
                     </button>
-                    <button className="VL_pp_btn" onClick={VeilingenTonenKnop}>
-                        Veilingen Tonen
+
+                    <button
+                        className="dashboard-btn secondary"
+                        onClick={ProductTonenKnop}
+                    >
+                        Product Tonen
                     </button>
                 </div>
             </main>
-        </>
+        </div>
     );
+
 }
 
-
-export default VeilingMeesterDashboard;
+export default SellerDashboard;

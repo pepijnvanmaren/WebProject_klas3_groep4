@@ -3,7 +3,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import IndexPage from "./pages/IndexPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
-import SellerDashboardPage from "./pages/SellerDashboardPage.jsx";
+import SellerDashboardPage from "./pages/AanvoerderDashboardPage.jsx";
 import AccountInfoPage from "./pages/AccountInfoPage.jsx";
 import ProductToneneDashboardPage from "./pages/ProductToneneDashboard.jsx";
 import ProductPlaatsenDashboardPage from "./pages/ProductPlaatsenDashboard.jsx";

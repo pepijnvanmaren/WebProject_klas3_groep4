@@ -1,4 +1,4 @@
-import "../styles/index.css";
+import "../styles/koperDashboard.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -51,21 +51,7 @@ function Index() {
     const lastProductIdRef = useRef<number | null>(null);
 
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
-
-    const scrollToCurrentProduct = () => {
-        if (!currentProductTitleRef.current) return;
-
-        const headerOffset = window.innerHeight * 0.18;
-        const elementPosition =
-            currentProductTitleRef.current.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - headerOffset;
-
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-        });
-    };
-
+    const [aantal, setAantal] = useState<number>(1);
 
     useEffect(() => {
         const checkLoginStatus = async () => {
@@ -141,7 +127,7 @@ function Index() {
 
         intervalRef.current = setInterval(() => {
             setPrice(prev => {
-                const current = prev > 0 ? prev : (minPrice * 10);
+                const current = prev > 0 ? prev : (minPrice);
 
                 const nextPrice = current * 0.98;
                 if (nextPrice <= minPrice) {
@@ -249,7 +235,8 @@ function Index() {
                 },
                 body: JSON.stringify({
                     ProductId: veilingStatus.huidigProduct.id,
-                    Prijs: price
+                    Prijs: totalPrice,
+                    Aantal: aantal
                 })
             });
 
@@ -288,7 +275,7 @@ function Index() {
             const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/volgende", {
                 method: "POST",
-                
+
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -308,6 +295,7 @@ function Index() {
                 setIsPaused(false);
                 setPurchased(false);
                 setPauseCountdown(30);
+                setAantal(1);
                 await fetchVeilingStatus();
             }
         } catch (err: any) {
@@ -321,6 +309,7 @@ function Index() {
     const maxPrice = minPrice * 10;
     const progress = maxPrice > minPrice ? (price - minPrice) / (maxPrice - minPrice) : 0;
     const barColor = `rgb(${Math.round(255 * (1 - progress))}, ${Math.round(255 * progress)}, 0)`;
+    const totalPrice = progress * aantal;
 
     const ProductImage = ({ product }: { product: Product }) =>
         product?.foto ? (
@@ -330,57 +319,30 @@ function Index() {
         );
 
     return (
-        <div className="page">
-            <div style={{
-                position: 'fixed',
-                top: '20vh',
-                right: '20px',
-                zIndex: 1000,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px'
-            }}>
+        <div className="buyer-dashboard-page">
+
+            {/* Floating controls */}
+            <div className="buyer-dashboard-controls">
                 {!veilingStatus?.isActief ? (
                     <button
+                        className="buyer-dashboard-btn buyer-dashboard-btn-start"
                         onClick={handleStartVeiling}
                         disabled={loading}
-                        style={{
-                            padding: '10px 20px',
-                            backgroundColor: '#047B00',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: loading ? 'not-allowed' : 'pointer',
-                            fontWeight: 'bold'
-                        }}
                     >
                         {loading ? "Bezig..." : "Start Veiling"}
                     </button>
                 ) : (
                     <button
+                        className="buyer-dashboard-btn buyer-dashboard-btn-stop"
                         onClick={handleStopVeiling}
                         disabled={loading}
-                        style={{
-                            padding: '10px 20px',
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: loading ? 'not-allowed' : 'pointer',
-                            fontWeight: 'bold'
-                        }}
                     >
                         {loading ? "Bezig..." : "Stop Veiling"}
                     </button>
                 )}
 
                 {veilingStatus?.isActief && (
-                    <div style={{
-                        padding: '10px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        borderRadius: '5px',
-                        fontSize: '14px'
-                    }}>
+                    <div className="buyer-dashboard-status">
                         <strong>Status:</strong> Actief<br />
                         <strong>In wachtrij:</strong> {veilingStatus.aantalInWachtrij}
                     </div>
@@ -388,7 +350,7 @@ function Index() {
             </div>
 
             {!veilingStatus?.isActief && (
-                <div style={{ textAlign: 'center', padding: '50px' }}>
+                <div className="buyer-dashboard-no-auction">
                     <h2>Er is momenteel geen actieve veiling</h2>
                     <p>Kom later terug of wacht tot de veiling start!</p>
                 </div>
@@ -396,57 +358,74 @@ function Index() {
 
             {veilingStatus?.isActief && veilingStatus.huidigProduct && (
                 <>
-                    <h2 className="page-title" ref={currentProductTitleRef}>
-                        {isPaused ? "Product verkocht! Volgend product over..." : "Huidig product"}
+                    <h2 className="buyer-dashboard-title" ref={currentProductTitleRef}>
+                        {isPaused
+                            ? "Product verkocht! Volgend product over..."
+                            : "Huidig product"}
                     </h2>
 
                     {isPaused && (
-                        <div style={{
-                            textAlign: 'center',
-                            fontSize: '2rem',
-                            fontWeight: 'bold',
-                            color: '#047B00',
-                            marginBottom: '20px'
-                        }}>
+                        <div className="buyer-dashboard-pause-timer">
                             {pauseCountdown} seconden
                         </div>
                     )}
 
-                    <div className="container">
-                        <div className="box">
+                    <div className="buyer-dashboard-container">
+                        <div className="buyer-dashboard-box">
                             <ProductImage product={veilingStatus.huidigProduct} />
                         </div>
 
-                        <div className="box box-description">
-                            <h2 className="product-name">{veilingStatus.huidigProduct.naam}</h2>
-                            <p className="description">{veilingStatus.huidigProduct.beschrijving}</p>
+                        <div className="buyer-dashboard-box buyer-dashboard-box-description">
+                            <h2 className="buyer-dashboard-product-name">
+                                {veilingStatus.huidigProduct.naam}
+                            </h2>
+                            <p className="buyer-dashboard-description">
+                                {veilingStatus.huidigProduct.beschrijving}
+                            </p>
                         </div>
 
-                        <div className="box">{veilingStatus.huidigProduct.hoeveelheid} stuks</div>
+                        <div className="buyer-dashboard-box">
+                            {veilingStatus.huidigProduct.hoeveelheid} stuks
+                        </div>
 
-                        <div className="box box-price">
-                            <div className="price-row">
-                                <span className="price">EUR {price.toFixed(2)}</span>
+                        <div className="buyer-dashboard-box buyer-dashboard-box-price">
+                            <div className="buyer-dashboard-price-row">
+                                <span className="buyer-dashboard-price">
+                                    EUR {totalPrice.toFixed(2)}
+                                </span>
                                 <button
-                                    className="button"
+                                    className="buyer-dashboard-buy-btn"
                                     onClick={handleBuy}
                                     disabled={purchased || isPaused || loading}
                                 >
-                                    {purchased ? "Gekocht" :
-                                        isPaused ? "Wacht..." :
-                                            isLoggedIn ? "Koop" : "Inloggen"}
+                                    {purchased
+                                        ? "Gekocht"
+                                        : isPaused
+                                            ? "Wacht..."
+                                            : isLoggedIn
+                                                ? "Koop"
+                                                : "Inloggen"}
                                 </button>
                             </div>
+
+                            <input
+                                type="number"
+                                className="buyer-dashboard-input"
+                                placeholder="Voer het aantal in"
+                                value={aantal}
+                                min={1}
+                                max={veilingStatus?.huidigProduct?.hoeveelheid ?? 1}
+                                onChange={(e) => setAantal(Number(e.target.value))}
+                            />
                         </div>
 
                         {!isPaused && (
-                            <div className="progress-bar-container integrated-bar">
+                            <div className="buyer-dashboard-progress-container">
                                 <div
-                                    className="progress-bar"
+                                    className="buyer-dashboard-progress-bar"
                                     style={{
                                         width: `${Math.max(0, Math.min(1, progress)) * 100}%`,
                                         backgroundColor: barColor,
-                                        transition: "width 1s linear, background-color 1s linear",
                                     }}
                                 />
                             </div>
@@ -455,17 +434,27 @@ function Index() {
 
                     {veilingStatus.volgendProduct && (
                         <>
-                            <h2 className="page-title">Volgend product</h2>
-                            <div className="container">
-                                <div className="box">
+                            <h2 className="buyer-dashboard-title">Volgend product</h2>
+
+                            <div className="buyer-dashboard-container">
+                                <div className="buyer-dashboard-box">
                                     <ProductImage product={veilingStatus.volgendProduct} />
                                 </div>
-                                <div className="box box-description">
-                                    <h2 className="product-name">{veilingStatus.volgendProduct.naam}</h2>
-                                    <p className="description">{veilingStatus.volgendProduct.beschrijving}</p>
+
+                                <div className="buyer-dashboard-box buyer-dashboard-box-description">
+                                    <h2 className="buyer-dashboard-product-name">
+                                        {veilingStatus.volgendProduct.naam}
+                                    </h2>
+                                    <p className="buyer-dashboard-description">
+                                        {veilingStatus.volgendProduct.beschrijving}
+                                    </p>
                                 </div>
-                                <div className="box">{veilingStatus.volgendProduct.hoeveelheid} stuks</div>
-                                <div className="box"></div>
+
+                                <div className="buyer-dashboard-box">
+                                    {veilingStatus.volgendProduct.hoeveelheid} stuks
+                                </div>
+
+                                <div className="buyer-dashboard-box"></div>
                             </div>
                         </>
                     )}
@@ -473,6 +462,7 @@ function Index() {
             )}
         </div>
     );
+
 }
 
 export default Index;
