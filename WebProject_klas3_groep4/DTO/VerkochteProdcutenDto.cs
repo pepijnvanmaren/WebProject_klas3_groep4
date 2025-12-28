@@ -7,6 +7,7 @@ namespace WebProject_klas3_groep4.DTO
         public double VerkochtePrijs { get; set; }
         public int ProductId { get; set; }
         public int KoperId { get; set; }
+        public DateTime VerkoopDatum { get; set; }
     }
 
     public class VerkochteProductenOutputDto
@@ -16,5 +17,6 @@ namespace WebProject_klas3_groep4.DTO
         public double VerkochtePrijs { get; set; }
         public int ProductId { get; set; }
         public int KoperId { get; set; }
+        public DateTime VerkoopDatum { get; set; }
     }
 }

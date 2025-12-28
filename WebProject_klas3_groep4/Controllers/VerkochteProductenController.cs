@@ -27,7 +27,8 @@ namespace WebProject_klas3_groep4.Controllers
                     HoeveelHeid = u.HoeveelHeid,
                     VerkochtePrijs = u.VerkochtePrijs,
                     ProductId = u.ProductId,
-                    KoperId = u.KoperId
+                    KoperId = u.KoperId,
+                    VerkoopDatum = u.VerkoopDatum
                 })
                 .ToList();
             return Ok(VerkochteProducten);
@@ -45,7 +46,8 @@ namespace WebProject_klas3_groep4.Controllers
                 HoeveelHeid = dto.HoeveelHeid,
                 VerkochtePrijs = dto.VerkochtePrijs,
                 ProductId = dto.ProductId,
-                KoperId = dto.KoperId
+                KoperId = dto.KoperId,
+                VerkoopDatum = dto.VerkoopDatum = DateTime.Now
             };
 
             _context.VerkochteProducten.Add(VerkochteProducten);
@@ -57,7 +59,8 @@ namespace WebProject_klas3_groep4.Controllers
                 HoeveelHeid = VerkochteProducten.HoeveelHeid,
                 VerkochtePrijs = VerkochteProducten.VerkochtePrijs,
                 ProductId = VerkochteProducten.ProductId,
-                KoperId = VerkochteProducten.KoperId
+                KoperId = VerkochteProducten.KoperId,
+                VerkoopDatum = VerkochteProducten.VerkoopDatum
             };
 
             return CreatedAtAction(nameof(GetVerkochteProducten), new { id = VerkochteProducten.ID }, outDto);
