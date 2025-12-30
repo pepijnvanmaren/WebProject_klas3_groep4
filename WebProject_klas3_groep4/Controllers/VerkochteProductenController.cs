@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using WebProject_klas3_groep4.models;
+using System.Threading.Tasks;
 using WebProject_klas3_groep4.DTO;
+using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
 {
@@ -17,53 +19,28 @@ namespace WebProject_klas3_groep4.Controllers
         }
         // GET ALL
         [HttpGet]
-        public ActionResult<IEnumerable<VerkochteProductenCreateDto>> GetVerkochteProducten()
+        public async Task<ActionResult> GetVerkochteProducten()
         {
-            var VerkochteProducten = _context.VerkochteProducten
-                .Include(u => u.Product)
-                .Include(u => u.Koper)
-                .Select(u => new VerkochteProductenCreateDto
-                {
-                    HoeveelHeid = u.HoeveelHeid,
-                    VerkochtePrijs = u.VerkochtePrijs,
-                    ProductId = u.ProductId,
-                    KoperId = u.KoperId,
-                    VerkoopDatum = u.VerkoopDatum
-                })
-                .ToList();
+            var VerkochteProducten = await _context.Set<VerkochteProdcutenDB>()
+                .FromSqlRaw("SELECT * FROM VerkochteProducten")
+                .AsNoTracking()
+                .ToListAsync();
             return Ok(VerkochteProducten);
         }
 
         // CREATE
         [HttpPost]
-        public async Task<ActionResult<VerkochteProductenOutputDto>> PostVeiling([FromBody] VerkochteProductenCreateDto dto)
+        public async Task<ActionResult> PostVeiling(int hvl, double vpp, int Pid, int Kid)
         {
-            if (dto == null)
-                return BadRequest("Invalid veiling data");
+            await _context.Database.ExecuteSqlRawAsync(@"INSERT INTO VerkochteProducten (HoeveelHeid, VerkochtePrijs, VerkoopDatum, ProductId, KoperId) VALUES (@hvl, @vpp, @datum, @pid, @kid)",
+                new SqlParameter("@hvl", hvl),
+                new SqlParameter("@vpp", vpp),
+                new SqlParameter("@datum", DateTime.Now),
+                new SqlParameter("@pid", Pid),
+                new SqlParameter("@kid", Kid)
+            );
 
-            var VerkochteProducten = new VerkochteProdcutenDB
-            {
-                HoeveelHeid = dto.HoeveelHeid,
-                VerkochtePrijs = dto.VerkochtePrijs,
-                ProductId = dto.ProductId,
-                KoperId = dto.KoperId,
-                VerkoopDatum = dto.VerkoopDatum = DateTime.Now
-            };
-
-            _context.VerkochteProducten.Add(VerkochteProducten);
-            await _context.SaveChangesAsync();
-
-            var outDto = new VerkochteProductenOutputDto
-            {
-                ID = VerkochteProducten.ID,
-                HoeveelHeid = VerkochteProducten.HoeveelHeid,
-                VerkochtePrijs = VerkochteProducten.VerkochtePrijs,
-                ProductId = VerkochteProducten.ProductId,
-                KoperId = VerkochteProducten.KoperId,
-                VerkoopDatum = VerkochteProducten.VerkoopDatum
-            };
-
-            return CreatedAtAction(nameof(GetVerkochteProducten), new { id = VerkochteProducten.ID }, outDto);
+            return Ok();
         }
         [HttpDelete("{ID:int}")]
         public async Task<ActionResult> DeleteVerkochteProducten(int ID)
