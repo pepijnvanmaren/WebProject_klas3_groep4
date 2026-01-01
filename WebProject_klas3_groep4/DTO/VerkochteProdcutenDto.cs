@@ -19,4 +19,10 @@ namespace WebProject_klas3_groep4.DTO
         public int KoperId { get; set; }
         public DateTime VerkoopDatum { get; set; }
     }
+
+    public class GemiddeldeAllesDto
+    {
+        public double VerkochtePrijs { get; set; }
+        public int HoeveelHeid { get; set; }
+    }
 }

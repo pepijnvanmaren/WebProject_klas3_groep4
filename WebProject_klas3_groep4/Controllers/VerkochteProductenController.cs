@@ -47,6 +47,40 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetallGemiddeldeProduct/{id:int}")]
+        public async Task<ActionResult> GetallGemiddeldeProduct(int id)
+        {
+            var result = await _context.Set<GemiddeldeAllesDto>()
+               .FromSqlRaw(@"SELECT 
+                            SUM(VerkochtePrijs) AS VerkochtePrijs,
+                            SUM(HoeveelHeid) AS HoeveelHeid
+                            FROM VerkochteProducten
+                            WHERE ProductId = @ID",
+                            new SqlParameter("@ID", id)
+                )
+                .AsNoTracking()
+                .FirstAsync();
+
+            var prijsPerAantal = result.VerkochtePrijs / result.HoeveelHeid;
+
+            return Ok(prijsPerAantal);
+        }
+
+        [HttpGet("GetallGemiddeldeAlles")]
+        public async Task<ActionResult> GetallGemiddeldeAlles()
+        {
+            var result = await _context.Set<GemiddeldeAllesDto>()
+                .FromSqlRaw(@"SELECT 
+                            SUM(VerkochtePrijs) AS VerkochtePrijs,
+                            SUM(HoeveelHeid) AS HoeveelHeid
+                            FROM VerkochteProducten")
+                .AsNoTracking()
+                .FirstAsync();
+
+            var prijsPerAantal = result.VerkochtePrijs / result.HoeveelHeid;
+
+            return Ok(prijsPerAantal);
+        }
         // CREATE
         [HttpPost("{hvl:int},{vpp:double},{Pid:int},{Kid:int}")]
         public async Task<ActionResult> PostVeiling(int hvl, double vpp, int Pid, int Kid)

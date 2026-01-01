@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
+using WebProject_klas3_groep4.DTO;
 using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4
@@ -28,6 +29,7 @@ namespace WebProject_klas3_groep4
                 optionsBuilder.UseSqlServer("Server=CRAPTOP\\SQLEXPRESS01;Database=WebProject_klas3_groep4;Trusted_Connection=True;");
             }
         }
+        public DbSet<GemiddeldeAllesDto> GemiddeldeAlles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -55,6 +57,9 @@ namespace WebProject_klas3_groep4
                 .WithMany()
                 .HasForeignKey(v => v.KoperId)
             .OnDelete(DeleteBehavior.Restrict);
+            
+            builder.Entity<GemiddeldeAllesDto>().HasNoKey();
+
         }
     }
 }
