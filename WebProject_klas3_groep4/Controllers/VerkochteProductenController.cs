@@ -21,15 +21,34 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpGet]
         public async Task<ActionResult> GetVerkochteProducten()
         {
-            var VerkochteProducten = await _context.Set<VerkochteProdcutenDB>()
+            var result = await _context.VerkochteProducten
                 .FromSqlRaw("SELECT * FROM VerkochteProducten")
-                .AsNoTracking()
                 .ToListAsync();
-            return Ok(VerkochteProducten);
+            
+            return Ok(result);
+        }
+
+        [HttpGet("GetallProducten/{id:int}")]
+        public async Task<ActionResult> GetallProducten(int id)
+        {
+            var result = await _context.VerkochteProducten
+                .FromSqlRaw(
+                    "SELECT * FROM VerkochteProducten WHERE ProductId = @ID",
+                    new SqlParameter("@ID", id)
+                )
+                .Select(vp => new
+                {
+                    vp.HoeveelHeid,
+                    vp.VerkochtePrijs,
+                    vp.VerkoopDatum
+                })
+                .ToListAsync();
+
+            return Ok(result);
         }
 
         // CREATE
-        [HttpPost]
+        [HttpPost("{hvl:int},{vpp:double},{Pid:int},{Kid:int}")]
         public async Task<ActionResult> PostVeiling(int hvl, double vpp, int Pid, int Kid)
         {
             await _context.Database.ExecuteSqlRawAsync(@"INSERT INTO VerkochteProducten (HoeveelHeid, VerkochtePrijs, VerkoopDatum, ProductId, KoperId) VALUES (@hvl, @vpp, @datum, @pid, @kid)",
