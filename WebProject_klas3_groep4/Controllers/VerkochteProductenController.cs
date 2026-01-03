@@ -38,8 +38,28 @@ namespace WebProject_klas3_groep4.Controllers
                 )
                 .Select(vp => new
                 {
-                    vp.HoeveelHeid,
-                    vp.VerkochtePrijs,
+                    Result = vp.HoeveelHeid != 0
+                     ? vp.VerkochtePrijs / vp.HoeveelHeid
+                     : 0,
+                    vp.VerkoopDatum
+                })
+                .ToListAsync();
+
+            return Ok(result);
+        }
+
+        [HttpGet("GetallAllProducten")]
+        public async Task<ActionResult> GetallAllProducten()
+        {
+            var result = await _context.VerkochteProducten
+                .FromSqlRaw(
+                    "SELECT * FROM VerkochteProducten"
+                )
+                .Select(vp => new
+                {
+                    Result = vp.HoeveelHeid != 0 
+                     ? vp.VerkochtePrijs / vp.HoeveelHeid 
+                     : 0,
                     vp.VerkoopDatum
                 })
                 .ToListAsync();
