@@ -82,19 +82,48 @@ function Index() {
     const [gemiddeldePrijsAlles, setGemiddeldePrijsAlles] = useState(0);
     const [gemiddeldePrijsHuidige, setGemiddeldePrijsHuidige] = useState(0);
 
-    useEffect(() => {
-        fetch('/api/VerkochteProducten/GetallGemiddeldeAlles')
-            .then(res => res.json())
-            .then(data => setGemiddeldePrijsAlles(data));
-    }, []);
+    //Gemdeddilde prijs van alles bij elkaar per product
 
     useEffect(() => {
-        if (veilingStatus?.huidigProduct?.id) {
-            fetch(`/api/VerkochteProducten/GetallGemiddeldeProduct/${veilingStatus.huidigProduct.id}`)
-                .then(res => res.json())
-                .then(data => setGemiddeldePrijsHuidige(data))
+        fetchAlleData();
+        fetchData();
+    }, []);
+    const fetchAlleData = async () => {
+        try {
+            const response = await fetch("https://localhost:7020/api/VerkochteProducten/GetallGemiddeldeAlles"
+            );
+
+            if (!response.ok) {
+                throw new Error("Kon gegevens niet ophalen");
+            }
+
+            const data = await response.json();
+            setGemiddeldePrijsAlles(data);
+        } catch (error) {
+            console.error(error);
+            alert("Er is iets verkeerd gegaan");
         }
-    }, [veilingStatus?.huidigProduct?.id]);
+    };
+
+    const fetchData = async () => {
+        if (!veilingStatus?.huidigProduct) return;
+
+        try {
+            const response = await fetch(
+                `https://localhost:7020/api/VerkochteProducten/GetallGemiddeldeProduct/${veilingStatus.huidigProduct.id}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Kon gegevens niet ophalen");
+            }
+
+            const data = await response.json();
+            setGemiddeldePrijsHuidige(data);
+        } catch (error) {
+            console.error(error);
+            alert("Er is iets verkeerd gegaan");
+        }
+    };
 
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
 
