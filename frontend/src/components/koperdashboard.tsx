@@ -79,6 +79,23 @@ function Index() {
         { date: "2024-05-03", price: 11.60 },
     ];
 
+    const [gemiddeldePrijsAlles, setGemiddeldePrijsAlles] = useState(0);
+    const [gemiddeldePrijsHuidige, setGemiddeldePrijsHuidige] = useState(0);
+
+    useEffect(() => {
+        fetch('/api/VerkochteProducten/GetallGemiddeldeAlles')
+            .then(res => res.json())
+            .then(data => setGemiddeldePrijsAlles(data));
+    }, []);
+
+    useEffect(() => {
+        if (veilingStatus?.huidigProduct?.id) {
+            fetch(`/api/VerkochteProducten/GetallGemiddeldeProduct/${veilingStatus.huidigProduct.id}`)
+                .then(res => res.json())
+                .then(data => setGemiddeldePrijsHuidige(data))
+        }
+    }, [veilingStatus?.huidigProduct?.id]);
+
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
 
     const scrollToCurrentProduct = () => {
@@ -389,9 +406,17 @@ function Index() {
                 )}
             </div>
 
-            {/* Vast prijs-geschiedenis paneel */}
+            {/* Prijsgeschiedenis knop links - vaste positie */}
             {isLoggedIn && (
-                <div>
+                <div style={{
+                    position: 'fixed',
+                    top: '20vh',
+                    left: '20px',
+                    zIndex: 1000,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                }}>
                     <button
                         style={{
                             padding: '10px 20px',
@@ -409,56 +434,73 @@ function Index() {
                     </button>
 
                     {priceHistoryExpanded && (
-                        <>
+                        <div style={{
+                            padding: '15px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            borderRadius: '5px',
+                            maxWidth: '350px',
+                            maxHeight: '70vh',
+                            overflowY: 'auto'
+                        }}>
                             <div className="price-history-section">
                                 <h4>Huidige aanvoerder</h4>
-                                <p><strong>Gemiddelde prijs:</strong> 12,78</p>
+                                <p><strong>Gemiddelde prijs:</strong> €{gemiddeldePrijsHuidige.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
 
-                                <table className="price-history-table">
+                                <table className="price-history-table" style={{
+                                    width: '100%',
+                                    borderCollapse: 'collapse',
+                                    fontSize: '14px'
+                                }}>
                                     <thead>
                                         <tr>
-                                            <th>Datum</th>
-                                            <th>Prijs</th>
+                                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px', textAlign: 'left' }}>Datum</th>
+                                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px', textAlign: 'left' }}>Prijs</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {mockCurrentSupplierHistory.map((item, index) => (
                                             <tr key={index}>
-                                                <td>{item.date}</td>
-                                                <td>{item.price.toFixed(2)}</td>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{item.date}</td>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{item.price.toFixed(2)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
 
-                            <hr />
+                            <hr style={{ margin: '15px 0' }} />
 
                             <div className="price-history-section">
                                 <h4>Alle aanvoerders</h4>
-                                <p><strong>Gemiddelde prijs:</strong> 11,85</p>
+                                <p><strong>Gemiddelde prijs:</strong> €{gemiddeldePrijsAlles.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+</p>
 
-                                <table className="price-history-table">
+                                <table className="price-history-table" style={{
+                                    width: '100%',
+                                    borderCollapse: 'collapse',
+                                    fontSize: '14px'
+                                }}>
                                     <thead>
                                         <tr>
-                                            <th>Datum</th>
-                                            <th>Prijs</th>
+                                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px', textAlign: 'left' }}>Datum</th>
+                                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px', textAlign: 'left' }}>Prijs</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {mockAllSuppliersHistory.map((item, index) => (
                                             <tr key={index}>
-                                                <td>{item.date}</td>
-                                                <td>{item.price.toFixed(2)}</td>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{item.date}</td>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{item.price.toFixed(2)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
-                        </>
+                        </div>
                     )}
                 </div>
             )}
+
             <div className="page">
                 <div style={{
                     position: 'fixed',

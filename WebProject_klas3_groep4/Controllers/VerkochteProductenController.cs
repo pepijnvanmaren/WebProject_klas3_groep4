@@ -78,11 +78,16 @@ namespace WebProject_klas3_groep4.Controllers
                             new SqlParameter("@ID", id)
                 )
                 .AsNoTracking()
-                .FirstAsync();
+                .FirstOrDefaultAsync();
+            
+            if (result == null || result.HoeveelHeid == 0)
+            {
+                return Ok(0);
+            }
 
             var prijsPerAantal = result.VerkochtePrijs / result.HoeveelHeid;
 
-            return Ok(prijsPerAantal);
+            return Ok(Math.Round(prijsPerAantal, 2));
         }
 
         [HttpGet("GetallGemiddeldeAlles")]
@@ -94,11 +99,16 @@ namespace WebProject_klas3_groep4.Controllers
                             SUM(HoeveelHeid) AS HoeveelHeid
                             FROM VerkochteProducten")
                 .AsNoTracking()
-                .FirstAsync();
+                .FirstOrDefaultAsync();
+
+            if (result == null || result.HoeveelHeid == 0)
+            {
+                return Ok(0);
+            }
 
             var prijsPerAantal = result.VerkochtePrijs / result.HoeveelHeid;
 
-            return Ok(prijsPerAantal);
+            return Ok(Math.Round(prijsPerAantal, 2));
         }
         // CREATE
         [HttpPost("{hvl:int},{vpp:double},{Pid:int},{Kid:int}")]
