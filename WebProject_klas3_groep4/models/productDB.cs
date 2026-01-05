@@ -29,12 +29,12 @@ namespace WebProject_klas3_groep4.models
 
        
 
-        // ===== NIEUW: Relatie naar Aanvoerder (GebruikerDB) =====
+        // Relatie naar Aanvoerder (GebruikerDB)
         [ForeignKey("Aanvoerder")]
         public int? AanvoerderId { get; set; }
         public GebruikerDB? Aanvoerder { get; set; }
 
-        // ===== NIEUW: Relatie naar Veiling =====
+        // Relatie naar Veiling
         [ForeignKey("Veiling")]
         public int? VeilingId { get; set; }
         public VeilingDB? Veiling { get; set; }

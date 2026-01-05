@@ -16,12 +16,12 @@ namespace WebProject_klas3_groep4
         public String HuidigeSituatieVanVeiling { get; set; }
         public String Bechrijving { get; set; }
 
-        // ===== NIEUW: Relatie naar Veilingmeester =====
+        // Relatie naar Veilingmeester
         [ForeignKey("Veilingmeester")]
         public int? VeilingmeesterId { get; set; }
         public GebruikerDB? Veilingmeester { get; set; }
 
-        // ===== NIEUW: Relatie naar Producten =====
+        // Relatie naar Producten
         public List<productDB>? Producten { get; set; } = new List<productDB>();
     }
 }

@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebProject_klas3_groep4.models;
-using WebProject_klas3_groep4.DTO;
+
 
 namespace WebProject_klas3_groep4.Controllers
 {

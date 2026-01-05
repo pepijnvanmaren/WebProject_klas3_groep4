@@ -171,3 +171,57 @@
     margin-top: 1.5em
 
 }
+
+/* Prijs Geschiedenis*/
+.price-history-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 420px;
+    max-height: 500px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    z-index: 1500;
+    overflow: hidden;
+}
+
+.price-history-header {
+    background-color: #047B00;
+    color: white;
+    padding: 14px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 16px;
+}
+
+.price-history-content {
+    padding: 15px;
+    font-size: 14px;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.price-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+}
+
+    .price-history-table th,
+    .price-history-table td {
+        text-align: left;
+        padding: 6px 4px;
+        border-bottom: 1px solid #eee;
+        font-size: 13px;
+    }
+
+    .price-history-table th {
+        font-weight: 600;
+        color: #333;
+    }
+
+.price-history-section {
+    margin-bottom: 20px;
+}

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebProject_klas3_groep4.models;
 using WebProject_klas3_groep4.DTO;
-using Microsoft.AspNetCore.Authorization;
+
 
 namespace WebProject_klas3_groep4.Controllers
 {

@@ -11,8 +11,9 @@ namespace WebProject_klas3_groep4.DTO
         public double? Steellengte { get; set; }
         public int Hoeveelheid { get; set; }
         public int MinimalePrijs { get; set; }
-        // NIEUW: Veiling koppelen
+        // Veiling koppelen
         public int? VeilingId { get; set; }
+        public object ID { get; set; }
     }
 
     public class ProductUpdateDto
@@ -26,7 +27,7 @@ namespace WebProject_klas3_groep4.DTO
         public double? Steellengte { get; set; }
         public int? Hoeveelheid { get; set; }
         public int? MinimalePrijs { get; set; }
-        // NIEUW: Veiling wijzigen
+        // Veiling wijzigen
         public int? VeilingId { get; set; }
     }
 
@@ -42,7 +43,7 @@ namespace WebProject_klas3_groep4.DTO
         public double? Steellengte { get; set; }
         public int Hoeveelheid { get; set; }
         public int MinimalePrijs { get; set; }
-        // NIEUW: Info over Aanvoerder en Veiling
+        // Info over Aanvoerder en Veiling
         public int? AanvoerderId { get; set; }
         public string? AanvoerderNaam { get; set; }
         public int? VeilingId { get; set; }

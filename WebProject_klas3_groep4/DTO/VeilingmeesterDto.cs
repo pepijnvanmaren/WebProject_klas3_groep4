@@ -25,7 +25,7 @@
         public string PhoneNumber { get; set; }
         public string? VeilingVestiging { get; set; }
         public string Rol { get; set; } = "Veilingmeester";
-        // NIEUW: Veilingen die deze veilingmeester beheert
+        // Veilingen die deze veilingmeester beheert
         public List<int>? VeilingIds { get; set; }
     }
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SellerDashboard.css';
 
-const apiBase = 'https://localhost:7020'; // Let op: gebruik dezelfde port als je API
+const apiBase = 'https://localhost:7020';
 
 type User = {
     id: number;
@@ -18,11 +18,11 @@ function SellerDashboard() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // NIEUW: State voor gebruiker en login status
+    // State voor gebruiker en login status
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null);
 
-    // NIEUW: Fetch gebruikersgegevens bij laden
+    // Fetch gebruikersgegevens bij laden
     useEffect(() => {
         const checkLoginStatus = async () => {
             const loggedIn = localStorage.getItem("loggedIn") === "true";
@@ -97,7 +97,7 @@ function SellerDashboard() {
                 </header>
             </div>
 
-            {/* NIEUW: Gebruiker welkom bericht */}
+
             {isLoggedIn && user && (
                 <div className="user-welcome">
                     <p>Welkom, <strong>{user.userName}</strong>!</p>
@@ -105,7 +105,7 @@ function SellerDashboard() {
             )}
 
             <main className="dashboard-container">
-                <h1 className="VerkoperDashboard-title">Dashboard</h1>
+                <h1 className="VerkoperDashboard-title">Verkoper dashboard</h1>
                 <div className="dashboard-box">
                     <button className="SD_btn" onClick={ProductMakenKnop}>
                         Product Plaatsen
