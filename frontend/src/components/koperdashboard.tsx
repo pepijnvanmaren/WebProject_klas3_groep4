@@ -83,11 +83,6 @@ function Index() {
     const [gemiddeldePrijsHuidige, setGemiddeldePrijsHuidige] = useState(0);
 
     //Gemdeddilde prijs van alles bij elkaar per product
-
-    useEffect(() => {
-        fetchAlleData();
-        fetchData();
-    }, []);
     const fetchAlleData = async () => {
         try {
             const response = await fetch("https://localhost:7020/api/VerkochteProducten/GetallGemiddeldeAlles"
@@ -155,6 +150,8 @@ function Index() {
         };
 
         checkLoginStatus();
+        fetchAlleData();
+        fetchData();
     }, []);
 
     const fetchVeilingStatus = async () => {
