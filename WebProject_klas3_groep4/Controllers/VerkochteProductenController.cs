@@ -17,7 +17,7 @@ namespace WebProject_klas3_groep4.Controllers
         {
             _context = context;
         }
-        // GET ALL
+        // GET 
         [HttpGet]
         public async Task<ActionResult> GetVerkochteProducten()
         {
@@ -27,7 +27,6 @@ namespace WebProject_klas3_groep4.Controllers
             
             return Ok(result);
         }
-
         [HttpGet("GetallProducten/{id:int}")]
         public async Task<ActionResult> GetallProducten(int id)
         {
@@ -115,6 +114,7 @@ namespace WebProject_klas3_groep4.Controllers
 
             return Ok();
         }
+        // DELETE
         [HttpDelete("{ID:int}")]
         public async Task<ActionResult> DeleteVerkochteProducten(int ID)
         {
