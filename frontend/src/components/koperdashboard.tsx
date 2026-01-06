@@ -53,36 +53,12 @@ function Index() {
     const [isPaused, setIsPaused] = useState(false);
     const [pauseCountdown, setPauseCountdown] = useState(30);
     const lastProductIdRef = useRef<number | null>(null);
-    const mockCurrentSupplierHistory = [
-        { date: "2024-05-12", price: 12.95 },
-        { date: "2024-05-11", price: 13.10 },
-        { date: "2024-05-10", price: 12.80 },
-        { date: "2024-05-09", price: 12.60 },
-        { date: "2024-05-08", price: 12.75 },
-        { date: "2024-05-07", price: 12.90 },
-        { date: "2024-05-06", price: 12.85 },
-        { date: "2024-05-05", price: 12.70 },
-        { date: "2024-05-04", price: 12.65 },
-        { date: "2024-05-03", price: 12.50 },
-    ];
-
-    const mockAllSuppliersHistory = [
-        { date: "2024-05-12", price: 11.90 },
-        { date: "2024-05-11", price: 12.10 },
-        { date: "2024-05-10", price: 12.00 },
-        { date: "2024-05-09", price: 11.85 },
-        { date: "2024-05-08", price: 11.95 },
-        { date: "2024-05-07", price: 11.80 },
-        { date: "2024-05-06", price: 11.75 },
-        { date: "2024-05-05", price: 11.70 },
-        { date: "2024-05-04", price: 11.65 },
-        { date: "2024-05-03", price: 11.60 },
-    ];
-
+    const [productGeschiedenis, setProductGeschiedenis] = useState([]);
+    const [alleProductGeschiedenis, setAlleProductGeschiedenis] = useState([]);
     const [gemiddeldePrijsAlles, setGemiddeldePrijsAlles] = useState(0);
     const [gemiddeldePrijsHuidige, setGemiddeldePrijsHuidige] = useState(0);
 
-    //Gemdeddilde prijs van alles bij elkaar per product
+    //Gemdeddilde prijs van alle producten bij elkaar 
     const fetchAlleData = async () => {
         try {
             const response = await fetch("https://localhost:7020/api/VerkochteProducten/GetallGemiddeldeAlles"
@@ -99,9 +75,11 @@ function Index() {
             alert("Er is iets verkeerd gegaan");
         }
     };
-
+    //Gemdeddilde prijs van huidige product bij elkaar
     const fetchData = async () => {
-        if (!veilingStatus?.huidigProduct) return;
+        if (!veilingStatus?.huidigProduct) {
+            throw new Error("Kon geen product vinden");
+        }
 
         try {
             const response = await fetch(
@@ -114,6 +92,47 @@ function Index() {
 
             const data = await response.json();
             setGemiddeldePrijsHuidige(data);
+        } catch (error) {
+            console.error(error);
+            alert("Er is iets verkeerd gegaan");
+        }
+    };
+
+    //Geschiedenis van alle producten
+    const fetchAlleGeschiedenis = async () => {
+        try {
+            const response = await fetch("https://localhost:7020/api/VerkochteProducten/GetallAllProducten"
+            );
+
+            if (!response.ok) {
+                throw new Error("Kon gegevens niet ophalen");
+            }
+
+            const data = await response.json();
+            setAlleProductGeschiedenis(data);
+        } catch (error) {
+            console.error(error);
+            alert("Er is iets verkeerd gegaan");
+        }
+    };
+
+    //Gemdeddilde prijs van huidige product bij elkaar
+    const fetchProductGeschiedenis = async () => {
+        if (!veilingStatus?.huidigProduct) {
+            throw new Error("Kon geen product vinden");
+        }
+
+        try {
+            const response = await fetch(
+                `https://localhost:7020/api/VerkochteProducten/GetallProducten/${veilingStatus.huidigProduct.id}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Kon gegevens niet ophalen");
+            }
+
+            const data = await response.json();
+            setProductGeschiedenis(data);
         } catch (error) {
             console.error(error);
             alert("Er is iets verkeerd gegaan");
@@ -152,6 +171,8 @@ function Index() {
         checkLoginStatus();
         fetchAlleData();
         fetchData();
+        fetchAlleGeschiedenis();
+        fetchProductGeschiedenis();
     }, []);
 
     const fetchVeilingStatus = async () => {
@@ -484,10 +505,10 @@ function Index() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {mockCurrentSupplierHistory.map((item, index) => (
-                                            <tr key={index}>
-                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{item.date}</td>
-                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{item.price.toFixed(2)}</td>
+                                        {productGeschiedenis.map( x => (
+                                            <tr key={`${x.verkoopDatum}-${x.name}`}>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>  {new Date(x.verkoopDatum).toLocaleDateString('nl-NL')}</td>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{x.result.toFixed(2)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -499,7 +520,7 @@ function Index() {
                             <div className="price-history-section">
                                 <h4>Alle aanvoerders</h4>
                                 <p><strong>Gemiddelde prijs:</strong> €{gemiddeldePrijsAlles.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-</p>
+                                </p>
 
                                 <table className="price-history-table" style={{
                                     width: '100%',
@@ -513,10 +534,10 @@ function Index() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {mockAllSuppliersHistory.map((item, index) => (
-                                            <tr key={index}>
-                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{item.date}</td>
-                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{item.price.toFixed(2)}</td>
+                                        {alleProductGeschiedenis.map(x => (
+                                            <tr key={`${x.verkoopDatum}-${x.name}`}>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{new Date(x.verkoopDatum).toLocaleDateString('nl-NL')}</td>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{x.result.toFixed(2)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -526,7 +547,7 @@ function Index() {
                     )}
                 </div>
             )}
-
+            {/* startveiling knop rechts - vaste positie */}
             <div className="page">
                 <div style={{
                     position: 'fixed',
