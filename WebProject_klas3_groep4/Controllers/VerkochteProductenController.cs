@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,11 @@ namespace WebProject_klas3_groep4.Controllers
     public class VerkochteProductenController : ControllerBase
     {
         private readonly DatabaseContext _context;
-        public VerkochteProductenController(DatabaseContext context)
+        private readonly UserManager<GebruikerDB> _userManager;
+        public VerkochteProductenController(DatabaseContext context, UserManager<GebruikerDB> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         // GET 
         [HttpGet]
@@ -111,15 +114,21 @@ namespace WebProject_klas3_groep4.Controllers
             return Ok(Math.Round(prijsPerAantal, 2));
         }
         // CREATE
-        [HttpPost("{hvl:int},{vpp:double},{Pid:int},{Kid:int}")]
-        public async Task<ActionResult> PostVeiling(int hvl, double vpp, int Pid, int Kid)
+        [HttpPost]
+        public async Task<ActionResult> PostVeiling([FromBody] PostVeilingDto dto)
         {
-            await _context.Database.ExecuteSqlRawAsync(@"INSERT INTO VerkochteProducten (HoeveelHeid, VerkochtePrijs, VerkoopDatum, ProductId, KoperId) VALUES (@hvl, @vpp, @datum, @pid, @kid)",
-                new SqlParameter("@hvl", hvl),
-                new SqlParameter("@vpp", vpp),
-                new SqlParameter("@datum", DateTime.Now),
-                new SqlParameter("@pid", Pid),
-                new SqlParameter("@kid", Kid)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized("Gebruiker niet gevonden");
+
+            await _context.Database.ExecuteSqlRawAsync(
+                @"INSERT INTO VerkochteProducten 
+          (HoeveelHeid, VerkochtePrijs, VerkoopDatum, ProductId, KoperId) 
+          VALUES (@hvl, @vpp, @datum, @pid, @kid)",
+                new SqlParameter("@hvl", dto.Aantal),
+                new SqlParameter("@vpp", dto.Prijs),
+                new SqlParameter("@datum", DateTime.UtcNow),
+                new SqlParameter("@pid", dto.ProductId),
+                new SqlParameter("@kid", user.Id)
             );
 
             return Ok();

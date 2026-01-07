@@ -164,6 +164,41 @@ function Index() {
         fetchAlleGeschiedenis();
     }, []);
 
+    //Maak geschiedenis aan bij aankoop
+    const maakProductGeschiedenis = async () => {
+        if (!veilingStatus?.huidigProduct) {
+            throw new Error("Kon geen product vinden");
+        }
+
+        const token = localStorage.getItem("token");
+
+        try {
+            const response = await fetch(
+                "https://localhost:7020/api/VerkochteProducten",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        ProductId: veilingStatus.huidigProduct.id,
+                        Aantal: aantal,
+                        Prijs: price
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Kon geen product geschiedenis maken");
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Er is iets verkeerd gegaan");
+        }
+    };
+
     const fetchVeilingStatus = async () => {
         try {
             const response = await fetch("https://localhost:7020/api/veiling-process/status", {
@@ -334,6 +369,7 @@ function Index() {
                     Prijs: totalPrice,
                     Aantal: aantal
                 })
+                
             });
 
             if (!response.ok) {
@@ -352,7 +388,7 @@ function Index() {
             setPurchased(true);
 
             alert(`Product "${veilingStatus.huidigProduct.naam}" gekocht voor EUR ${price.toFixed(2)}!`);
-
+            maakProductGeschiedenis();
             const pauze = data.pauzeDurationSeconds ?? 30;
             setIsPaused(true);
             setPauseCountdown(pauze);
