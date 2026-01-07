@@ -2,7 +2,7 @@
 
 .account-info-page {
     min-height: 100vh;
-    padding-top: 8rem;
+    padding-top: 7rem;
     padding-bottom: 4rem;
     display: flex;
     flex-direction: column;
@@ -12,7 +12,7 @@
     /* TITLE */
     .account-info-page .account-info-title {
         font-size: 2.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
         color: #000;
         text-align: center;
         white-space: nowrap;
@@ -28,7 +28,7 @@
 
     /* FORM GROUP */
     .account-info-page .account-info-form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.5rem;
         width: 100%;
     }
 
