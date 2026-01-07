@@ -157,6 +157,8 @@ function Index() {
     useEffect(() => {
         const userRole = localStorage.getItem("userRole");
         setIsLoggedIn(userRole === "Koper");
+        fetchAlleData();
+        fetchAlleGeschiedenis();
     }, []);
 
     const fetchVeilingStatus = async () => {
