@@ -1,4 +1,4 @@
-import "../styles/koperDashboard.css";
+﻿import "../styles/koperDashboard.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -41,6 +41,7 @@ function Index() {
     const [veilingStatus, setVeilingStatus] = useState<VeilingStatus | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [priceHistoryExpanded, setPriceHistoryExpanded] = useState(false);
 
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const [price, setPrice] = useState(0);
@@ -52,7 +53,101 @@ function Index() {
 
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
     const [aantal, setAantal] = useState<number>(1);
+    const [productGeschiedenis, setProductGeschiedenis] = useState([]);
+    const [alleProductGeschiedenis, setAlleProductGeschiedenis] = useState([]);
+    const [gemiddeldePrijsAlles, setGemiddeldePrijsAlles] = useState(0);
+    const [gemiddeldePrijsHuidige, setGemiddeldePrijsHuidige] = useState(0);
 
+    //Gemdeddilde prijs van alle producten bij elkaar 
+    const fetchAlleData = async () => {
+        try {
+            const response = await fetch("https://localhost:7020/api/VerkochteProducten/GetallGemiddeldeAlles"
+            );
+
+            if (!response.ok) {
+                throw new Error("Kon gegevens niet ophalen");
+            }
+
+            const data = await response.json();
+            setGemiddeldePrijsAlles(data);
+        } catch (error) {
+            console.error(error);
+            alert("Er is iets verkeerd gegaan");
+        }
+    };
+    //Gemdeddilde prijs van huidige product bij elkaar
+    const fetchData = async () => {
+        if (!veilingStatus?.huidigProduct) {
+            throw new Error("Kon geen product vinden");
+        }
+
+        try {
+            const response = await fetch(
+                `https://localhost:7020/api/VerkochteProducten/GetallGemiddeldeProduct/${veilingStatus.huidigProduct.id}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Kon gegevens niet ophalen");
+            }
+
+            const data = await response.json();
+            setGemiddeldePrijsHuidige(data);
+        } catch (error) {
+            console.error(error);
+            alert("Er is iets verkeerd gegaan");
+        }
+    };
+
+    //Geschiedenis van alle producten
+    const fetchAlleGeschiedenis = async () => {
+        try {
+            const response = await fetch("https://localhost:7020/api/VerkochteProducten/GetallAllProducten"
+            );
+
+            if (!response.ok) {
+                throw new Error("Kon gegevens niet ophalen");
+            }
+
+            const data = await response.json();
+            setAlleProductGeschiedenis(data);
+        } catch (error) {
+            console.error(error);
+            alert("Er is iets verkeerd gegaan");
+        }
+    };
+
+    //Gemdeddilde prijs van huidige product bij elkaar
+    const fetchProductGeschiedenis = async () => {
+        if (!veilingStatus?.huidigProduct) {
+            throw new Error("Kon geen product vinden");
+        }
+
+        try {
+            const response = await fetch(
+                `https://localhost:7020/api/VerkochteProducten/GetallProducten/${veilingStatus.huidigProduct.id}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Kon gegevens niet ophalen");
+            }
+
+            const data = await response.json();
+            setProductGeschiedenis(data);
+        } catch (error) {
+            console.error(error);
+            alert("Er is iets verkeerd gegaan");
+        }
+    };
+
+    //Haal de geschiedenis op wanneer het product verandert
+    useEffect(() => {
+        if (!veilingStatus?.huidigProduct) return;
+
+        fetchData();
+        fetchProductGeschiedenis();
+    }, [veilingStatus?.huidigProduct?.id]);
+
+    //Controleer of de gebruiker is ingelogd
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
@@ -64,8 +159,9 @@ function Index() {
                 setIsLoggedIn(false);
             }
         };
-
         checkLoginStatus();
+        fetchAlleData();
+        fetchAlleGeschiedenis();
     }, []);
 
     const fetchVeilingStatus = async () => {
@@ -195,7 +291,7 @@ function Index() {
             const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/stop", {
                 method: "POST",
-                
+
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -228,7 +324,7 @@ function Index() {
             const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/koop", {
                 method: "POST",
-                
+
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -321,6 +417,100 @@ function Index() {
     return (
         <div className="buyer-dashboard-page">
 
+            {/* Prijsgeschiedenis knop links - vaste positie */}
+            {isLoggedIn && (
+                <div style={{
+                    position: 'fixed',
+                    top: '20vh',
+                    left: '20px',
+                    zIndex: 1000,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                }}>
+                    <button
+                        style={{
+                            padding: '10px 20px',
+                            backgroundColor: '#047B00',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: loading ? 'not-allowed' : 'pointer',
+                            fontWeight: 'bold'
+                        }}
+                        onClick={() => setPriceHistoryExpanded(prev => !prev)}
+                        disabled={loading}
+                    >
+                        Prijs Geschiedenis {priceHistoryExpanded ? "▲" : "▼"}
+                    </button>
+
+                    {priceHistoryExpanded && (
+                        <div style={{
+                            padding: '15px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            borderRadius: '5px',
+                            maxWidth: '350px',
+                            maxHeight: '70vh',
+                            overflowY: 'auto'
+                        }}>
+                            <div className="price-history-section">
+                                <h4>Huidige aanvoerder</h4>
+                                <p><strong>Gemiddelde prijs:</strong> €{gemiddeldePrijsHuidige.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+
+                                <table className="price-history-table" style={{
+                                    width: '100%',
+                                    borderCollapse: 'collapse',
+                                    fontSize: '14px'
+                                }}>
+                                    <thead>
+                                        <tr>
+                                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px', textAlign: 'left' }}>Datum</th>
+                                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px', textAlign: 'left' }}>Prijs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {productGeschiedenis.map(x => (
+                                            <tr key={`${x.verkoopDatum}-${x.name}`}>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>  {new Date(x.verkoopDatum).toLocaleDateString('nl-NL')}</td>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{x.result.toFixed(2)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <hr style={{ margin: '15px 0' }} />
+
+                            <div className="price-history-section">
+                                <h4>Alle aanvoerders</h4>
+                                <p><strong>Gemiddelde prijs:</strong> €{gemiddeldePrijsAlles.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </p>
+
+                                <table className="price-history-table" style={{
+                                    width: '100%',
+                                    borderCollapse: 'collapse',
+                                    fontSize: '14px'
+                                }}>
+                                    <thead>
+                                        <tr>
+                                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px', textAlign: 'left' }}>Datum</th>
+                                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px', textAlign: 'left' }}>Prijs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {alleProductGeschiedenis.map(x => (
+                                            <tr key={`${x.verkoopDatum}-${x.name}`}>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{new Date(x.verkoopDatum).toLocaleDateString('nl-NL')}</td>
+                                                <td style={{ borderBottom: '1px solid #eee', padding: '6px' }}>{x.result.toFixed(2)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
             {/* Floating controls */}
             <div className="buyer-dashboard-controls">
                 {!veilingStatus?.isActief ? (
