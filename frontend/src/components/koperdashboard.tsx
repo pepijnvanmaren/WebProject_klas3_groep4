@@ -94,7 +94,7 @@ function Index() {
             );
 
             if (!response.ok) {
-                throw new Error("Kon gegevens niet ophalen");
+                throw new Error("Er zijn geen gegevens van dit product");
             }
 
             const data = await response.json();
@@ -135,7 +135,7 @@ function Index() {
             );
 
             if (!response.ok) {
-                throw new Error("Kon gegevens niet ophalen");
+                throw new Error("Er zijn geen gegevens van dit product");
             }
 
             const data = await response.json();
@@ -160,41 +160,6 @@ function Index() {
         fetchAlleData();
         fetchAlleGeschiedenis();
     }, []);
-
-    //Maak geschiedenis aan bij aankoop
-    const maakProductGeschiedenis = async () => {
-        if (!veilingStatus?.huidigProduct) {
-            throw new Error("Kon geen product vinden");
-        }
-
-        const token = localStorage.getItem("token");
-
-        try {
-            const response = await fetch(
-                "https://localhost:7020/api/VerkochteProducten",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        ProductId: veilingStatus.huidigProduct.id,
-                        Aantal: aantal,
-                        Prijs: priceForInput
-                    })
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error("Kon geen product geschiedenis maken");
-            }
-
-        } catch (error) {
-            console.error(error);
-            alert("Er is iets verkeerd gegaan");
-        }
-    };
 
     const fetchVeilingStatus = async () => {
         try {
@@ -371,9 +336,9 @@ function Index() {
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    productId: product.id,
-                    hoeveelHeid: aantal,
-                    verkochtePrijs: priceForInput
+                    ProductId: product.id,
+                    Aantal: aantal,
+                    Prijs: priceForInput
                 })
             });
 
@@ -396,7 +361,6 @@ function Index() {
             } else {
                 startPauseCountdown();
             }
-            maakProductGeschiedenis();
             setPurchased(true);
 
         } catch (err: any) {
