@@ -1,11 +1,14 @@
 /* BuyerDashboard.css */
 
+/* PAGE */
 .buyer-dashboard-page {
-    margin-top: 8em;
-    width: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
+    font-family: "Inter", sans-serif;
+    margin-top: 8em;
+    width: 100%;
 }
 
 /* FLOATING CONTROLS */
@@ -21,11 +24,18 @@
 
 .buyer-dashboard-btn {
     padding: 10px 20px;
-    color: #fff;
+    background-color: #698a55;
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    cursor: pointer;
     font-weight: bold;
+    transition: all 0.3s ease;
 }
+
+    .buyer-dashboard-btn:hover {
+        background-color: #9eba8d;
+    }
 
     .buyer-dashboard-btn:disabled {
         cursor: not-allowed;
@@ -33,7 +43,7 @@
     }
 
 .buyer-dashboard-btn-start {
-    background-color: #047B00;
+    background-color: #698a55;
 }
 
 .buyer-dashboard-btn-stop {
@@ -43,9 +53,10 @@
 /* STATUS */
 .buyer-dashboard-status {
     padding: 10px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
     font-size: 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* NO AUCTION */
@@ -54,11 +65,11 @@
     padding: 50px;
 }
 
-/* TITLES */
+/* TITLE */
 .buyer-dashboard-title {
     width: 80%;
     text-align: left;
-    margin: 1.5em 0 0.5em;
+    margin: 1em 0 -0.5em 2em;
 }
 
 /* PAUSE TIMER */
@@ -66,50 +77,82 @@
     text-align: center;
     font-size: 2rem;
     font-weight: bold;
-    color: #047B00;
+    color: #698a55;
     margin-bottom: 20px;
 }
 
 /* CONTAINER */
 .buyer-dashboard-container {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
     width: 80%;
+    margin-top: 2em;
     margin-bottom: 2em;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
+
+    /* CURRENT AUCTION */
+    .buyer-dashboard-container.current {
+        border: 2px solid #698a55;
+        background-color: #f9f9f9;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
 
 /* BOX */
 .buyer-dashboard-box {
-    background: #fff;
-    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+    font-weight: 600;
+    color: #333;
+    border-right: 1px solid #eee;
+    transition: all 0.3s ease;
 }
+
+    .buyer-dashboard-box:last-child {
+        border-right: none;
+    }
 
 /* DESCRIPTION */
 .buyer-dashboard-box-description {
     grid-column: span 2;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0.5em;
 }
 
 /* PRODUCT */
 .buyer-dashboard-product-name {
     font-size: 1.2rem;
-    margin-bottom: 10px;
+    color: #333;
+    margin-bottom: 0.5em;
 }
 
 .buyer-dashboard-description {
     color: #555;
+    font-weight: 400;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    padding: 0 0.5em;
 }
 
 /* PRICE */
 .buyer-dashboard-box-price {
-    display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .buyer-dashboard-price-row {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
 }
 
@@ -120,14 +163,19 @@
 
 /* BUY BUTTON */
 .buyer-dashboard-buy-btn {
-    padding: 8px 18px;
-    background: #007bff;
+    padding: 10px 20px;
+    background-color: #698a55;
+    color: white;
     border: none;
-    color: #fff;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
+    transition: all 0.3s ease;
 }
+
+    .buyer-dashboard-buy-btn:hover {
+        background-color: #9eba8d;
+    }
 
     .buyer-dashboard-buy-btn:disabled {
         cursor: not-allowed;
@@ -139,18 +187,25 @@
     margin-top: 10px;
     padding: 6px;
     width: 100%;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
 /* PROGRESS BAR */
 .buyer-dashboard-progress-container {
     grid-column: span 4;
+    position: absolute;
+    bottom: 0;
+    left: 0;
     height: 12px;
-    background-color: #ddd;
-    border-radius: 10px;
+    width: 100%;
+    background-color: #eee;
+    border-radius: 0 0 12px 12px;
     overflow: hidden;
 }
 
 .buyer-dashboard-progress-bar {
     height: 100%;
     transition: width 1s linear, background-color 1s linear;
+    border-radius: 0 0 0 12px;
 }
