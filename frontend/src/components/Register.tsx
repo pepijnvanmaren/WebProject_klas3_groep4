@@ -21,7 +21,7 @@ function Register() {
                 ? "https://localhost:7020/api/kopers"
                 : rol === "aanvoerder"
                     ? "https://localhost:7020/api/aanvoerders"
-                    : "https://localhost:7020/api/veilingmeester"
+                    : "https://localhost:7020/api/veilingmeesters"
 
         let body: any = {
             UserName: naam,
@@ -41,7 +41,7 @@ function Register() {
             body.Adres = "";
             body.BedrijfTelefoonnummer = "";
             body.BedrijfEmail = "";
-        } else if (rol === "veiligmeester") {
+        } else if (rol === "veilingmeester") {
             body.VeilingVestiging = "";
         }
 

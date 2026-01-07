@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using WebProject_klas3_groep4.models;
+using System.Threading.Tasks;
 using WebProject_klas3_groep4.DTO;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class VerkochteProductenController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -18,64 +17,114 @@ namespace WebProject_klas3_groep4.Controllers
         {
             _context = context;
         }
-        // GET ALL
+        // GET 
         [HttpGet]
-        public ActionResult<IEnumerable<VerkochteProductenOutputDto>> GetVerkochteProducten()
+        public async Task<ActionResult> GetVerkochteProducten()
         {
-            var verkochteProducten = _context.VerkochteProducten
-                .Include(v => v.Product)
-                .Include(v => v.Koper)
-                .Select(v => new VerkochteProductenOutputDto
+            var result = await _context.VerkochteProducten
+                .FromSqlRaw("SELECT * FROM VerkochteProducten")
+                .ToListAsync();
+
+            return Ok(result);
+        }
+        [HttpGet("GetallProducten/{id:int}")]
+        public async Task<ActionResult> GetallProducten(int id)
+        {
+            var result = await _context.VerkochteProducten
+                .FromSqlRaw(
+                    "SELECT * FROM VerkochteProducten WHERE ProductId = @ID",
+                    new SqlParameter("@ID", id)
+                )
+                .Select(vp => new
                 {
-                    ID = v.ID,
-                    HoeveelHeid = v.HoeveelHeid,
-                    VerkochtePrijs = v.VerkochtePrijs,
-                    ProductId = v.ProductId,
-                    KoperId = v.KoperId
+                    Result = vp.HoeveelHeid != 0
+                     ? vp.VerkochtePrijs / vp.HoeveelHeid
+                     : 0,
+                    vp.VerkoopDatum
                 })
-                .ToList();
+                .ToListAsync();
 
-            return Ok(verkochteProducten);
+            return Ok(result);
         }
 
-
-        // CREATE
-        [HttpPost]
-        public async Task<ActionResult<VerkochteProductenOutputDto>> PostVeiling(
-        [FromBody] VerkochteProductenCreateDto dto)
+        [HttpGet("GetallAllProducten")]
+        public async Task<ActionResult> GetallAllProducten()
         {
-            if (dto == null)
-                return BadRequest("Invalid data");
+            var result = await _context.VerkochteProducten
+                .FromSqlRaw(
+                    "SELECT * FROM VerkochteProducten"
+                )
+                .Select(vp => new
+                {
+                    Result = vp.HoeveelHeid != 0
+                     ? vp.VerkochtePrijs / vp.HoeveelHeid
+                     : 0,
+                    vp.VerkoopDatum
+                })
+                .ToListAsync();
 
-            var koperIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (!int.TryParse(koperIdClaim, out int koperId))
-                return Unauthorized("Ongeldige gebruiker");
-
-            var entity = new VerkochteProdcutenDB
-            {
-                HoeveelHeid = dto.HoeveelHeid,
-                VerkochtePrijs = dto.VerkochtePrijs,
-                ProductId = dto.ProductId,
-                KoperId = koperId
-            };
-
-            _context.VerkochteProducten.Add(entity);
-            await _context.SaveChangesAsync();
-
-            var outDto = new VerkochteProductenOutputDto
-            {
-                ID = entity.ID,
-                HoeveelHeid = entity.HoeveelHeid,
-                VerkochtePrijs = entity.VerkochtePrijs,
-                ProductId = entity.ProductId,
-                KoperId = entity.KoperId
-            };
-
-            return CreatedAtAction(nameof(GetVerkochteProducten),
-                new { id = entity.ID }, outDto);
+            return Ok(result);
         }
 
+        [HttpGet("GetallGemiddeldeProduct/{id:int}")]
+        public async Task<ActionResult> GetallGemiddeldeProduct(int id)
+        {
+            var result = await _context.Set<GemiddeldeAllesDto>()
+               .FromSqlRaw(@"SELECT 
+                            SUM(VerkochtePrijs) AS VerkochtePrijs,
+                            SUM(HoeveelHeid) AS HoeveelHeid
+                            FROM VerkochteProducten
+                            WHERE ProductId = @ID",
+                            new SqlParameter("@ID", id)
+                )
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            if (result == null || result.HoeveelHeid == 0)
+            {
+                return Ok(0);
+            }
+
+            var prijsPerAantal = result.VerkochtePrijs / result.HoeveelHeid;
+
+            return Ok(Math.Round(prijsPerAantal, 2));
+        }
+
+        [HttpGet("GetallGemiddeldeAlles")]
+        public async Task<ActionResult> GetallGemiddeldeAlles()
+        {
+            var result = await _context.Set<GemiddeldeAllesDto>()
+                .FromSqlRaw(@"SELECT 
+                            SUM(VerkochtePrijs) AS VerkochtePrijs,
+                            SUM(HoeveelHeid) AS HoeveelHeid
+                            FROM VerkochteProducten")
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            if (result == null || result.HoeveelHeid == 0)
+            {
+                return Ok(0);
+            }
+
+            var prijsPerAantal = result.VerkochtePrijs / result.HoeveelHeid;
+
+            return Ok(Math.Round(prijsPerAantal, 2));
+        }
+        // CREATE
+        [HttpPost("{hvl:int},{vpp:double},{Pid:int},{Kid:int}")]
+        public async Task<ActionResult> PostVeiling(int hvl, double vpp, int Pid, int Kid)
+        {
+            await _context.Database.ExecuteSqlRawAsync(@"INSERT INTO VerkochteProducten (HoeveelHeid, VerkochtePrijs, VerkoopDatum, ProductId, KoperId) VALUES (@hvl, @vpp, @datum, @pid, @kid)",
+                new SqlParameter("@hvl", hvl),
+                new SqlParameter("@vpp", vpp),
+                new SqlParameter("@datum", DateTime.Now),
+                new SqlParameter("@pid", Pid),
+                new SqlParameter("@kid", Kid)
+            );
+
+            return Ok();
+        }
+        // DELETE
         [HttpDelete("{ID:int}")]
         public async Task<ActionResult> DeleteVerkochteProducten(int ID)
         {
