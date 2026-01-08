@@ -154,7 +154,7 @@ function VeilingTonen() {
                         Terug naar Dashboard
                     </button>
                     <button onClick={() => navigate('/VeilingPlaatsen')} className="btn-add">
-                        + Nieuw Product
+                        + Nieuwe Veiling
                     </button>
                 </div>
 
@@ -167,7 +167,7 @@ function VeilingTonen() {
                             onClick={() => navigate('/VeilingPlaatsen')}
                             className="btn-add-first"
                         >
-                            Voeg je eerste product toe
+                            Voeg je eerste Veiling toe
                         </button>
                     </div>
                 ) : (

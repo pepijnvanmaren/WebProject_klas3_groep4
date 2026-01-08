@@ -103,10 +103,10 @@ function Login() {
             </div>
 
             <div className="givePassword">
-                <p>Password</p>
+                <p>Wachtwoord</p>
                 <input
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="Voer je wachtwoord in"
                     className="input-field-Email"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -118,13 +118,13 @@ function Login() {
                 onClick={handleLogin}
                 disabled={loading}
             >
-                {loading ? "Please wait..." : "Login"}
+                {loading ? "Moment geduld..." : "Inloggen"}
             </button>
 
             <div className="signup-section">
-                <p>Don't have an account?</p>
+                <p>Heb je geen account?</p>
                 <Link to="/registreren" className="signup-link">
-                    Create account
+                    Maak account aan
                 </Link>
             </div>
         </div>
