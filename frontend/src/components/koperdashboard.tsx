@@ -412,7 +412,7 @@ function Index() {
     };
 
     const startPauseCountdown = () => {
-        setPauseCountdown(30);
+        setPauseCountdown(10);
         setIsPaused(true);
     };
 
