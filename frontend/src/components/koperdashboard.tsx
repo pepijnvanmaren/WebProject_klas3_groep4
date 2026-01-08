@@ -49,7 +49,7 @@ function Index() {
     const [isRunning, setIsRunning] = useState(false);
     const [purchased, setPurchased] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
-    const [pauseCountdown, setPauseCountdown] = useState(30);
+    const [pauseCountdown, setPauseCountdown] = useState(10);
     const [error, setError] = useState<string | null>(null);
 
     const [aantal, setAantal] = useState<number>(1);
@@ -159,8 +159,13 @@ function Index() {
 
     const fetchVeilingStatus = async () => {
         try {
+            const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7020/api/veiling-process/status", {
-                credentials: "include"
+                method: "Get",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             });
             if (!response.ok) throw new Error("Kon veiling status niet ophalen");
 
@@ -300,6 +305,7 @@ function Index() {
     };
 
     const handleBuy = async () => {
+        let remainingAmount = 0;
         if (!isLoggedIn) return navigate("/inloggen");
         if (!veilingStatus?.huidigProduct) return;
 
@@ -338,7 +344,7 @@ function Index() {
                 })
             });
 
-            const remainingAmount = product.hoeveelheid - aantal;
+            remainingAmount = product.hoeveelheid - aantal;
 
             if (remainingAmount > 0) {
                 await fetch("https://localhost:7020/api/veiling-process/herstart", {
@@ -363,9 +369,12 @@ function Index() {
             alert(err.message);
         } finally {
             setLoading(false);
+            if (remainingAmount > 0) {
+                startPauseCountdown();
+                handleStartVeiling();
+            }
         }
     };
-
 
     const handleVolgendProduct = async () => {
         try {
