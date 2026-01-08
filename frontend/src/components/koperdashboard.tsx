@@ -79,7 +79,6 @@ function Index() {
             setGemiddeldePrijsAlles(data);
         } catch (error) {
             console.error(error);
-            alert("Er is iets verkeerd gegaan");
         }
     };
     //Gemdeddilde prijs van huidige product bij elkaar
@@ -101,7 +100,6 @@ function Index() {
             setGemiddeldePrijsHuidige(data);
         } catch (error) {
             console.error(error);
-            alert("Er is iets verkeerd gegaan");
         }
     };
 
@@ -119,7 +117,6 @@ function Index() {
             setAlleProductGeschiedenis(data);
         } catch (error) {
             console.error(error);
-            alert("Er is iets verkeerd gegaan");
         }
     };
 
@@ -142,7 +139,6 @@ function Index() {
             setProductGeschiedenis(data);
         } catch (error) {
             console.error(error);
-            alert("Er is iets verkeerd gegaan");
         }
     };
 
@@ -338,7 +334,7 @@ function Index() {
                 body: JSON.stringify({
                     ProductId: product.id,
                     Aantal: aantal,
-                    Prijs: priceForInput
+                    Prijs: currentPrice
                 })
             });
 
@@ -609,7 +605,18 @@ function Index() {
                                 value={aantal}
                                 min={1}
                                 max={veilingStatus.huidigProduct.hoeveelheid}
-                                onChange={(e) => setAantal(Number(e.target.value))}
+                                onChange={(e) => {
+                                    let value = Number(e.target.value);
+
+                                    if (!veilingStatus?.huidigProduct) return;
+
+                                    if (value < 1) value = 1;
+                                    if (value > veilingStatus.huidigProduct.hoeveelheid) {
+                                        value = veilingStatus.huidigProduct.hoeveelheid;
+                                    }
+
+                                    setAantal(value);
+                                }}
                             />
                         </div>
 
