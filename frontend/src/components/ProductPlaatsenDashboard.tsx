@@ -250,7 +250,7 @@ function SellerDashboard() {
                     </label>
 
                     <label>
-                        <h2>Minimale prijs (voor totale hoeveelheid) *</h2>
+                        <h2>Minimale prijs (Prijs per stuk) *</h2>
                         <input
                             className="pp_input-container"
                             type="number"
