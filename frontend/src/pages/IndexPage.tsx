@@ -7,7 +7,7 @@ export default function IndexPage() {
     return (
         <>
             <Navbar />
-            <Index />
+
             <Footer />
         </>
     );

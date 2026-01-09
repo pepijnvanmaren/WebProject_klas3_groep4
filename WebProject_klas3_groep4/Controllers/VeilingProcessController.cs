@@ -152,11 +152,18 @@ namespace WebProject_klas3_groep4.Controllers
             if (product == null)
                 return NotFound("Product niet actief in veiling");
 
+            if (dto.Aantal < 1)
+                return BadRequest("Aantal moet minimaal 1 zijn.");
+
+            if (dto.Aantal > product.Hoeveelheid)
+                return BadRequest("Aantal is groter dan beschikbare voorraad.");
+
             var koperIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (!int.TryParse(koperIdClaim, out int koperId))
                 return Unauthorized();
 
             // Markeer als gekocht maar laat status Actief - we gaan in pauze
+            product.Hoeveelheid -= dto.Aantal;
             product.IsGekocht = true;
             product.VerkochtOp = DateTime.UtcNow;
             product.KoperID = koperId;
@@ -294,8 +301,10 @@ namespace WebProject_klas3_groep4.Controllers
     public class KoopProductDto
     {
         public int ProductId { get; set; }
+        public int Aantal { get; set; }
         public double Prijs { get; set; }
     }
+
     public class HerstartProductDto
     {
         public int ProductId { get; set; }
