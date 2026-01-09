@@ -9,8 +9,8 @@ namespace WebProject_klas3_groep4
         [Key]
         public int ID { get; set; }
 
-        public String StarTijd { get; set; }
-        public String StartDatum { get; set; }
+        public DateTime? StartTijdUtc { get; set; }
+        public int DuurInSeconden { get; set; }
         public int AantalProducten { get; set; }
         public String KlokLocatie { get; set; }
         public String HuidigeSituatieVanVeiling { get; set; }

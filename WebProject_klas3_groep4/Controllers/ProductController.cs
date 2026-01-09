@@ -46,7 +46,7 @@ namespace WebProject_klas3_groep4.Controllers
                     AanvoerderId = p.AanvoerderId,
                     AanvoerderNaam = p.Aanvoerder != null ? p.Aanvoerder.UserName : null,
                     VeilingId = p.VeilingId,
-                    VeilingNaam = p.Veiling != null ? p.Veiling.StarTijd : null
+                    VeilingNaam = p.Veiling != null ? p.Veiling.StartTijdUtc.ToString() : null
                 })
                 .ToListAsync();
 
@@ -83,7 +83,7 @@ namespace WebProject_klas3_groep4.Controllers
                 AanvoerderId = p.AanvoerderId,
                 AanvoerderNaam = p.Aanvoerder != null ? p.Aanvoerder.UserName : null,
                 VeilingId = p.VeilingId,
-                VeilingNaam = p.Veiling != null ? p.Veiling.StarTijd : null
+                VeilingNaam = p.Veiling != null ? p.Veiling.StartTijdUtc.ToString() : null
             };
 
             return Ok(dto);

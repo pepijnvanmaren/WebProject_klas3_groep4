@@ -116,6 +116,32 @@ function VeilingTonen() {
         }
     };
 
+    const handleStartVeiling = async (id: number) => {
+        try {
+            const token = localStorage.getItem("token");
+            const resp = await fetch(`https://localhost:7020/api/veiling/${id}/start`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
+
+            if (!resp.ok) {
+                const errorText = await resp.text();
+                throw new Error(errorText || "Kon veiling niet starten");
+            }
+
+            const data = await resp.json();
+            console.log("Veiling gestart:", data);
+
+            alert("Veiling gestart!");
+        } catch (err: any) {
+            alert(err.message || "Er is een fout opgetreden");
+        }
+    };
+
+
     if (loading) {
         return (
             <div className="product-dashboard">
@@ -203,6 +229,13 @@ function VeilingTonen() {
                                     </div>
 
                                     <div className="product-actions">
+                                        <button
+                                            onClick={() => handleStartVeiling(veiling.id)}
+                                            className="btn-start"
+                                            disabled={veiling.huidigeSituatieVanVeiling === "Gestart"}
+                                        >
+                                            {veiling.huidigeSituatieVanVeiling === "Gestart" ? "Gestart" : "Veiling Starten"}
+                                        </button>
                                         <button
                                             onClick={() => handleDeleteVeiling(veiling.id)}
                                             className="btn-delete"

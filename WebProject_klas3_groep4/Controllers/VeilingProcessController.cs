@@ -88,40 +88,67 @@ namespace WebProject_klas3_groep4.Controllers
         [HttpGet("status")]
         public async Task<IActionResult> GetVeilingStatus()
         {
-            var actiefProduct = await _context.Producten
-                .FirstOrDefaultAsync(p => p.Status == VeilingStatus.Actief);
-
-            var volgendProduct = await _context.Producten
-                .Where(p => p.Status == VeilingStatus.InWachtrij)
-                .OrderBy(p => p.VeilingVolgorde)
-                .FirstOrDefaultAsync();
-
-            var aantalInWachtrij = await _context.Producten
-                .CountAsync(p => p.Status == VeilingStatus.InWachtrij);
-
-            bool isInPauze = false;
-            int pauzeRemainingSeconds = 0;
-            const int PauzeTijd = 30; // seconden
-
-            if (actiefProduct != null && actiefProduct.IsGekocht && actiefProduct.VerkochtOp.HasValue)
+            try
             {
-                isInPauze = true;
-                var elapsed = (int)(DateTime.UtcNow - actiefProduct.VerkochtOp.Value).TotalSeconds;
-                pauzeRemainingSeconds = Math.Max(0, PauzeTijd - elapsed);
-                // If pauze has passed, we still let front-end call /volgende to transition.
+                //Gebruik van AsNoTracking voor memory overload
+                var huidigProduct = await _context.Producten
+                    .AsNoTracking()
+                    .Where(p => p.Status == VeilingStatus.Actief)
+                    .OrderBy(p => p.VeilingVolgorde)
+                    .Select(p => new
+                    {
+                        p.ID,
+                        p.Naam,
+                        p.Foto,
+                        p.Beschrijving,
+                        p.Hoeveelheid,
+                        p.MinimalePrijs
+                    })
+                    .FirstOrDefaultAsync();
+
+                var volgendProduct = await _context.Producten
+                    .AsNoTracking()
+                    .Where(p => p.Status == 0) // in wachtrij
+                    .OrderBy(p => p.VeilingVolgorde)
+                    .Select(p => new
+                    {
+                        p.ID,
+                        p.Naam,
+                        p.Foto,
+                        p.Beschrijving,
+                        p.Hoeveelheid,
+                        p.MinimalePrijs
+                    })
+                    .FirstOrDefaultAsync();
+
+                // Count in wachtrij
+                var aantalInWachtrij = await _context.Producten
+                    .AsNoTracking()
+                    .CountAsync(p => p.Status == 0);
+
+                // Optional: simple paused logic
+                bool isInPauze = false;
+                int pauzeRemainingSeconds = 0;
+                // implement your pause logic if needed
+
+                return Ok(new
+                {
+                    isActief = huidigProduct != null,
+                    huidigProduct,
+                    volgendProduct,
+                    aantalInWachtrij,
+                    isInPauze,
+                    pauzeRemainingSeconds
+                });
             }
-
-            return Ok(new
+            catch (Exception ex)
             {
-                isActief = actiefProduct != null,
-                huidigProduct = actiefProduct != null ? MapToOutputDto(actiefProduct) : null,
-                volgendProduct = volgendProduct != null ? MapToOutputDto(volgendProduct) : null,
-                aantalInWachtrij = aantalInWachtrij,
-                volgorde = actiefProduct?.VeilingVolgorde,
-                isInPauze = isInPauze,
-                pauzeRemainingSeconds = pauzeRemainingSeconds
-            });
+                // Log exception
+                Console.WriteLine(ex);
+                return StatusCode(500, "Er is iets misgegaan bij ophalen van de veiling status");
+            }
         }
+
 
         // ========================================
         // GET PRODUCT QUEUE
