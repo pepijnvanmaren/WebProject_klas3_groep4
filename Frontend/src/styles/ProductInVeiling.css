@@ -1,0 +1,152 @@
+.piv {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== HEADER ===== */
+
+.piv__header {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.piv__header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+    .piv__header-content h1 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .piv__header-content p {
+        color: #666;
+    }
+
+/* ===== MAIN ===== */
+
+.piv__main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* ===== CONTROLS ===== */
+
+.piv__controls {
+    margin-bottom: 2rem;
+}
+
+.piv__btn-back {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .piv__btn-back:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+/* ===== GRID ===== */
+
+.piv__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+/* ===== CARD ===== */
+
+.piv__card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+    .piv__card:hover {
+        transform: translateY(-5px);
+    }
+
+/* ===== IMAGE ===== */
+
+.piv__image-container {
+    height: 200px;
+    background: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.piv__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.piv__no-image {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* ===== CONTENT ===== */
+
+.piv__content {
+    padding: 1.5rem;
+}
+
+.piv__name {
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.piv__description {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+}
+
+/* ===== ACTIONS ===== */
+
+.piv__btn-delete {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background: #dc3545;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .piv__btn-delete:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+    }
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+    .piv__main {
+        padding: 1rem;
+    }
+
+    .piv__header-content h1 {
+        font-size: 1.5rem;
+    }
+}
