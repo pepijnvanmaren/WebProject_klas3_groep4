@@ -173,7 +173,10 @@ function VeilingTonen() {
                 ) : (
                     <div className="products-grid">
                         {veilingen.map((veiling) => (
-                            <div key={veiling.id} className="product-card">
+                            <div key={veiling.id} className="product-card"
+                                onClick={() => navigate(`/veiling/${veiling.id}`)}
+                                style={{ cursor: "pointer" }}
+                            >
                                 <div className="product-content">
                                     <p className="product-description">
                                         {veiling.bechrijving || "Geen beschrijving"}
@@ -204,7 +207,10 @@ function VeilingTonen() {
 
                                     <div className="product-actions">
                                         <button
-                                            onClick={() => handleDeleteVeiling(veiling.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteVeiling(veiling.id);
+                                            }}
                                             className="btn-delete"
                                         >
                                             Verwijderen
