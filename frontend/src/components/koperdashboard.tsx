@@ -37,7 +37,7 @@ const ProductImage = ({ product }: { product: Product }) =>
     product?.foto ? (
         <img src={getImageSrc(product.foto)} alt={product.naam} className="Roses" />
     ) : (
-        <div className="no-image">No image available</div>
+        <div className="no-image">Geen afbeelding gevonden</div>
     );
 
 function Index() {
@@ -65,7 +65,7 @@ function Index() {
     const [gemiddeldePrijsAlles, setGemiddeldePrijsAlles] = useState(0);
     const [gemiddeldePrijsHuidige, setGemiddeldePrijsHuidige] = useState(0);
 
-    //Gemdeddilde prijs van alle producten bij elkaar 
+    //Gemiddelde prijs van alle producten bij elkaar 
     const fetchAlleData = async () => {
         try {
             const response = await fetch("https://localhost:7020/api/VerkochteProducten/GetallGemiddeldeAlles"
@@ -81,7 +81,7 @@ function Index() {
             console.error(error);
         }
     };
-    //Gemdeddilde prijs van huidige product bij elkaar
+    //Gemiddelde prijs van huidige product bij elkaar
     const fetchData = async () => {
         if (!veilingStatus?.huidigProduct) {
             throw new Error("Kon geen product vinden");
@@ -120,7 +120,7 @@ function Index() {
         }
     };
 
-    //Gemdeddilde prijs van huidige product bij elkaar
+    //Gemiddelde prijs van huidige product bij elkaar
     const fetchProductGeschiedenis = async () => {
         if (!veilingStatus?.huidigProduct) {
             throw new Error("Kon geen product vinden");
@@ -195,7 +195,7 @@ function Index() {
             }
         } catch (error: any) {
             console.error(error);
-            setError(error?.message ?? "Unknown error");
+            setError(error?.message ?? "Onbekende error");
         }
     };
 
