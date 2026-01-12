@@ -168,7 +168,10 @@ function ProductInVeiling() {
 
                 <div className="piv__grid">
                     {products.map((product) => (
-                        <div key={product.id} className="piv__card">
+                        <div key={product.id} className="piv__card"
+                            onClick={() => navigate(`/product/${product.id}`)}
+                            style={{ cursor: "pointer" }}
+                            >
                             <div className="piv__image-container">
                                 {product.foto ? (
                                     <img
