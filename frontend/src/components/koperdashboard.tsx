@@ -147,7 +147,9 @@ function Index() {
         if (!veilingStatus?.huidigProduct) return;
 
         fetchData();
+        fetchAlleData();
         fetchProductGeschiedenis();
+        fetchAlleGeschiedenis();
     }, [veilingStatus?.huidigProduct?.id]);
 
     useEffect(() => {
@@ -595,6 +597,10 @@ function Index() {
                             <p className="description">{veilingStatus.huidigProduct.beschrijving}</p>
                         </div>
                         <div className="box">{veilingStatus.huidigProduct.hoeveelheid} stuks</div>
+                        <div className="box">{veilingStatus.huidigProduct.oogstdatum} geoogst</div>
+                        <div className="box">{veilingStatus.huidigProduct.potmaat} cm potmaat</div>
+                        <div className="box">{veilingStatus.huidigProduct.gewicht} kg gewicht</div>
+                        <div className="box">{veilingStatus.huidigProduct.steellengte} cm steellengte</div>
                         <div className="box box-price">
                             <div className="price-row">
                                 <span className="price">EUR {currentPrice}</span>
