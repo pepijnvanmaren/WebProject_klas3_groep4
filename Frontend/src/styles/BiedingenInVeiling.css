@@ -1,0 +1,111 @@
+.biv {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== HEADER ===== */
+
+.biv__header {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.biv__header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+    .biv__header-content h1 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .biv__header-content p {
+        color: #666;
+    }
+
+/* ===== MAIN ===== */
+
+.biv__main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* ===== CONTROLS ===== */
+
+.biv__controls {
+    margin-bottom: 2rem;
+}
+
+.biv__btn-back {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .biv__btn-back:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+/* ===== GRID ===== */
+
+.biv__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+/* ===== CARD ===== */
+
+.biv__card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+    .biv__card:hover {
+        transform: translateY(-5px);
+    }
+/* ===== CONTENT ===== */
+
+.biv__content {
+    padding: 1.5rem;
+}
+
+.biv__name {
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.biv__description {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+    .biv__main {
+        padding: 1rem;
+    }
+
+    .biv__header-content h1 {
+        font-size: 1.5rem;
+    }
+}
