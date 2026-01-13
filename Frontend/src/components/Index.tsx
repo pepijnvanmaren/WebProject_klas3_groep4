@@ -151,7 +151,7 @@ function Index() {
 
             {/* Current Product */}
             <h2 className="page-title" ref={currentProductTitleRef}>
-                Houdig product
+                Current product
             </h2>
 
             <div className="container">
@@ -193,10 +193,10 @@ function Index() {
             </div>
 
             {/* Next Product */}
-            <h2 className="page-title">Volgend product</h2>
+            <h2 className="page-title">volgend product</h2>
             <div className="container">
                 <div className="box">
-                    {nextProduct ? <ProductImage product={nextProduct} /> : "Geen afbeelding gevonden"}
+                    {nextProduct ? <ProductImage product={nextProduct} /> : "No next product"}
                 </div>
                 <div className="box box-description">
                     <h2 className="product-name">{nextProduct?.naam}</h2>
