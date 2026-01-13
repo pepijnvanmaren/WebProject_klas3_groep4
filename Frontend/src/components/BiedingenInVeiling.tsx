@@ -66,7 +66,7 @@ function BiedingenInVeiling() {
     }, [navigate, ProductId]);
 
     const handleBack = () => {
-        navigate('/VeilingTonen');
+        navigate(-1);
     };
 
 
@@ -107,7 +107,7 @@ function BiedingenInVeiling() {
             <main className="biv__main">
                 <div className="biv__controls">
                     <button className="biv__btn-back" onClick={(handleBack)}>
-                        Terug naar veilingen
+                        Terug naar producten in veiling
                     </button>
                 </div>
 
