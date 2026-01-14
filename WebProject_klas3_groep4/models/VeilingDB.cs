@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebProject_klas3_groep4.models;
 namespace WebProject_klas3_groep4
 {
+    [Index(nameof(VeilingmeesterId))]
     public class VeilingDB
     {
         [Key]
