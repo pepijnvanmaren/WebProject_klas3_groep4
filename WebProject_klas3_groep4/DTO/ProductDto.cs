@@ -47,5 +47,6 @@ namespace WebProject_klas3_groep4.DTO
         public string? AanvoerderNaam { get; set; }
         public int? VeilingId { get; set; }
         public string? VeilingNaam { get; set; }
+        public string? Productstatus { get; set; }
     }
 }

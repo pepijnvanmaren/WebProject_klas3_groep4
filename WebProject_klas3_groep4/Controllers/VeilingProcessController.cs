@@ -18,6 +18,20 @@ namespace WebProject_klas3_groep4.Controllers
             _context = context;
         }
 
+        [HttpGet("gestart-product")]
+        public async Task<IActionResult> GetGestartProduct()
+        {
+            var producten = await _context.Producten
+                .Where(p => p.productstatus == "Gestart")
+                .OrderBy(p => p.ID)
+                .ToListAsync();
+
+            return Ok(new 
+            {
+                producten
+            });
+        }
+
         // ========================================
         // START VEILING
         // ========================================

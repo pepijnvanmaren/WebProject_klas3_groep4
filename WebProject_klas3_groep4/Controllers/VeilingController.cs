@@ -238,12 +238,24 @@ namespace WebProject_klas3_groep4.Controllers
 
             await _context.SaveChangesAsync();
 
+            var producten = await _context.Producten
+                .Where(p => p.VeilingId == id)
+                .ToListAsync();
+
+            foreach (var product in producten)
+            {
+                product.productstatus = "Gestart";
+            }
+
+            await _context.SaveChangesAsync();
+
             return Ok(new
             {
                 veilingId = veiling.ID,
                 startTijdUtc = veiling.StartTijdUtc,
                 serverNow = DateTime.UtcNow,
-                duurInSeconden = veiling.DuurInSeconden
+                duurInSeconden = veiling.DuurInSeconden,
+                aantalProducten = producten.Count
             });
         }
     }

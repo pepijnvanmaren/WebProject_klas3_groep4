@@ -57,25 +57,16 @@ function Index() {
     // ======================
     const fetchVeilingStatus = async () => {
         try {
-            const response = await fetch("https://localhost:7020/api/veiling-process/status");
-            if (!response.ok) throw new Error("Kon veilingstatus niet ophalen");
+            const response = await fetch(
+                "https://localhost:7020/api/veiling-process/gestart-product"
+            );
 
-            const data: VeilingStatus = await response.json();
+            if (!response.ok) return;
 
-            // ✅ Initialiseer huidigePrijs als het ontbreekt
-            if (data.huidigProduct) {
-                const min = data.huidigProduct.minimalePrijs;
-                data.huidigProduct.huidigePrijs = min * 10; // startprijs
-            }
+            const data = await response.json();
 
-            setVeilingStatus(prev => {
-                if (prev?.huidigProduct?.id !== data.huidigProduct?.id) {
-                    setAantal(1);
-                    setPurchased(false);
-                }
-                return data;
-            });
-        } catch (err: any) {
+            setVeilingStatus(data.huidigProduct);
+        } catch (err) {
             console.error(err);
         }
     };

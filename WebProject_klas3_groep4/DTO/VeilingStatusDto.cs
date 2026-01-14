@@ -22,4 +22,13 @@ namespace WebProject_klas3_groep4.DTO
         [JsonPropertyName("aantalInWachtrij")]
         public int AantalInWachtrij { get; set; }
     }
+    public class ProductDto
+    {
+        public int Id { get; set; }
+        public string Naam { get; set; } = "";
+        public string? Foto { get; set; }
+        public string? Beschrijving { get; set; }
+        public int Hoeveelheid { get; set; }
+        public decimal MinimalePrijs { get; set; }
+    }
 }

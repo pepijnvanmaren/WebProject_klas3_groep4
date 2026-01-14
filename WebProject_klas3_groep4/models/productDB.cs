@@ -26,8 +26,7 @@ namespace WebProject_klas3_groep4.models
         public int? KoperID { get; set; }
         public double? VerkochtePrijs { get; set; }
         public bool IsGekocht { get; set; } = false;
-
-       
+        public string productstatus { get; set; } = "Niet gestart";
 
         // ===== NIEUW: Relatie naar Aanvoerder (GebruikerDB) =====
         [ForeignKey("Aanvoerder")]
