@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebProject_klas3_groep4.models;
 using WebProject_klas3_groep4.DTO;
+using WebProject_klas3_groep4.models;
 
 namespace WebProject_klas3_groep4.Controllers
 {
@@ -91,6 +92,7 @@ namespace WebProject_klas3_groep4.Controllers
         {
             try
             {
+
                 // 1. Zoek actieve veiling (koper kiest niets)
                 var actieveVeiling = await _context.Veilingen
                     .AsNoTracking()
@@ -147,23 +149,47 @@ namespace WebProject_klas3_groep4.Controllers
                     .CountAsync(p => p.VeilingId == veilingId &&
                                      p.Status == VeilingStatus.InWachtrij);
 
+                // 5. Flags initialiseren
                 bool isActief = huidigProductEntity != null;
-                bool isInPauze = false;
+                bool isInPauze = false; 
                 int remainingSeconds = 0;
                 ProductVeilingDto? huidigProduct = null;
 
-                // 5. Timer & prijsberekening huidig product
+
+                // 6. Timer & prijsberekening huidig product
                 if (huidigProductEntity != null)
                 {
-                    if (!huidigProductEntity.VeilingStartTijd.HasValue)
+                    int elapsedSeconds = 0;
+                    if (huidigProductEntity.IsGekocht)
                     {
-                        huidigProductEntity.VeilingStartTijd = DateTime.UtcNow;
-                        await _context.SaveChangesAsync();
+                            remainingSeconds = 0; // stop timer
+                    }
+                    else
+                    {
+                        elapsedSeconds =
+                            (int)(DateTime.UtcNow - huidigProductEntity.VeilingStartTijd.Value).TotalSeconds;
+
+                        remainingSeconds = Math.Max(0, VEILING_DUUR_SECONDS - elapsedSeconds);
                     }
 
-                    int elapsedSeconds = (int)(DateTime.UtcNow - huidigProductEntity.VeilingStartTijd.Value).TotalSeconds;
-                    remainingSeconds = Math.Max(0, VEILING_DUUR_SECONDS - elapsedSeconds);
-                    isInPauze = remainingSeconds <= 0;
+
+                    double prijs = isInPauze
+                    ? huidigProductEntity.VerkochtePrijs.Value / huidigProductEntity.Hoeveelheid
+                    : CalculateCurrentPrice(huidigProductEntity);
+
+
+                    if (remainingSeconds <= 0 && !huidigProductEntity.IsGekocht)
+                        {
+                            // ❌ Niet verkocht → product verlaten
+                            huidigProductEntity.Status = VeilingStatus.VerlatenVeiling;
+
+                            await _context.SaveChangesAsync();
+
+                            return await StartVolgendProduct();
+                        }
+
+                        isInPauze = remainingSeconds <= 0;
+
 
                     huidigProduct = new ProductVeilingDto
                     {
@@ -182,7 +208,7 @@ namespace WebProject_klas3_groep4.Controllers
                     );
                 }
 
-                // 6. Resultaat
+                // 7. Resultaat
                 var statusDto = new VeilingStatusDto
                 {
                     IsActief = isActief,
@@ -232,6 +258,11 @@ namespace WebProject_klas3_groep4.Controllers
             var product = await _context.Producten
                 .FirstOrDefaultAsync(p => p.ID == dto.ProductId && p.Status == VeilingStatus.Actief);
 
+            bool allesVerkocht = product.Hoeveelheid - dto.Aantal == 0;
+            double prijsPerStuk = dto.Prijs;
+            double totalePrijs = prijsPerStuk * dto.Aantal;
+
+
             if (product == null)
                 return NotFound("Product niet actief in veiling");
 
@@ -248,9 +279,11 @@ namespace WebProject_klas3_groep4.Controllers
             // Markeer als gekocht maar laat status Actief - we gaan in pauze
             product.Hoeveelheid -= dto.Aantal;
             product.IsGekocht = true;
+            product.PauzeStartTijd = DateTime.UtcNow; // nieuw veld
             product.VerkochtOp = DateTime.UtcNow;
             product.KoperID = koperId;
-            product.VerkochtePrijs = dto.Prijs;
+            product.VerkochtePrijs = totalePrijs;
+            product.IsVolledigVerkocht = allesVerkocht;
             // We zetten Status pas op Verkocht in VolgendProduct zodat frontend/pauze goed werkt
 
             await _context.SaveChangesAsync();
@@ -264,6 +297,103 @@ namespace WebProject_klas3_groep4.Controllers
                 pauzeDurationSeconds = 30
             });
         }
+
+        // ========================================
+        // START VOLGEND PRODUCT (na koop / pauze)
+        // ========================================
+        [Authorize]
+        [HttpPost("volgend-product")]
+        public async Task<IActionResult> StartVolgendProduct()
+        {
+            // 1. Actieve veiling zoeken
+            var actieveVeiling = await _context.Veilingen
+                .Where(v => v.StartTijdUtc != null &&
+                            v.HuidigeSituatieVanVeiling == "Gestart")
+                .OrderByDescending(v => v.StartTijdUtc)
+                .FirstOrDefaultAsync();
+
+            if (actieveVeiling == null)
+                return BadRequest("Geen actieve veiling");
+
+            int veilingId = actieveVeiling.ID;
+
+            // 2. Huidig actief product
+            var huidigProduct = await _context.Producten
+                .Where(p => p.VeilingId == veilingId &&
+                            p.Status == VeilingStatus.Actief)
+                .OrderBy(p => p.VeilingVolgorde)
+                .FirstOrDefaultAsync();
+
+            if (huidigProduct == null)
+                return BadRequest("Geen actief product");
+
+            // 3. Zet huidig product op Verkocht
+            if (huidigProduct.IsVolledigVerkocht)
+            {
+                // normaal gedrag
+                huidigProduct.Status = VeilingStatus.Verkocht;
+            }
+            // alleen herstarten bij PARTIËLE KOOP
+            if (huidigProduct.IsGekocht && !huidigProduct.IsVolledigVerkocht)
+            {
+                huidigProduct.IsGekocht = false;
+                huidigProduct.VerkochtOp = null;
+                huidigProduct.KoperID = null;
+                huidigProduct.VerkochtePrijs = null;
+                huidigProduct.VeilingStartTijd = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    message = "Product opnieuw gestart met resterende hoeveelheid",
+                    huidigProduct = MapToOutputDto(huidigProduct)
+                });
+            }
+
+            // anders → normaal doorgaan
+            huidigProduct.Status = VeilingStatus.Verkocht;
+
+
+
+            // 4. Zoek volgend product
+            var volgendProduct = await _context.Producten
+                .Where(p => p.VeilingId == veilingId &&
+                            p.Status == VeilingStatus.InWachtrij)
+                .OrderBy(p => p.VeilingVolgorde)
+                .FirstOrDefaultAsync();
+
+            // 5. Geen volgende producten → veiling klaar
+            if (volgendProduct == null)
+            {
+                actieveVeiling.HuidigeSituatieVanVeiling = "Afgelopen";
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    message = "Veiling is afgelopen",
+                    huidigProduct = MapToOutputDto(huidigProduct)
+                });
+            }
+
+            // 6. Start volgend product
+            volgendProduct.Status = VeilingStatus.Actief;
+            volgendProduct.VeilingStartTijd = DateTime.UtcNow;
+            volgendProduct.IsGekocht = false;
+            volgendProduct.VerkochtOp = null;
+            volgendProduct.KoperID = null;
+            volgendProduct.VerkochtePrijs = null;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Volgend product gestart",
+                vorigProduct = MapToOutputDto(huidigProduct),
+                huidigProduct = MapToOutputDto(volgendProduct)
+            });
+        }
+
 
 
         // =========================

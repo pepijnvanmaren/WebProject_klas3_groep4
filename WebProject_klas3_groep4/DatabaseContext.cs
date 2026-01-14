@@ -50,13 +50,13 @@ namespace WebProject_klas3_groep4
                 .HasOne(v => v.Product)
                 .WithMany()
                 .HasForeignKey(v => v.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<VerkochteProdcutenDB>()
                 .HasOne(v => v.Koper)
                 .WithMany()
                 .HasForeignKey(v => v.KoperId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<GemiddeldeAllesDto>().HasNoKey();
 

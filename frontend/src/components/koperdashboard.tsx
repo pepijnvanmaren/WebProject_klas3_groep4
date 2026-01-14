@@ -26,6 +26,8 @@ type VeilingStatus = {
 };
 
 const VEILING_DUUR_SECONDS = 30;
+const PAUZE_DUUR_SECONDS = 10;
+
 
 const getImageSrc = (foto?: string | null) => {
     if (!foto) return "";
@@ -51,6 +53,12 @@ function Index() {
     const [purchased, setPurchased] = useState(false);
     const [aantal, setAantal] = useState<number>(1);
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
+    const [pauzeSeconds, setPauzeSeconds] = useState<number>(0);
+    const pauzeIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const prijsPerStuk = veilingStatus?.huidigProduct?.huidigePrijs ?? 0;
+    const totalePrijs = prijsPerStuk * aantal;
+
+
 
     // ======================
     // Fetch veiling status
@@ -88,7 +96,16 @@ function Index() {
 
         const interval = setInterval(() => {
             setVeilingStatus(prev => {
-                if (!prev || !prev.huidigProduct || prev.remainingSeconds <= 0) return prev;
+                if (
+                    !prev ||
+                    !prev.huidigProduct ||
+                    prev.remainingSeconds <= 0 ||
+                    purchased ||
+                    prev.isInPauze
+                ) {
+                    return prev;
+                }
+
 
                 const newRemaining = prev.remainingSeconds - 1;
                 const min = prev.huidigProduct.minimalePrijs;
@@ -113,6 +130,30 @@ function Index() {
 
         return () => clearInterval(interval);
     }, []);
+
+    //  =========================================
+    //  volgende product wanneer timer voorbij is
+    //  =========================================
+    useEffect(() => {
+        if (
+            veilingStatus &&
+            veilingStatus.remainingSeconds === 0 &&
+            !purchased &&
+            veilingStatus.isActief
+        ) {
+            // Tijd voorbij zonder koop, start pauze
+            setPauzeSeconds(PAUZE_DUUR_SECONDS);
+
+            if (pauzeIntervalRef.current) {
+                clearInterval(pauzeIntervalRef.current);
+            }
+
+            pauzeIntervalRef.current = setInterval(() => {
+                setPauzeSeconds(prev => prev - 1);
+            }, 1000);
+        }
+    }, [veilingStatus?.remainingSeconds]);
+
 
     // ======================
     // Koop product
@@ -143,15 +184,49 @@ function Index() {
                 const msg = await response.text();
                 throw new Error(msg || "Kon product niet kopen");
             }
-
             setPurchased(true);
-            fetchVeilingStatus();
+
+            // Start pauze van 10 seconden
+            setPauzeSeconds(PAUZE_DUUR_SECONDS);
+
+            // Start aftellen
+            if (pauzeIntervalRef.current) {
+                clearInterval(pauzeIntervalRef.current);
+            }
+
+            pauzeIntervalRef.current = setInterval(() => {
+                setPauzeSeconds(prev => prev - 1);
+            }, 1000);
+
         } catch (err: any) {
             alert(err.message);
         } finally {
             setLoading(false);
         }
     };
+
+    const startVolgendProduct = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            await fetch("https://localhost:7020/api/veiling-process/volgend-product", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            // Reset states
+            setPurchased(false);
+            setPauzeSeconds(0);
+
+            // Haal nieuwe status op
+            fetchVeilingStatus();
+        } catch (err) {
+            console.error("Kon volgend product niet starten", err);
+        }
+    };
+
 
     // ======================
     // Controle login
@@ -160,6 +235,18 @@ function Index() {
         const userRole = localStorage.getItem("userRole");
         setIsLoggedIn(userRole === "Koper");
     }, []);
+
+
+    // ======================
+    // start volgende product
+    // ======================
+    useEffect(() => {
+        if (pauzeSeconds === 0 && (purchased || veilingStatus?.remainingSeconds === 0)) {
+            startVolgendProduct();
+        }
+    }, [pauzeSeconds]);
+
+
 
     // ======================
     // Render
@@ -175,13 +262,16 @@ function Index() {
 
             {veilingStatus?.isActief && veilingStatus.huidigProduct && (
                 <>
-                    <h2 className="page-title" ref={currentProductTitleRef}>
-                        {veilingStatus.isInPauze
-                            ? "Product verkocht! Volgend product over..."
-                            : "Huidig product"}
+                    <h2 className="page-title">
+                        {purchased
+                            ? "Product verkocht!"
+                            : veilingStatus.remainingSeconds === 0
+                                ? "Tijd voorbij! "
+                                : "Huidig product"}
                     </h2>
 
-                    {veilingStatus.isInPauze && (
+
+                    {purchased && pauzeSeconds > 0 && (
                         <div
                             style={{
                                 textAlign: "center",
@@ -191,9 +281,10 @@ function Index() {
                                 marginBottom: "20px"
                             }}
                         >
-                            Volgend product over {veilingStatus.remainingSeconds} seconden
+                            Volgend product over {pauzeSeconds} seconden
                         </div>
                     )}
+
 
                     <div className="container">
                         <div className="box">
@@ -207,8 +298,12 @@ function Index() {
                         <div className="box box-price">
                             <div className="price-row">
                                 <span className="price">
-                                    EUR {veilingStatus.huidigProduct.huidigePrijs?.toFixed(2)}
+                                    EUR {totalePrijs.toFixed(2)}
+                                    <div style={{ fontSize: "0.8rem", color: "#555" }}>
+                                        (€{prijsPerStuk.toFixed(2)} per stuk)
+                                    </div>
                                 </span>
+
                                 <button
                                     className="button"
                                     onClick={handleBuy}
