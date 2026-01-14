@@ -598,9 +598,11 @@ function Index() {
                         </div>
                         <div className="box">{veilingStatus.huidigProduct.hoeveelheid} stuks</div>
                         <div className="box">{veilingStatus.huidigProduct.oogstdatum} geoogst</div>
-                        <div className="box">{veilingStatus.huidigProduct.potmaat} cm potmaat</div>
-                        <div className="box">{veilingStatus.huidigProduct.gewicht} kg gewicht</div>
-                        <div className="box">{veilingStatus.huidigProduct.steellengte} cm steellengte</div>
+                        <div className="box">
+                                <p>{veilingStatus.huidigProduct.potmaat} cm potmaat</p>
+                                <p>{veilingStatus.huidigProduct.gewicht} kg gewicht</p>
+                                <p>{veilingStatus.huidigProduct.steellengte} cm steellengte</p>
+                        </div>
                         <div className="box box-price">
                             <div className="price-row">
                                 <span className="price">EUR {currentPrice}</span>
