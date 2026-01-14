@@ -160,6 +160,20 @@ function ProductInVeiling() {
             </header>
 
             <main className="piv__main">
+                {products.length === 0 ? (
+                    <div className="no-products">
+                        <div className="no-products-icon">[Geen producten]</div>
+                        <h2>Geen producten gevonden</h2>
+                        <p>Er zijn nog geen producten toegevoegd tot de veiling.</p>
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="btn-add-first"
+                        >
+                            terug
+                        </button>
+                    </div>
+                ) : (
+                    <>
                 <div className="piv__controls">
                     <button className="piv__btn-back" onClick={() => navigate("/VeilingTonen")}>
                         Terug naar veilingen
@@ -200,9 +214,14 @@ function ProductInVeiling() {
                             </div>
                         </div>
                     ))}
-                </div>
+                        </div>
+                    </>
+
+                )}
             </main>
+
         </div>
+
     );
 }
 

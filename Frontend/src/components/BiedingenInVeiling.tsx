@@ -105,6 +105,20 @@ function BiedingenInVeiling() {
             </header>
 
             <main className="biv__main">
+                {bieding.length === 0 ? (
+                    <div className="no-products">
+                        <div className="no-products-icon">[Geen bieding]</div>
+                        <h2>Geen biedingen gevonden</h2>
+                        <p>Er zijn nog geen biedingen gedaan.</p>
+                        <button
+                            className="btn-add-first"
+                            onClick={(handleBack)}
+                        >
+                            terug
+                        </button>
+                    </div>
+                ) : (
+                    <>
                 <div className="biv__controls">
                     <button className="biv__btn-back" onClick={(handleBack)}>
                         Terug naar producten in veiling
@@ -122,9 +136,14 @@ function BiedingenInVeiling() {
                             </div>
                         </div>
                     ))}
-                </div>
+                    </div>
+                    </>
+
+                )}
             </main>
+
         </div>
+
     );
 }
 
