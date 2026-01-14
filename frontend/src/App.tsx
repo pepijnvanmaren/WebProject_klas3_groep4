@@ -107,7 +107,7 @@ function App() {
                 <Route
                     path="//product/:ProductId"
                     element={
-                        <ProtectedRoute requiredRoles={["Veilingmeester"]}>
+                        <ProtectedRoute requiredRoles={["Veilingmeester", "Aanvoerder"]}>
                             <BiedingenInVeilingPage />
                         </ProtectedRoute>
                     }

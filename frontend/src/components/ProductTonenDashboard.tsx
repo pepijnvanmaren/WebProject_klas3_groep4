@@ -188,7 +188,10 @@ function ProductDashboard() {
                 ) : (
                     <div className="products-grid">
                         {products.map((product) => (
-                            <div key={product.id} className="product-card">
+                            <div key={product.id} className="product-card"
+                                onClick={() => navigate(`/product/${product.id}`)}
+                                style={{ cursor: "pointer" }}
+                            >
                                 <div className="product-image-container">
                                     {product.foto ? (
                                         <img

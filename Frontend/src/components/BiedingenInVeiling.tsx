@@ -87,7 +87,7 @@ function BiedingenInVeiling() {
                 <div className="error-container">
                     <p className="error-message">{error}</p>
                     <button onClick={handleBack} className="btn-back">
-                        Terug naar producten in veiling
+                        Terug
                     </button>
                 </div>
             </div>
@@ -107,7 +107,7 @@ function BiedingenInVeiling() {
             <main className="biv__main">
                 <div className="biv__controls">
                     <button className="biv__btn-back" onClick={(handleBack)}>
-                        Terug naar producten in veiling
+                        Terug
                     </button>
                 </div>
 
