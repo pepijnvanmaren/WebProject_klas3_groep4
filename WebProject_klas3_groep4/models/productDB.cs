@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace WebProject_klas3_groep4.models
 {
+    [Index(nameof(AanvoerderId))]
+    [Index(nameof(VeilingId))]
+
     public class productDB
     {
         [Key]
