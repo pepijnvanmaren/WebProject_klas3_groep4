@@ -119,7 +119,7 @@ function VeilingTonen() {
     const handleStartVeiling = async (id: number) => {
         try {
             const token = localStorage.getItem("token");
-            const resp = await fetch(`https://localhost:7020/api/veiling/${id}/start`, {
+            const resp = await fetch(`https://localhost:7020/api/veiling-process/${id}/start`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

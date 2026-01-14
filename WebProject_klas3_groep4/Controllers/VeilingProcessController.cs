@@ -15,78 +15,119 @@ namespace WebProject_klas3_groep4.Controllers
 
         public VeilingProcessController(DatabaseContext context)
         {
-            _context = context;
+            _context = context; 
         }
 
         // ========================================
         // START VEILING
         // ========================================
-        [HttpPost("start")]
-        public async Task<IActionResult> StartVeiling()
+        [Authorize(Roles = "Veilingmeester")]
+        [HttpPost("{veilingId:int}/start")]
+        public async Task<IActionResult> StartVeiling(int veilingId)
         {
-            // Check of er al een actieve veiling is
+            // 1. Check of veiling bestaat
+            var veiling = await _context.Veilingen.FindAsync(veilingId);
+            if (veiling == null)
+                return NotFound("Veiling niet gevonden");
+
+            if (veiling.StartTijdUtc != null)
+                return BadRequest("Veiling is al gestart");
+
+            // 2. Check of er al een actief product is binnen deze veiling
             var actieveVeiling = await _context.Producten
-                .AnyAsync(p => p.Status == VeilingStatus.Actief);
+                .AnyAsync(p => p.VeilingId == veilingId &&
+                               p.Status == VeilingStatus.Actief);
 
             if (actieveVeiling)
-                return BadRequest("Er is al een actieve veiling");
+                return BadRequest("Er is al een actieve veiling voor deze veiling");
 
-            // Haal alle producten in wachtrij op
+            // 3. Producten in wachtrij voor deze veiling
             var productenInWachtrij = await _context.Producten
-                .Where(p => p.Status == VeilingStatus.InWachtrij)
+                .Where(p => p.VeilingId == veilingId &&
+                            p.Status == VeilingStatus.InWachtrij)
                 .OrderBy(p => p.VeilingVolgorde)
                 .ToListAsync();
 
             if (!productenInWachtrij.Any())
-                return BadRequest("Geen producten in wachtrij");
+                return BadRequest("Geen producten in wachtrij voor deze veiling");
 
-            // Geef elk product een volgnummer
+            // 4. Volgorde opnieuw instellen
             int volgorde = 1;
             foreach (var product in productenInWachtrij)
             {
                 product.VeilingVolgorde = volgorde++;
             }
 
-            // Start eerste product
+            // 5. Start eerste product
             var eersteProduct = productenInWachtrij.First();
             eersteProduct.Status = VeilingStatus.Actief;
-            eersteProduct.VeilingStartTijd = DateTime.UtcNow; // ✅ zet starttijd
-            eersteProduct.IsGekocht = false; // reset flags
+            eersteProduct.VeilingStartTijd = DateTime.UtcNow;
+            eersteProduct.IsGekocht = false;
             eersteProduct.VerkochtOp = null;
             eersteProduct.KoperID = null;
             eersteProduct.VerkochtePrijs = null;
 
-            await _context.SaveChangesAsync();
+            // 6. Start veiling zelf
+            veiling.StartTijdUtc = DateTime.UtcNow;
+            veiling.HuidigeSituatieVanVeiling = "Gestart";
 
-            Console.WriteLine($"DEBUG: Veiling gestart -> {eersteProduct.Naam}, VeilingStartTijd={eersteProduct.VeilingStartTijd}");
+            await _context.SaveChangesAsync();
 
             return Ok(new
             {
                 message = "Veiling gestart",
+                veilingId = veilingId,
                 aantalProducten = productenInWachtrij.Count,
                 huidigProduct = MapToOutputDto(eersteProduct)
             });
         }
 
+
         // ========================================
-        // GET VEILING STATUS
+        // GET VEILING STATUS (actieve veiling)
         // ========================================
         [HttpGet("status")]
         public async Task<IActionResult> GetVeilingStatus()
         {
             try
             {
-                // Huidig actief product
+                // 1. Zoek actieve veiling (koper kiest niets)
+                var actieveVeiling = await _context.Veilingen
+                    .AsNoTracking()
+                    .Where(v => v.StartTijdUtc != null &&
+                                v.HuidigeSituatieVanVeiling == "Gestart")
+                    .OrderByDescending(v => v.StartTijdUtc)
+                    .FirstOrDefaultAsync();
+
+                // Geen actieve veiling → lege status
+                if (actieveVeiling == null)
+                {
+                    return Ok(new VeilingStatusDto
+                    {
+                        IsActief = false,
+                        IsInPauze = false,
+                        RemainingSeconds = 0,
+                        HuidigProduct = null,
+                        VolgendProduct = null,
+                        AantalInWachtrij = 0
+                    });
+                }
+
+                int veilingId = actieveVeiling.ID;
+
+                // 2. Huidig actief product
                 var huidigProductEntity = await _context.Producten
                     .AsNoTracking()
-                    .Where(p => p.Status == VeilingStatus.Actief)
+                    .Where(p => p.VeilingId == veilingId &&
+                                p.Status == VeilingStatus.Actief)
                     .OrderBy(p => p.VeilingVolgorde)
                     .FirstOrDefaultAsync();
 
-                // Volgend product in wachtrij
+                // 3. Volgend product in wachtrij
                 var volgendProduct = await _context.Producten
                     .AsNoTracking()
-                    .Where(p => p.Status == VeilingStatus.InWachtrij)
+                    .Where(p => p.VeilingId == veilingId &&
+                                p.Status == VeilingStatus.InWachtrij)
                     .OrderBy(p => p.VeilingVolgorde)
                     .Select(p => new ProductVeilingDto
                     {
@@ -96,20 +137,22 @@ namespace WebProject_klas3_groep4.Controllers
                         Beschrijving = p.Beschrijving,
                         Hoeveelheid = p.Hoeveelheid,
                         MinimalePrijs = p.MinimalePrijs,
-                        HuidigePrijs = p.MinimalePrijs // startprijs = min totdat actief
+                        HuidigePrijs = p.MinimalePrijs
                     })
                     .FirstOrDefaultAsync();
 
-                // Aantal producten in wachtrij
+                // 4. Aantal producten in wachtrij
                 var aantalInWachtrij = await _context.Producten
                     .AsNoTracking()
-                    .CountAsync(p => p.Status == VeilingStatus.InWachtrij);
+                    .CountAsync(p => p.VeilingId == veilingId &&
+                                     p.Status == VeilingStatus.InWachtrij);
 
                 bool isActief = huidigProductEntity != null;
                 bool isInPauze = false;
                 int remainingSeconds = 0;
                 ProductVeilingDto? huidigProduct = null;
 
+                // 5. Timer & prijsberekening huidig product
                 if (huidigProductEntity != null)
                 {
                     if (!huidigProductEntity.VeilingStartTijd.HasValue)
@@ -118,10 +161,9 @@ namespace WebProject_klas3_groep4.Controllers
                         await _context.SaveChangesAsync();
                     }
 
-                    var elapsedSeconds = (int)(DateTime.UtcNow - huidigProductEntity.VeilingStartTijd.Value).TotalSeconds;
+                    int elapsedSeconds = (int)(DateTime.UtcNow - huidigProductEntity.VeilingStartTijd.Value).TotalSeconds;
                     remainingSeconds = Math.Max(0, VEILING_DUUR_SECONDS - elapsedSeconds);
-                    if (remainingSeconds <= 0)
-                        isInPauze = true;
+                    isInPauze = remainingSeconds <= 0;
 
                     huidigProduct = new ProductVeilingDto
                     {
@@ -134,9 +176,13 @@ namespace WebProject_klas3_groep4.Controllers
                         HuidigePrijs = CalculateCurrentPrice(huidigProductEntity)
                     };
 
-                    Console.WriteLine($"DEBUG: {huidigProduct.Naam}, elapsed={elapsedSeconds}s, huidigePrijs={huidigProduct.HuidigePrijs}");
+                    Console.WriteLine(
+                        $"DEBUG: Veiling {veilingId} | {huidigProduct.Naam} | " +
+                        $"elapsed={elapsedSeconds}s | prijs={huidigProduct.HuidigePrijs}"
+                    );
                 }
 
+                // 6. Resultaat
                 var statusDto = new VeilingStatusDto
                 {
                     IsActief = isActief,
@@ -155,6 +201,7 @@ namespace WebProject_klas3_groep4.Controllers
                 return StatusCode(500, "Er is iets misgegaan bij ophalen van de veiling status");
             }
         }
+
 
         // ========================================
         // Huidige prijs berekenen
