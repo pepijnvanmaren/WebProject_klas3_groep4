@@ -174,7 +174,7 @@ namespace WebProject_klas3_groep4.Controllers
                         Hoeveelheid = huidigProductEntity.Hoeveelheid,
                         MinimalePrijs = huidigProductEntity.MinimalePrijs,
                         HuidigePrijs = CalculateCurrentPrice(huidigProductEntity)
-                    };
+                    }; 
 
                     Console.WriteLine(
                         $"DEBUG: Veiling {veilingId} | {huidigProduct.Naam} | " +
@@ -220,6 +220,49 @@ namespace WebProject_klas3_groep4.Controllers
 
             Console.WriteLine($"DEBUG: {product.Naam}, elapsed={elapsedSeconds:F2}s, progress={progress:F2}, huidigePrijs={currentPrice:F2}");
             return Math.Round(currentPrice, 2);
+        }
+
+        // ========================================
+        // KOOP PRODUCT
+        // ========================================
+        [Authorize]
+        [HttpPost("koop")]
+        public async Task<IActionResult> KoopProduct([FromBody] KoopProductDto dto)
+        {
+            var product = await _context.Producten
+                .FirstOrDefaultAsync(p => p.ID == dto.ProductId && p.Status == VeilingStatus.Actief);
+
+            if (product == null)
+                return NotFound("Product niet actief in veiling");
+
+            if (dto.Aantal < 1)
+                return BadRequest("Aantal moet minimaal 1 zijn.");
+
+            if (dto.Aantal > product.Hoeveelheid)
+                return BadRequest("Aantal is groter dan beschikbare voorraad.");
+
+            var koperIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(koperIdClaim, out int koperId))
+                return Unauthorized();
+
+            // Markeer als gekocht maar laat status Actief - we gaan in pauze
+            product.Hoeveelheid -= dto.Aantal;
+            product.IsGekocht = true;
+            product.VerkochtOp = DateTime.UtcNow;
+            product.KoperID = koperId;
+            product.VerkochtePrijs = dto.Prijs;
+            // We zetten Status pas op Verkocht in VolgendProduct zodat frontend/pauze goed werkt
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Product gekocht!",
+                product = MapToOutputDto(product),
+                koperId = koperId,
+                prijs = dto.Prijs,
+                pauzeDurationSeconds = 30
+            });
         }
 
 
@@ -268,5 +311,12 @@ namespace WebProject_klas3_groep4.Controllers
         public int Hoeveelheid { get; set; }
         public int MinimalePrijs { get; set; }
         public double HuidigePrijs { get; set; }
+    }
+
+    public class KoopProductDto
+    {
+        public int ProductId { get; set; }
+        public int Aantal { get; set; }
+        public double Prijs { get; set; }
     }
 }
