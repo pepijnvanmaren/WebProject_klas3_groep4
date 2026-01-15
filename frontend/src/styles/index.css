@@ -8,6 +8,46 @@
     width: 100%;
 }
 
+.user-welcome {
+    width: 60%;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5em 2em;
+    margin-bottom: 2em;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+    .user-welcome h1 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 0.5em;
+    }
+
+    .user-welcome p {
+        font-size: 1rem;
+        color: #555;
+    }
+
+.login-register {
+    display: flex;
+    justify-content: center;
+    gap: 1.5em;
+    margin-bottom: 2em;
+}
+
+.login-button,
+.register-button {
+    font-size: 1.1rem;
+    padding: 14px 32px;
+    min-width: 160px;
+}
+
+    .login-button:hover,
+    .register-button:hover {
+        background-color: #9eba8d;
+    }
+
 .about-us {
     width: 40%;
     margin-top: 3em;
@@ -50,7 +90,7 @@
     display: flex;
     height: 200px;
     width: 80%;
-    border: 1px solid #ccc;
+    border: 2px solid #000;
     border-radius: 12px;
     overflow: hidden;
     margin-top: 2em;
@@ -67,6 +107,7 @@
     color: #333;
     transition: all 0.3s ease;
     border-right: 1px solid #eee;
+    flex-direction: column;
 }
 
     .box:last-child {
@@ -79,7 +120,7 @@
 
 .button {
     padding: 10px 20px;
-    background-color: #698a55;
+    background-color: #047B00;
     color: white;
     border: none;
     border-radius: 8px;
@@ -95,15 +136,14 @@
 .page-title {
     width: 80%;
     text-align: left;
-    margin-left: 2em;
-    margin-right: 0;
+    padding-left: 3em;
     margin-bottom: -1em;
     margin-top: 1em;
 }
 
 .Roses {
-    height: 10em;
-    width: 10em;
+    max-height: 100%;
+    max-width: 100%;
 }
 
     .Roses:hover {
@@ -167,7 +207,53 @@
     background-color: #f9f9f9;
 }
 
-.user-welcome {
-    margin-top: 1.5em
+.reviews-section {
+    width: 80%;
+    text-align: center;
+    margin: 4em 0 2em 0;
+}
 
+    .reviews-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1em;
+        color: #333;
+    }
+
+.reviews-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2em;
+}
+
+.review-card {
+    background-color: #fff;
+    padding: 1.5em 2em;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    border: 2px solid #000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .review-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+.review-text {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1em;
+}
+
+.review-name {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5em;
+}
+
+.review-rating {
+    color: #f5c518;
+    font-size: 1.1rem;
 }
