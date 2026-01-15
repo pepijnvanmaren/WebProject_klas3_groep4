@@ -66,6 +66,11 @@ function Index() {
     const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
     const [pauzeSeconds, setPauzeSeconds] = useState<number>(0);
     const pauzeIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const [priceHistoryExpanded, setPriceHistoryExpanded] = useState(false);
+    const [productGeschiedenis, setProductGeschiedenis] = useState([]);
+    const [alleProductGeschiedenis, setAlleProductGeschiedenis] = useState([]);
+    const [gemiddeldePrijsAlles, setGemiddeldePrijsAlles] = useState(0);
+    const [gemiddeldePrijsHuidige, setGemiddeldePrijsHuidige] = useState(0);
     const prijsPerStuk = veilingStatus?.huidigProduct?.huidigePrijs ?? 0;
     const totalePrijs = prijsPerStuk * aantal;
 
@@ -163,6 +168,9 @@ function Index() {
         fetchAlleGeschiedenis();
     }, []);
 
+    // ======================
+    // fetch veiling status
+    // ======================
     const fetchVeilingStatus = async () => {
         try {
             const response = await fetch("https://localhost:7020/api/veiling-process/status");
@@ -449,42 +457,7 @@ function Index() {
                 </div>
             )}
 
-            <div style={{
-                position: 'fixed',
-                top: '20vh',
-                right: '20px',
-                zIndex: 1000,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px'
-            }}>
-                <button
-                    onClick={veilingStatus?.isActief ? handleStopVeiling : handleStartVeiling}
-                    disabled={loading}
-                    style={{
-                        padding: '10px 20px',
-                        backgroundColor: veilingStatus?.isActief ? '#dc3545' : '#047B00',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        fontWeight: 'bold'
-                    }}
-                >
-                    {loading ? "Bezig..." : veilingStatus?.isActief ? "Stop Veiling" : "Start Veiling"}
-                </button>
-                {veilingStatus?.isActief && (
-                    <div style={{
-                        padding: '10px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        borderRadius: '5px',
-                        fontSize: '14px'
-                    }}>
-                        <strong>Status:</strong> Actief<br />
-                        <strong>In wachtrij:</strong> {veilingStatus.aantalInWachtrij}
-                    </div>
-                )}
-            </div>
+            
             {!veilingStatus?.isActief && (
                 <div style={{ textAlign: "center", padding: "50px" }}>
                     <h2>Er is momenteel geen actieve veiling</h2>
