@@ -292,6 +292,19 @@ function Index() {
                 const msg = await response.text();
                 throw new Error(msg || "Kon product niet kopen");
             }
+            await fetch("https://localhost:7020/api/VerkochteProducten", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    ProductId: product.id,
+                    Aantal: aantal,
+                    Prijs: totalePrijs
+                })
+            });
+
             setPurchased(true);
 
             // Start pauze van 10 seconden

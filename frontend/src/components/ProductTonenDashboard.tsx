@@ -246,7 +246,10 @@ function ProductDashboard() {
 
                                     <div className="product-actions">
                                         <button
-                                            onClick={() => handleDeleteProduct(product.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteProduct(product.id)
+                                            }}
                                             className="btn-delete"
                                         >
                                             Verwijderen

@@ -111,7 +111,7 @@ namespace WebProject_klas3_groep4.Controllers
                         RemainingSeconds = 0,
                         HuidigProduct = null,
                         VolgendProduct = null,
-                        AantalInWachtrij = 0
+                        AantalInWachtrij = 0,
                     });
                 }
 
@@ -139,7 +139,12 @@ namespace WebProject_klas3_groep4.Controllers
                         Beschrijving = p.Beschrijving,
                         Hoeveelheid = p.Hoeveelheid,
                         MinimalePrijs = p.MinimalePrijs,
-                        HuidigePrijs = p.MinimalePrijs
+                        HuidigePrijs = p.MinimalePrijs,
+                        Oogstdatum = p.Oogstdatum,
+                        Potmaat = p.Potmaat,
+                        Gewicht = p.Gewicht,
+                        Steellengte = p.Steellengte
+
                     })
                     .FirstOrDefaultAsync();
 
@@ -199,7 +204,11 @@ namespace WebProject_klas3_groep4.Controllers
                         Beschrijving = huidigProductEntity.Beschrijving,
                         Hoeveelheid = huidigProductEntity.Hoeveelheid,
                         MinimalePrijs = huidigProductEntity.MinimalePrijs,
-                        HuidigePrijs = CalculateCurrentPrice(huidigProductEntity)
+                        HuidigePrijs = CalculateCurrentPrice(huidigProductEntity),
+                        Oogstdatum = huidigProductEntity.Oogstdatum,
+                        Potmaat = huidigProductEntity.Potmaat,
+                        Gewicht = huidigProductEntity.Gewicht,
+                        Steellengte = huidigProductEntity.Steellengte
                     }; 
 
                     Console.WriteLine(
@@ -441,6 +450,10 @@ namespace WebProject_klas3_groep4.Controllers
         public int Hoeveelheid { get; set; }
         public int MinimalePrijs { get; set; }
         public double HuidigePrijs { get; set; }
+        public DateTime? Oogstdatum { get; set; }
+        public int? Potmaat { get; set; }
+        public double? Gewicht { get; set; }
+        public double? Steellengte { get; set; }
     }
 
     public class KoopProductDto

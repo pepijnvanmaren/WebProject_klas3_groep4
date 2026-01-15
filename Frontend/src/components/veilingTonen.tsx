@@ -233,14 +233,20 @@ function VeilingTonen() {
 
                                     <div className="product-actions">
                                         <button
-                                            onClick={() => handleStartVeiling(veiling.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleStartVeiling(veiling.id)
+                                            }}
                                             className="btn-start"
                                             disabled={veiling.huidigeSituatieVanVeiling === "Gestart"}
                                         >
                                             {veiling.huidigeSituatieVanVeiling === "Gestart" ? "Gestart" : "Veiling Starten"}
                                         </button>
                                         <button
-                                            onClick={() => handleDeleteVeiling(veiling.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteVeiling(veiling.id)
+                                            }}
                                             className="btn-delete"
                                         >
                                             Verwijderen

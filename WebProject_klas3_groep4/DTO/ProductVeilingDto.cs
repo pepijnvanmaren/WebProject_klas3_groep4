@@ -21,5 +21,13 @@ namespace WebProject_klas3_groep4.DTO
 
         [JsonPropertyName("minimalePrijs")]
         public int MinimalePrijs { get; set; }
+        [JsonPropertyName("oogstdatum")]
+        public DateTime Oogstdatum { get; set; }
+        [JsonPropertyName("potmaat")]
+        public int Potmaat { get; set; }
+        [JsonPropertyName("gewicht")]
+        public int Gewicht { get; set; }
+        [JsonPropertyName("steellengte")]
+        public int Steellengte { get; set; }
     }
 }
