@@ -87,10 +87,6 @@ function VeilingTonen() {
         navigate('/VeilingMeesterDashboard');
     };
 
-    const productToevoegen = () => {
-        navigate('/ProductToevoegen');
-    };
-
     const handleDeleteVeiling = async (id: number) => {
         if (!window.confirm("Weet je zeker dat je dit veiling wilt verwijderen?")) {
             return;
@@ -98,14 +94,16 @@ function VeilingTonen() {
 
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`https://localhost:7020/api/veilingToevoegen/${id}`, {
-                method: "POST",
-                
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
+
+            const response = await fetch(
+                `https://localhost:7020/api/Veiling/${id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
                 }
-            });
+            );
 
             if (response.ok || response.status === 204) {
                 alert("Veiling succesvol verwijderd!");
@@ -254,17 +252,6 @@ function VeilingTonen() {
                                             className="btn-delete"
                                         >
                                             Verwijderen
-                                        </button>
-                                    </div>
-                                    <div className="product-actions">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                productToevoegen();
-                                            }}
-                                            className="btn-toevoegen"
-                                        >
-                                            Veiling toevoegen
                                         </button>
                                     </div>
                                 </div>
