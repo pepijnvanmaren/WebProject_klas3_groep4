@@ -199,7 +199,10 @@ function VeilingTonen() {
                 ) : (
                     <div className="products-grid">
                         {veilingen.map((veiling) => (
-                            <div key={veiling.id} className="product-card">
+                            <div key={veiling.id} className="product-card"
+                                onClick={() => navigate(`/veiling/${veiling.id}`)}
+                                style={{ cursor: "pointer" }}
+                            >
                                 <div className="product-content">
                                     <p className="product-description">
                                         {veiling.bechrijving || "Geen beschrijving"}
