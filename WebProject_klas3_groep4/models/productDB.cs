@@ -29,9 +29,12 @@ namespace WebProject_klas3_groep4.models
         public DateTime? VerkochtOp { get; set; }
         public int? KoperID { get; set; }
         public double? VerkochtePrijs { get; set; }
+        public bool IsVolledigVerkocht { get; set; } 
         public bool IsGekocht { get; set; } = false;
+        public DateTime? PauzeStartTijd { get; set; }
 
-       
+
+
 
         // ===== NIEUW: Relatie naar Aanvoerder (GebruikerDB) =====
         [ForeignKey("Aanvoerder")]

@@ -2,8 +2,7 @@ namespace WebProject_klas3_groep4.DTO
 {
     public class VeilingCreateDto
     {
-        public string? StarTijd { get; set; }
-        public string? StartDatum { get; set; }
+        public int? DuurInSeconden { get; set; }
         public int AantalProducten { get; set; }
         public string? KlokLocatie { get; set; }
         public string? HuidigeSituatieVanVeiling { get; set; }
@@ -14,8 +13,7 @@ namespace WebProject_klas3_groep4.DTO
 
     public class VeilingUpdateDto
     {
-        public string? StarTijd { get; set; }
-        public string? StartDatum { get; set; }
+        public int? DuurInSeconden { get; set; }
         public int? AantalProducten { get; set; }
         public string? KlokLocatie { get; set; }
         public string? HuidigeSituatieVanVeiling { get; set; }
@@ -27,8 +25,9 @@ namespace WebProject_klas3_groep4.DTO
     public class VeilingOutputDto
     {
         public int Id { get; set; }
-        public string? StarTijd { get; set; }
-        public string? StartDatum { get; set; }
+        public DateTime? StartTijdUtc { get; set; }
+        public int? DuurInSeconden { get; set; }
+        public DateTime ServerNow { get; set; }
         public int AantalProducten { get; set; }
         public string? KlokLocatie { get; set; }
         public string? HuidigeSituatieVanVeiling { get; set; }
