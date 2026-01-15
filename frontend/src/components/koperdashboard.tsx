@@ -74,7 +74,7 @@ function Index() {
     const prijsPerStuk = veilingStatus?.huidigProduct?.huidigePrijs ?? 0;
     const totalePrijs = prijsPerStuk * aantal;
 
-    //Gemdeddilde prijs van alle producten bij elkaar 
+    //Gemiddelde prijs van alle producten bij elkaar 
     const fetchAlleData = async () => {
         try {
             const response = await fetch("https://localhost:7020/api/VerkochteProducten/GetallGemiddeldeAlles"
@@ -90,7 +90,7 @@ function Index() {
             console.error(error);
         }
     };
-    //Gemdeddilde prijs van huidige product bij elkaar
+    //Gemiddelde prijs van huidige product bij elkaar
     const fetchData = async () => {
         if (!veilingStatus?.huidigProduct) {
             throw new Error("Kon geen product vinden");
@@ -129,7 +129,7 @@ function Index() {
         }
     };
 
-    //Gemdeddilde prijs van huidige product bij elkaar
+    //Gemiddelde prijs van huidige product bij elkaar
     const fetchProductGeschiedenis = async () => {
         if (!veilingStatus?.huidigProduct) {
             throw new Error("Kon geen product vinden");
