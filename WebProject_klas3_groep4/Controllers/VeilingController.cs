@@ -32,8 +32,8 @@ namespace WebProject_klas3_groep4.Controllers
                 .Select(v => new VeilingOutputDto
                 {
                     Id = v.ID,
-                    StarTijd = v.StarTijd,
-                    StartDatum = v.StartDatum,
+                    StartTijdUtc = v.StartTijdUtc,
+                    DuurInSeconden = v.DuurInSeconden,
                     AantalProducten = v.AantalProducten,
                     KlokLocatie = v.KlokLocatie,
                     HuidigeSituatieVanVeiling = v.HuidigeSituatieVanVeiling,
@@ -64,8 +64,9 @@ namespace WebProject_klas3_groep4.Controllers
             var dto = new VeilingOutputDto
             {
                 Id = veiling.ID,
-                StarTijd = veiling.StarTijd,
-                StartDatum = veiling.StartDatum,
+                StartTijdUtc = veiling.StartTijdUtc,
+                DuurInSeconden = veiling.DuurInSeconden,
+                ServerNow = DateTime.UtcNow,
                 AantalProducten = veiling.AantalProducten,
                 KlokLocatie = veiling.KlokLocatie,
                 HuidigeSituatieVanVeiling = veiling.HuidigeSituatieVanVeiling,
@@ -110,11 +111,11 @@ namespace WebProject_klas3_groep4.Controllers
 
             var veiling = new VeilingDB
             {
-                StarTijd = dto.StarTijd ?? DateTime.Now.ToString("HH:mm"),
-                StartDatum = dto.StartDatum ?? DateTime.Now.ToString("yyyy-MM-dd"),
+                StartTijdUtc = null,
+                DuurInSeconden = dto.DuurInSeconden ?? 300,
                 AantalProducten = dto.AantalProducten,
                 KlokLocatie = dto.KlokLocatie,
-                HuidigeSituatieVanVeiling = dto.HuidigeSituatieVanVeiling,
+                HuidigeSituatieVanVeiling = "Niet gestart",
                 Bechrijving = dto.Bechrijving,
                 VeilingmeesterId = dto.VeilingmeesterId ?? user.Id
             };
@@ -125,8 +126,8 @@ namespace WebProject_klas3_groep4.Controllers
             var outDto = new VeilingOutputDto
             {
                 Id = veiling.ID,
-                StarTijd = veiling.StarTijd,
-                StartDatum = veiling.StartDatum,
+                StartTijdUtc = veiling.StartTijdUtc,
+                DuurInSeconden = veiling.DuurInSeconden,
                 AantalProducten = veiling.AantalProducten,
                 KlokLocatie = veiling.KlokLocatie,
                 HuidigeSituatieVanVeiling = veiling.HuidigeSituatieVanVeiling,
@@ -157,8 +158,7 @@ namespace WebProject_klas3_groep4.Controllers
             if (veiling.VeilingmeesterId != user.Id)
                 return Forbid("Je kunt deze veiling niet bewerken");
 
-            if (dto.StarTijd != null) veiling.StarTijd = dto.StarTijd;
-            if (dto.StartDatum != null) veiling.StartDatum = dto.StartDatum;
+            if (dto.DuurInSeconden != null) veiling.DuurInSeconden = dto.DuurInSeconden ?? veiling.DuurInSeconden; ;
             if (dto.AantalProducten > 0) veiling.AantalProducten = dto.AantalProducten.Value;
             if (dto.KlokLocatie != null) veiling.KlokLocatie = dto.KlokLocatie;
             if (dto.HuidigeSituatieVanVeiling != null) veiling.HuidigeSituatieVanVeiling = dto.HuidigeSituatieVanVeiling;
@@ -173,7 +173,7 @@ namespace WebProject_klas3_groep4.Controllers
         // ---------------------------------------------------------
         // DELETE
         // ---------------------------------------------------------
-      //  [Authorize(Roles = "Veilingmeester")]
+        //  [Authorize(Roles = "Veilingmeester")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteVeiling(int id)
         {
@@ -208,8 +208,8 @@ namespace WebProject_klas3_groep4.Controllers
                 .Select(v => new VeilingOutputDto
                 {
                     Id = v.ID,
-                    StarTijd = v.StarTijd,
-                    StartDatum = v.StartDatum,
+                    StartTijdUtc = v.StartTijdUtc,
+                    DuurInSeconden = v.DuurInSeconden,
                     AantalProducten = v.AantalProducten,
                     KlokLocatie = v.KlokLocatie,
                     HuidigeSituatieVanVeiling = v.HuidigeSituatieVanVeiling,
@@ -220,6 +220,31 @@ namespace WebProject_klas3_groep4.Controllers
                 .ToListAsync();
 
             return Ok(veilingen);
+        }
+
+        [Authorize(Roles = "Veilingmeester")]
+        [HttpPost("{id:int}/start")]
+        public async Task<IActionResult> StartVeiling(int id)
+        {
+            var veiling = await _context.Veilingen.FindAsync(id);
+            if (veiling == null)
+                return NotFound("Veiling niet gevonden");
+
+            if (veiling.StartTijdUtc != null)
+                return BadRequest("Veiling is al gestart");
+
+            veiling.StartTijdUtc = DateTime.UtcNow;
+            veiling.HuidigeSituatieVanVeiling = "Gestart";
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                veilingId = veiling.ID,
+                startTijdUtc = veiling.StartTijdUtc,
+                serverNow = DateTime.UtcNow,
+                duurInSeconden = veiling.DuurInSeconden
+            });
         }
     }
 }
