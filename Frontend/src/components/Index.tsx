@@ -1,8 +1,8 @@
-import "../styles/index.css";
+﻿import "../styles/index.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-//Refereerd naar de DTO
+//Refereerd naar DTO
 type Product = {
     id: number;
     naam: string;
@@ -14,7 +14,22 @@ type Product = {
     steellengte: number;
     hoeveelheid: number;
     minimalePrijs: number;
+}
+
+type Review = {
+    id: number;
+    naam: string;
+    tekst: string;
+    sterren: number; 
 };
+
+const dummyReviews: Review[] = [
+    { id: 1, naam: "Sophie V.", tekst: "Fantastische service en prachtige bloemen!", sterren: 5 },
+    { id: 2, naam: "Jan K.", tekst: "Snelle levering en goede kwaliteit.", sterren: 4 },
+    { id: 3, naam: "Lotte M.", tekst: "Zeer tevreden, zeker een aanrader.", sterren: 5 },
+    { id: 4, naam: "Emma T.", tekst: "Goede prijzen en vriendelijke klantenservice.", sterren: 4 },
+    { id: 5, naam: "Mark D.", tekst: "De bloemen waren vers en mooi verpakt.", sterren: 5 },
+];
 
 //Zet de image nvarchar om naar een image.
 const getImageSrc = (foto?: string | null) => {
@@ -39,7 +54,7 @@ function Index() {
     const [isRunning, setIsRunning] = useState(true);
     const [purchased, setPurchased] = useState(false);
 
-    //Houd bij de product volgorde
+    //Houd de product volgorde bij
     const currentProduct = products[0];
     const nextProduct = products[1];
 
@@ -74,7 +89,7 @@ function Index() {
 
             try {
                 const response = await fetch("https://localhost:7020/api/Product");
-                if (!response.ok) throw new Error("Could not load products");
+                if (!response.ok) throw new Error("Kon producten niet laden.");
 
                 const data = (await response.json()) as Product[];
                 setProducts(data);
@@ -82,7 +97,7 @@ function Index() {
                 if (data[0]) setPrice(data[0].minimalePrijs * 10);
             } catch (err: any) {
                 console.error(err);
-                setError(err?.message ?? "Unknown error");
+                setError(err?.message ?? "Onbekende error");
             } finally {
                 setLoading(false);
             }
@@ -106,7 +121,7 @@ function Index() {
 
         intervalRef.current = setInterval(() => {
             setPrice(prev => {
-                const nextPrice = prev * 0.98; // decrease by 2%
+                const nextPrice = prev * 0.98; // verminder met 2%
                 if (nextPrice <= minPrice) {
                     clearInterval(intervalRef.current!);
                     return minPrice;
@@ -142,30 +157,55 @@ function Index() {
         product?.foto ? (
             <img src={getImageSrc(product.foto)} alt={product.naam} className="Roses" />
         ) : (
-            <div className="no-image">No image available</div>
+            <div className="no-image">Geen afbeelding gevonden</div>
         );
 
     return (
         <div className="page">
             {/* Over ons */}
+            <div className="user-welcome">
+                    <h1>Welkom bij Floriday!</h1>
+                <p>
+                    Bekijk ons huidige product en profiteer van de dalende prijs.
+                </p>
+            </div>
 
-            {/* Current Product */}
-            <h2 className="page-title" ref={currentProductTitleRef}>
-                Current product
-            </h2>
+                {isLoggedIn && (
+                    <div className="login-register">
+                    <button
+                        className="button login-button"
+                            onClick={() => navigate("/inloggen")}
+                        >
+                            Inloggen
+                        </button>
 
+                    <button
+                        className="button login-button"
+                            onClick={() => navigate("/registreren")}
+                        >
+                            Registreren
+                        </button>
+                    </div>
+                )}
+
+            {/* Houdig product */}
             <div className="container">
                 <div className="box">
-                    <ProductImage product={currentProduct} />
-                </div>
+                    <ProductImage product={currentProduct} /> </div>
 
                 <div className="box box-description">
                     <h2 className="product-name">{currentProduct.naam}</h2>
                     <p className="description">{currentProduct.beschrijving}</p>
                 </div>
 
-                
                 <div className="box">{currentProduct.hoeveelheid} stuks</div>
+                <div className="box">{currentProduct.oogstdatum} geoogst</div>
+
+                <div className="box">
+                    <p>{currentProduct.potmaat} cm potmaat</p>
+                    <p>{currentProduct.gewicht} kg gewicht</p>
+                    <p>{currentProduct.steellengte} cm steellengte</p>
+                </div>
 
                 <div className="box box-price">
                     <div className="price-row">
@@ -193,20 +233,42 @@ function Index() {
             </div>
 
             {/* Next Product */}
-            <h2 className="page-title">volgend product</h2>
             <div className="container">
                 <div className="box">
-                    {nextProduct ? <ProductImage product={nextProduct} /> : "No next product"}
+                    {nextProduct ? <ProductImage product={nextProduct} /> : "Geen volgend product"}
                 </div>
                 <div className="box box-description">
                     <h2 className="product-name">{nextProduct?.naam}</h2>
                     <p className="description">{nextProduct?.beschrijving}</p>
                 </div>
-                <div className="box">{nextProduct?.hoeveelheid ?? "onebekend aantal"} stuks</div>
-                <div className="box"></div>
+                <div className="box">{nextProduct?.hoeveelheid ?? "Onbekend aantal"} stuks</div>
+                <div className="box">{nextProduct?.oogstdatum} geoogst</div>
+                <div className="box">
+                    <p>{nextProduct?.potmaat} cm potmaat</p>
+                    <p>{nextProduct?.gewicht} kg gewicht</p>
+                    <p>{nextProduct?.steellengte} cm steellengte</p>
+                </div>
             </div>
+
+{/* Reviews */ }
+<div className="reviews-section">
+    <h2>Wat onze klanten zeggen</h2>
+    <div className="reviews-container">
+        {dummyReviews.map((review) => (
+            <div key={review.id} className="review-card">
+                <p className="review-text">"{review.tekst}"</p>
+                <p className="review-name">- {review.naam}</p>
+                <p className="review-rating">
+                    {"⭐".repeat(review.sterren)}{" "}
+                    {"☆".repeat(5 - review.sterren)}
+                </p>
+            </div>
+        ))}
+    </div>
+</div>
         </div>
     );
 }
+
 
 export default Index;

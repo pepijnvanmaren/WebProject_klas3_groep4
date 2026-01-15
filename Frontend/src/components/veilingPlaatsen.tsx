@@ -29,7 +29,7 @@ function VeilingPlaatsen() {
 
         const payload = {
             starTijd,
-            bechrijving: beschrijving,
+            beschrijving: beschrijving,
             startDatum,
             klokLocatie,
             aantalProducten: 1,

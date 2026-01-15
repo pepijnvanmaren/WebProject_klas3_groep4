@@ -161,10 +161,10 @@ function SellerDashboard() {
                 {/*Linker colom*/}
                 <div className="pp_dashboard-column">
                     <label>
-                        <h2>Naam *</h2>
+                        <h2>Naam </h2>
                         <input
                             className="pp_input-container"
-                            placeholder="Voer je Naam in"
+                            placeholder="Voer de Naam in"
                             value={naam}
                             onChange={e => setNaam(e.target.value)}
                         />
@@ -174,7 +174,7 @@ function SellerDashboard() {
                         <h2>Beschrijving</h2>
                         <textarea
                             className="pp_input-container-beschrijving"
-                            placeholder="Voer je Beschrijving in"
+                            placeholder="Voer de Beschrijving in"
                             value={beschrijving}
                             onChange={e => setBeschrijving(e.target.value)}
                         />
@@ -250,7 +250,7 @@ function SellerDashboard() {
                     </label>
 
                     <label>
-                        <h2>Minimale prijs (Prijs per stuk) *</h2>
+                        <h2>Minimale prijs (Prijs per stuk) </h2>
                         <input
                             className="pp_input-container"
                             type="number"

@@ -81,7 +81,7 @@ function Login() {
             }
         } catch (error) {
             console.error("Login error:", error);
-            alert("Cannot connect to server.");
+            alert("Kan niet verbinden met de server.");
         } finally {
             setLoading(false);
         }
