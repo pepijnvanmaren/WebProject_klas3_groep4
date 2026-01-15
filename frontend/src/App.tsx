@@ -14,6 +14,7 @@ import VeilingTonenPage from "./pages/VeilingTonenPage.jsx";
 import VeilingPlaatsenPage from "./pages/VeilingPlaatsenPage.jsx";
 import ProductInVeilingPage from "./pages/ProductenInVeilingPage.js"
 import BiedingenInVeilingPage from "./pages/BiedingenInVeilingPage.js"
+import ProductToevoegen from "./pages/ProductToevoegenPage.js"
 function App() {
     return (
         <BrowserRouter>
@@ -109,6 +110,14 @@ function App() {
                     element={
                         <ProtectedRoute requiredRoles={["Veilingmeester", "Aanvoerder"]}>
                             <BiedingenInVeilingPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/ProductToevoegen"
+                    element={
+                        <ProtectedRoute requiredRoles={["Veilingmeester"]}>
+                            <ProductToevoegen />
                         </ProtectedRoute>
                     }
                 />

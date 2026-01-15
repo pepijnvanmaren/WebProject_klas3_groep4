@@ -297,5 +297,45 @@ namespace WebProject_klas3_groep4.Controllers
 
             return Ok(producten);
         }
+
+        // ---------------------------------------------------------
+        // GET PRODCUTEN BIJ GEEN VEILINGID
+        // ---------------------------------------------------------
+        [HttpGet("legeProducten")]
+        public async Task<ActionResult<IEnumerable<ProductOutputDto>>> GetLegeProducten()
+        {
+            var producten = await _context.Producten
+                .Where(p => p.VeilingId == null)
+                .Include(p => p.Aanvoerder)
+                .Include(p => p.Veiling)
+                .ToListAsync();
+
+            if (!producten.Any())
+                return NotFound("Geen producten gevonden");
+
+            var dtoList = producten.Select(p => new ProductOutputDto
+            {
+                Id = p.ID,
+                Naam = p.Naam,
+                Foto = p.Foto,
+                Beschrijving = p.Beschrijving,
+                Oogstdatum = p.Oogstdatum.HasValue
+                        ? DateOnly.FromDateTime(p.Oogstdatum.Value)
+                        : DateOnly.FromDateTime(DateTime.UtcNow),
+                Potmaat = p.Potmaat,
+                Gewicht = p.Gewicht,
+                Steellengte = p.Steellengte ?? 0,
+                Hoeveelheid = p.Hoeveelheid,
+                MinimalePrijs = p.MinimalePrijs,
+                AanvoerderId = p.AanvoerderId,
+                AanvoerderNaam = p.Aanvoerder != null ? p.Aanvoerder.UserName : null,
+                VeilingId = p.VeilingId
+            });
+
+            return Ok(dtoList);
+        }
+        // ---------------------------------------------------------
+        // VOEG PRODCUT TOE TOT VEILING
+        // ---------------------------------------------------------
     }
 }
