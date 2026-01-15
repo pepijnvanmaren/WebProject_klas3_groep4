@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-//Refereerd naar DTO
+//Refereerd naar DTO's
 type Product = {
     id: number;
     naam: string;
@@ -40,41 +40,17 @@ const getImageSrc = (foto?: string | null) => {
     if (s.startsWith("iVBOR")) return `data:image/png;base64,${s}`;
     return `data:image/*;base64,${s}`;
 };
-
 function Index() {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    //De timer bar
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const [price, setPrice] = useState(0);
-    const [isRunning, setIsRunning] = useState(true);
-    const [purchased, setPurchased] = useState(false);
 
     //Houd de product volgorde bij
     const currentProduct = products[0];
     const nextProduct = products[1];
-
-    //Referentie voor het automatisch scrollen naar beneden
-    const currentProductTitleRef = useRef<HTMLHeadingElement | null>(null);
-
-    //Scroll functie
-    const scrollToCurrentProduct = () => {
-        if (!currentProductTitleRef.current) return;
-
-        const headerOffset = window.innerHeight * 0.18; // account for 18vh header
-        const elementPosition =
-            currentProductTitleRef.current.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - headerOffset;
-
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-        });
-    };
 
     //Update de login status
     useEffect(() => {
@@ -106,46 +82,6 @@ function Index() {
         getProducts();
     }, []);
 
-    //prijs berekeningen voor max/stapgrootte gebaseeerd op de min)
-    const minPrice = currentProduct?.minimalePrijs ?? 0;
-    const maxPrice = minPrice * 10;
-    const progress =
-        maxPrice > minPrice ? (price - minPrice) / (maxPrice - minPrice) : 0;
-    const barColor = `rgb(${Math.round(255 * (1 - progress))}, ${Math.round(
-        255 * progress
-    )}, 0)`;
-
-    //Timer updater
-    useEffect(() => {
-        if (!isRunning || !currentProduct) return;
-
-        intervalRef.current = setInterval(() => {
-            setPrice(prev => {
-                const nextPrice = prev * 0.98; // verminder met 2%
-                if (nextPrice <= minPrice) {
-                    clearInterval(intervalRef.current!);
-                    return minPrice;
-                }
-                return parseFloat(nextPrice.toFixed(2));
-            });
-        }, 1000);
-
-        return () => clearInterval(intervalRef.current!);
-    }, [isRunning, currentProduct, minPrice]);
-
-    //Handle voor koopknop
-    //Als je niet ingelogd bent dan navigeer je naar inloggen
-    const handleBuy = () => {
-        if (!isLoggedIn) {
-            navigate("/inloggen");
-            return;
-        }
-        else {
-            clearInterval(intervalRef.current!);
-            setIsRunning(false);
-            setPurchased(true);
-        }
-    };
 
     //error handling voor producten ophalen
     if (loading) return <p>Laad producten...</p>;
@@ -169,8 +105,8 @@ function Index() {
                     Bekijk ons huidige product en profiteer van de dalende prijs.
                 </p>
             </div>
-
-                {isLoggedIn && (
+            
+                {!isLoggedIn && (
                     <div className="login-register">
                     <button
                         className="button login-button"
@@ -212,23 +148,11 @@ function Index() {
                         <span className="price">EUR {price.toFixed(2)}</span>
                         <button
                             className="button"
-                            onClick={handleBuy}
-                            disabled={purchased}
+                            onClick={() => navigate("/inloggen")}
                         >
-                            {purchased ? "Gekocht" : "Koop"}
+                            Bekijk Veilingen
                         </button>
                     </div>
-                </div>
-
-                <div className="progress-bar-container integrated-bar">
-                    <div
-                        className="progress-bar"
-                        style={{
-                            width: `${progress * 100}%`,
-                            backgroundColor: barColor,
-                            transition: "width 1s linear, background-color 1s linear",
-                        }}
-                    />
                 </div>
             </div>
 
@@ -252,7 +176,7 @@ function Index() {
 
 {/* Reviews */ }
 <div className="reviews-section">
-    <h2>Wat onze klanten zeggen</h2>
+    <h2>Wat onze gebruikers zeggen</h2>
     <div className="reviews-container">
         {dummyReviews.map((review) => (
             <div key={review.id} className="review-card">
@@ -269,6 +193,5 @@ function Index() {
         </div>
     );
 }
-
 
 export default Index;
