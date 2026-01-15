@@ -210,25 +210,7 @@ function Index() {
                 <div className="box box-price">
                     <div className="price-row">
                         <span className="price">EUR {price.toFixed(2)}</span>
-                        <button
-                            className="button"
-                            onClick={handleBuy}
-                            disabled={purchased}
-                        >
-                            {purchased ? "Gekocht" : "Koop"}
-                        </button>
                     </div>
-                </div>
-
-                <div className="progress-bar-container integrated-bar">
-                    <div
-                        className="progress-bar"
-                        style={{
-                            width: `${progress * 100}%`,
-                            backgroundColor: barColor,
-                            transition: "width 1s linear, background-color 1s linear",
-                        }}
-                    />
                 </div>
             </div>
 
